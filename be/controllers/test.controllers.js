@@ -1,11 +1,9 @@
 const { google } = require('googleapis');
 const sheets = google.sheets('v4');
-const forms = google.forms('v1');
 const spreadsheetId = '1kX-oht-CJU5IvO_5PVIiVXBRl-BppXJ38byO0eoxdKc';
-const formId = '1PEujxV05feXNKWMfBGAdMkt3ysl_Ynzmzu0ToPP5WOQ';
-const axios = require('axios');
 const { exec } = require('child_process');
 require('dotenv').config();
+const { JOTFORM_API } = process.env;
 
 // async function authorize() {
 const auth = new google.auth.GoogleAuth({
@@ -13,62 +11,23 @@ const auth = new google.auth.GoogleAuth({
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
 });
 
-// // Set the refresh token
-// const client = await auth.getClient();
-
-// const googleSheets = google.sheets({ version: 'v4', client });
-// const metaData = await googleSheets.spreadsheets.get({ auth, spreadsheetId });
-
-// const getRows = await googleSheets.spreadsheets.values.get({
-//   auth,
-//   spreadsheetId,
-//   range: 'Sheet1!A1:D3',
-// });
-
-//   return metaData;
-// }
-
-// async function getQuestionsWithShuffledChoices(auth) {
-//   const response = await sheets.spreadsheets.values.get({
-//     spreadsheetId,
-//     range: 'Sheet1!A1:D3', // Soal di kolom A dan pilihan di kolom B-D
-//     auth: auth,
-//   });
-
-//   let questions = response.data.values;
-//   questions = questions.map((question) => {
-//     let choices = question.slice(1); // Pilihan mulai dari kolom kedua
-//     choices = shuffleChoices(choices); // Acak pilihan
-//     return {
-//       question: question[0], // Pertanyaan di kolom pertama
-//       choices: choices,
-//     };
-//   });
-
-//   questions = shuffleArray(questions); // Acak urutan soal
-//   // res.send(questions);
-//   // console.log(questions);
-//   return questions;
-// }
-
 async function getQuestionsWithShuffledChoices(auth) {
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: 'Sheet1!A1:G3', // Kolom A hingga G mencakup pertanyaan, pilihan, dan nilai
+    range: 'Sheet1!A1:G3',
     auth: auth,
   });
 
   let questions = response.data.values;
   questions = questions.map((row) => {
-    let question = row[0]; // Pertanyaan di kolom pertama
+    let question = row[0];
     // let choices = [];
     let choices = '';
     for (let i = 1; i < row.length; i += 2) {
-      // Iterasi setiap pasangan pilihan dan nilai
       // choices.push({ choice: row[i], value: parseInt(row[i + 1], 10) });
       // choices.push({ choice: row[i] });
       if (i <= 1) {
-        choices += ''; // Menambahkan garis pemisah setelah elemen pertama
+        choices += '';
       } else {
         choices += '|';
       }
@@ -110,7 +69,7 @@ module.exports = {
       // res.json({ questions: dataSpreadSheets });
 
       // Membuat Form Baru
-      const createFormCommand = `curl -X POST -d "questions[0][type]=control_head" -d "questions[0][text]=Jawab pertanyaan berikut, disini tidak ada jawaban benar ataupun salah" -d "questions[0][order]=1" -d "questions[0][name]=Header" -d "questions[1][type]=control_textbox" -d "questions[1][text]=Nama Lengkap" -d "questions[1][order]=2" -d "questions[1][name]=TextBox" -d "questions[1][validation]=None" -d "questions[1][required]=Yes" -d "questions[1][readonly]=No" -d "questions[1][size]=20" -d "questions[1][labelAlign]=Auto" -d "questions[1][hint]= " -d "properties[title]=Test Pesikolog" -d "properties[height]=600" "https://api.jotform.com/form?apiKey=${process.env.JOTFORM_API}"`;
+      const createFormCommand = `curl -X POST -d "questions[0][type]=control_head" -d "questions[0][text]=Jawab pertanyaan berikut, disini tidak ada jawaban benar ataupun salah" -d "questions[0][order]=1" -d "questions[0][name]=Header" -d "questions[1][type]=control_textbox" -d "questions[1][text]=Nama Lengkap" -d "questions[1][order]=2" -d "questions[1][name]=TextBox" -d "questions[1][validation]=None" -d "questions[1][required]=Yes" -d "questions[1][readonly]=No" -d "questions[1][size]=20" -d "questions[1][labelAlign]=Auto" -d "questions[1][hint]= " -d "properties[title]=Test Pesikolog" -d "properties[height]=600" "https://api.jotform.com/form?apiKey=${JOTFORM_API}"`;
 
       const formID = await new Promise((resolve, reject) => {
         exec(createFormCommand, (error, stdout) => {
@@ -155,24 +114,31 @@ module.exports = {
       for (const question of dataSpreadSheets) {
         const createQuestions = `curl -X POST -d "question[type]=control_radio" -d "question[text]=${question.text}" -d "question[order]=${order}" -d "question[name]=${order}" -d "question[required]=Yes" -d "question[options]=${
           question.options || ''
-        }" "https://api.jotform.com/form/${formID}/questions?apiKey=${process.env.JOTFORM_API}"`;
+        }" "https://api.jotform.com/form/${formID}/questions?apiKey=${JOTFORM_API}"`;
         await new Promise((resolve, reject) => {
           exec(createQuestions, (error, stdout) => {
-            if (error) {
-              return reject(`Gagal membuat pertanyaan: ${error.message}`);
-            }
+            if (error) return reject(`Gagal membuat pertanyaan: ${error.message}`);
             const response = JSON.parse(stdout);
-            if (response.responseCode !== 200) {
-              return reject(`Gagal membuat pertanyaan: ${response.message}`);
-            }
-            console.log('pertanyaannnn', response);
+            if (response.responseCode !== 200) return reject(`Gagal membuat pertanyaan: ${response.message}`);
             resolve(response);
           });
         });
         order++;
       }
 
-      console.log('Semua proses selesai.');
+      const send = `curl -X POST -d "question[type]=control_button" -d "question[text]=Kirim" -d "question[order]=${order}" -d "question[name]=${order}" -d "question[required]=Yes" "https://api.jotform.com/form/${formID}/questions?apiKey=${JOTFORM_API}"`;
+      await new Promise((resolve, reject) => {
+        exec(send, (error, stdout) => {
+          if (error) {
+            return reject(`Gagal membuat button kirim: ${error.message}`);
+          }
+          const response = JSON.parse(stdout);
+          if (response.responseCode !== 200) {
+            return reject(`Gagal membuat button kirim: ${response.message}`);
+          }
+          resolve(response);
+        });
+      });
       res.send('Semua proses selesai.');
     } catch (err) {
       console.error(err);
@@ -180,23 +146,24 @@ module.exports = {
   },
 
   getAnswer: async (req, res, next) => {
-    //   const forms = google.forms({ version: 'v1', auth: authForm });
-    //   const formId = '14RK8BGZ05kW2WI9Kq5X1nfexB-DVGdTpPUra8IXKDH0'; // ID dari Google Form
-    //   try {
-    //     const response = await forms.forms.responses.list({
-    //       formId,
-    //     });
-
-    //     const answers = response;
-    //     console.log('Form Responses:', answers);
-    //     res.json(answers);
-    //   } catch (err) {
-    //     console.error('Error fetching form responses:', err);
-    //   }
-    // },
-
-    const answers = await getMappedResponses('14RK8BGZ05kW2WI9Kq5X1nfexB-DVGdTpPUra8IXKDH0');
-    console.log('Form Responses:', answers);
-    res.json(answers);
+    try {
+      const { formID } = req.body;
+      const answers = `curl -X GET "https://api.jotform.com/form/${formID}/submissions?apiKey=${JOTFORM_API}`;
+      let a = await new Promise((resolve, reject) => {
+        exec(answers, (error, stdout) => {
+          if (error) {
+            return reject(`Gagal membuat button kirim: ${error.message}`);
+          }
+          const response = JSON.parse(stdout);
+          if (response.responseCode !== 200) {
+            return reject(`Gagal membuat button kirim: ${response.message}`);
+          }
+          resolve(response);
+        });
+      });
+      res.json(a.content[a.content.length - 1]);
+    } catch (err) {
+      console.error(err);
+    }
   },
 };
