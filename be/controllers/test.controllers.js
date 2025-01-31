@@ -14,7 +14,7 @@ const auth = new google.auth.GoogleAuth({
 async function getQuestionsWithShuffledChoices(auth) {
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: 'Sheet1!A1:G3',
+    range: 'Test Pesikolog!A1:D3',
     auth: auth,
   });
 
@@ -23,7 +23,7 @@ async function getQuestionsWithShuffledChoices(auth) {
     let question = row[0];
     // let choices = [];
     let choices = '';
-    for (let i = 1; i < row.length; i += 2) {
+    for (let i = 1; i < row.length; i++) {
       // choices.push({ choice: row[i], value: parseInt(row[i + 1], 10) });
       // choices.push({ choice: row[i] });
       if (i <= 1) {
@@ -63,7 +63,7 @@ function shuffleArray(array) {
 }
 
 module.exports = {
-  getQuestions: async (req, res, next) => {
+  createQuestion: async (req, res, next) => {
     try {
       const dataSpreadSheets = await getQuestionsWithShuffledChoices(auth);
       // res.json({ questions: dataSpreadSheets });
@@ -84,7 +84,6 @@ module.exports = {
         });
       });
 
-      // Pertanyaan yang akan ditambahkan
       const questions = [
         {
           type: 'control_textbox',
@@ -107,14 +106,27 @@ module.exports = {
           name: 'favoriteColor',
           options: 'Red|Green|Blue|Yellow',
         },
+        {
+          type: 'control_image',
+          text: 'Lihat gambar berikut dan jawab pertanyaan.',
+          name: 'questionImage',
+          url: 'https://cdn1-production-images-kly.akamaized.net/w3Lx3L4iTX2sz_ZQ13IZ1cpgddI=/800x450/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/2160965/original/058483900_1525515185-iStock-640299760.jpg',
+        },
+        {
+          type: 'control_radio',
+          text: 'Apa yang kamu lihat pada gambar?',
+          name: 'imageAnswer',
+          options:
+            '<img src="https://cdn1-production-images-kly.akamaized.net/w3Lx3L4iTX2sz_ZQ13IZ1cpgddI=/800x450/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/2160965/original/058483900_1525515185-iStock-640299760.jpg" width="100">|<img src="https://cdn.antaranews.com/cache/1200x800/2022/09/16/elvicto.jpg" width="100">|<img src="https://res.cloudinary.com/dk0z4ums3/image/upload/v1672644823/attached_image/muka-kusam-kenali-penyebab-dan-cara-mengatasinya.jpg" width="100">',
+        },
       ];
 
       // Menambahkan Pertanyaan Satu per Satu
       let order = 3;
       for (const question of dataSpreadSheets) {
-        const createQuestions = `curl -X POST -d "question[type]=control_radio" -d "question[text]=${question.text}" -d "question[order]=${order}" -d "question[name]=${order}" -d "question[required]=Yes" -d "question[options]=${
-          question.options || ''
-        }" "https://api.jotform.com/form/${formID}/questions?apiKey=${JOTFORM_API}"`;
+        const createQuestions = `curl -X POST -d "question[type]=${question.type}" -d "question[text]=${question.text}" -d "question[order]=${order}" -d "question[name]=${question.name}" ${
+          question.url ? `-d "question[src]=${question.url}"` : ''
+        } ${question.options ? `-d "question[options]=${question.options}"` : ''} "https://api.jotform.com/form/${formID}/questions?apiKey=${JOTFORM_API}"`;
         await new Promise((resolve, reject) => {
           exec(createQuestions, (error, stdout) => {
             if (error) return reject(`Gagal membuat pertanyaan: ${error.message}`);
@@ -147,7 +159,8 @@ module.exports = {
 
   getAnswer: async (req, res, next) => {
     try {
-      const { formID } = req.body;
+      // const { formID } = req.body;
+      const formID = '250302776008451';
       const answers = `curl -X GET "https://api.jotform.com/form/${formID}/submissions?apiKey=${JOTFORM_API}`;
       let a = await new Promise((resolve, reject) => {
         exec(answers, (error, stdout) => {
@@ -161,7 +174,7 @@ module.exports = {
           resolve(response);
         });
       });
-      res.json(a.content[a.content.length - 1]);
+      res.json(a.content);
     } catch (err) {
       console.error(err);
     }
