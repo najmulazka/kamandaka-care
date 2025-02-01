@@ -1,9 +1,8 @@
 const { google } = require('googleapis');
 const sheets = google.sheets('v4');
-const spreadsheetId = '1kX-oht-CJU5IvO_5PVIiVXBRl-BppXJ38byO0eoxdKc';
 const { exec } = require('child_process');
 require('dotenv').config();
-const { JOTFORM_API } = process.env;
+const { JOTFORM_API, SPREADSHEET_ID } = process.env;
 
 // async function authorize() {
 const auth = new google.auth.GoogleAuth({
@@ -13,7 +12,7 @@ const auth = new google.auth.GoogleAuth({
 
 async function getQuestionsWithShuffledChoices(auth) {
   const response = await sheets.spreadsheets.values.get({
-    spreadsheetId,
+    spreadsheetId: SPREADSHEET_ID,
     range: 'Test Pesikolog!A1:D3',
     auth: auth,
   });
@@ -124,9 +123,9 @@ module.exports = {
       // Menambahkan Pertanyaan Satu per Satu
       let order = 3;
       for (const question of dataSpreadSheets) {
-        const createQuestions = `curl -X POST -d "question[type]=${question.type}" -d "question[text]=${question.text}" -d "question[order]=${order}" -d "question[name]=${question.name}" ${
-          question.url ? `-d "question[src]=${question.url}"` : ''
-        } ${question.options ? `-d "question[options]=${question.options}"` : ''} "https://api.jotform.com/form/${formID}/questions?apiKey=${JOTFORM_API}"`;
+        const createQuestions = `curl -X POST -d "question[type]=control_radio" -d "question[text]=${question.text}" -d "question[order]=${order}" -d "question[name]=${order}" ${question.url ? `-d "question[src]=${question.url}"` : ''} ${
+          question.options ? `-d "question[options]=${question.options}"` : ''
+        } "https://api.jotform.com/form/${formID}/questions?apiKey=${JOTFORM_API}"`;
         await new Promise((resolve, reject) => {
           exec(createQuestions, (error, stdout) => {
             if (error) return reject(`Gagal membuat pertanyaan: ${error.message}`);

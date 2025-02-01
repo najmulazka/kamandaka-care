@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  Username String @unique
+  Password String
+}
+
+model Clients {
+  id       Int        @id @default(autoincrement())
+  fullName String
+  email    String     @unique
+  googleId String
+  bookings Bookings[]
+}
+
+model Doctors {
+  id         Int        @id @default(autoincrement())
+  fullName   String
+  email      String     @unique
+  password   String
+  specialist String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  services   Services[]
+}
+
+model Services {
+  id          Int        @id @default(autoincrement())
+  doctorId    Int
+  serviceName String
+  price       Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  doctors     Doctors    @relation(fields: [doctorId], references: [id])
+  bookings    Bookings[]
+}
+
+model ServiceTime {
+  id              Int     @id @default(autoincrement())
+  senin           Boolean @default(true)
+  startTimeSenin  Int
+  endTimeSenin    Int
+  selasa          Boolean @default(true)
+  startTimeSelasa Int
+  endTimeSelasa   Int
+  rabu            Boolean @default(true)
+  startTimeRabu   Int
+  endTimeRabu     Int
+  kamis           Boolean @default(true)
+  startTimeKamis  Int
+  endTimeKamis    Int
+  jumat           Boolean @default(true)
+  startTimeJumat  Int
+  endTimeJumat    Int
+  sabtu           Boolean @default(true)
+  startTimeSabtu  Int
+  endTimeSabtu    Int
+  minggu          Boolean @default(true)
+  startTimeMinggu Int
+  endTimeMinggu   Int
+}
+
+model Bookings {
+  id         Int      @id @default(autoincrement())
+  clientId   Int
+  serviceId  Int
+  dateTime   DateTime
+  link       String
+  createdAt  DateTime @default(now())
+  isValidate Boolean  @default(false)
+  clients    Clients  @relation(fields: [clientId], references: [id])
+  services   Services @relation(fields: [serviceId], references: [id])
+}
