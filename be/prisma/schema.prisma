@@ -39,39 +39,42 @@ model Doctors {
 }
 
 model Services {
-  id          Int        @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   doctorId    Int
-  serviceName String
+  serviceName String        @unique
   price       Int
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  doctors     Doctors    @relation(fields: [doctorId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  doctors     Doctors       @relation(fields: [doctorId], references: [id])
+  serviceTime ServiceTime[]
   bookings    Bookings[]
 }
 
 model ServiceTime {
-  id              Int     @id @default(autoincrement())
-  senin           Boolean @default(true)
-  startTimeSenin  Int
-  endTimeSenin    Int
-  selasa          Boolean @default(true)
-  startTimeSelasa Int
-  endTimeSelasa   Int
-  rabu            Boolean @default(true)
-  startTimeRabu   Int
-  endTimeRabu     Int
-  kamis           Boolean @default(true)
-  startTimeKamis  Int
-  endTimeKamis    Int
-  jumat           Boolean @default(true)
-  startTimeJumat  Int
-  endTimeJumat    Int
-  sabtu           Boolean @default(true)
-  startTimeSabtu  Int
-  endTimeSabtu    Int
-  minggu          Boolean @default(true)
-  startTimeMinggu Int
-  endTimeMinggu   Int
+  id              Int      @id @default(autoincrement())
+  servicesId      Int
+  senin           Boolean  @default(true)
+  startTimeSenin  DateTime @default(now()) @db.Time()
+  endTimeSenin    DateTime @default(now()) @db.Time()
+  selasa          Boolean  @default(true)
+  startTimeSelasa DateTime @default(now()) @db.Time()
+  endTimeSelasa   DateTime @default(now()) @db.Time()
+  rabu            Boolean  @default(true)
+  startTimeRabu   DateTime @default(now()) @db.Time()
+  endTimeRabu     DateTime @default(now()) @db.Time()
+  kamis           Boolean  @default(true)
+  startTimeKamis  DateTime @default(now()) @db.Time()
+  endTimeKamis    DateTime @default(now()) @db.Time()
+  jumat           Boolean  @default(true)
+  startTimeJumat  DateTime @default(now()) @db.Time()
+  endTimeJumat    DateTime @default(now()) @db.Time()
+  sabtu           Boolean  @default(true)
+  startTimeSabtu  DateTime @default(now()) @db.Time()
+  endTimeSabtu    DateTime @default(now()) @db.Time()
+  minggu          Boolean  @default(true)
+  startTimeMinggu DateTime @default(now()) @db.Time()
+  endTimeMinggu   DateTime @default(now()) @db.Time()
+  services        Services @relation(fields: [servicesId], references: [id])
 }
 
 model Bookings {

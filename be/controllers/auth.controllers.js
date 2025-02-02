@@ -12,7 +12,7 @@ module.exports = {
       res.sendResponse(400, 'Bad Request', 'Username already exist', null);
     }
 
-    const encryptedPassword = bcrypt.hash(password, 10);
+    const encryptedPassword = await bcrypt.hash(password, 10);
     const admin = await prisma.admin.create({
       data: {
         username,
@@ -31,7 +31,7 @@ module.exports = {
       res.sendResponse(400, 'Bad request', 'Username or password wrong', null);
     }
 
-    const passwordCorrect = bcrypt.compare(password, user.password);
+    const passwordCorrect = await bcrypt.compare(password, adminExist.password);
     if (!passwordCorrect) {
       res.sendResponse(400, 'Bad request', 'Username or password wrong', null);
     }
@@ -47,13 +47,13 @@ module.exports = {
   addDoctor: async (req, res, next) => {
     const { fullName, email, password, specialist } = req.body;
 
-    const doctorExist = await prisma.admin.findUnique({ where: { email } });
+    const doctorExist = await prisma.doctors.findUnique({ where: { email } });
     if (doctorExist) {
       res.sendResponse(400, 'Bad Request', 'Doctor already exist', null);
     }
 
-    const encryptedPassword = bcrypt.hash(password, 10);
-    const doctor = await prisma.admin.create({
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    const doctor = await prisma.doctors.create({
       data: {
         fullName,
         email,
@@ -68,17 +68,17 @@ module.exports = {
   loginDoctor: async (req, res, next) => {
     const { email, password } = req.body;
 
-    const doctorExist = await prisma.admin.findUnique({ where: { email } });
+    const doctorExist = await prisma.doctors.findUnique({ where: { email } });
     if (!doctorExist) {
       res.sendResponse(400, 'Bad request', 'Email or password wrong', null);
     }
 
-    const passwordCorrect = bcrypt.compare(password, doctorExist.password);
+    const passwordCorrect = await bcrypt.compare(password, doctorExist.password);
     if (!passwordCorrect) {
       res.sendResponse(400, 'Bad request', 'Username or password wrong', null);
     }
 
-    const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
+    const token = jwt.sign({ id: doctorExist.id }, JWT_SECRET_KEY);
     res.status(200).json({
       status: true,
       message: 'OK',

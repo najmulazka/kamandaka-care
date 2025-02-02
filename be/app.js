@@ -7,10 +7,9 @@ const createMeeting = require('./libs/meet.lib');
 const { jsonResponse } = require('./middlewares/jsonresponse.middleware');
 const { PORT } = process.env;
 
-// app.get('/auth/google', authGoogle);
-// app.get('/auth/google', authGoogleCallback);
+app.use(express.json());
 app.use(morgan('dev'));
-app.use(jsonResponse)
+app.use(jsonResponse);
 
 app.get('/meet', createMeeting);
 app.get('/', async (req, res) => {

@@ -8,7 +8,9 @@ const MyCalendar = () => {
   const [date, setDate] = useState(new Date());
 
   const simpan = () => {
-    console.log(format(date, 'EEEE, d MMMM yyyy', { locale: id }));
+    console.log(format(date, 'EEEE', { locale: id }));
+    console.log(format(date, 'dd MM yyyy', { locale: id }));
+    console.log(date.toISOString());
   };
 
   return (
