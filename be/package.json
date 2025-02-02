@@ -14,13 +14,17 @@
     "@google-cloud/local-auth": "^2.1.0",
     "@prisma/client": "^6.3.0",
     "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "googleapis": "^144.0.0",
     "jotform": "^1.0.1",
+    "jsonwebtoken": "^9.0.2",
     "moment-timezone": "^0.5.47",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.9",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "prisma": "^6.3.0"
   }
 }

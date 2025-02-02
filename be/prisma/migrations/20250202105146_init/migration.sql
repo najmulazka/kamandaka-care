@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE "Admin" (
     "id" SERIAL NOT NULL,
-    "Username" TEXT NOT NULL,
-    "Password" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
 
     CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
 );
@@ -84,7 +84,7 @@ CREATE TABLE "Bookings" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Admin_Username_key" ON "Admin"("Username");
+CREATE UNIQUE INDEX "Admin_username_key" ON "Admin"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Clients_email_key" ON "Clients"("email");
