@@ -16,7 +16,7 @@ const MyCalendar = () => {
   return (
     <div>
       <h2>Pilih Tanggal:</h2>
-      <Calendar onChange={setDate} value={date} locale="id-ID" />
+      <Calendar onChange={setDate} value={date} locale="id-ID" tileDisabled={({ date }) => date < new Date().setHours(0, 0, 0, 0)} />
       <p>Tanggal yang dipilih: {format(date, 'EEEE, d MMMM yyyy', { locale: id })}</p>
       <button onClick={simpan}>Simpan</button>
     </div>
