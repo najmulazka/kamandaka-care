@@ -1,3 +1,5 @@
+const createMeeting = require('../libs/meet.lib');
+const { sendEmail, getHtml } = require('../libs/nodemailer.lib');
 const prisma = require('../libs/prisma.lib');
 const moment = require('moment-timezone');
 
@@ -6,6 +8,13 @@ const formatTimeToWib = (isoString) => {
   const wib = moment.utc(date).tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
   return wib;
 };
+
+// const formatTimeToUtc = (hhmm) => {
+//   const clean = hhmm.trim();
+//   const date = new Date(`1990-01-01 ${clean}:00.000`);
+//   const a = moment.tz(date, 'Asia/Jakarta').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+//   return a;
+// };
 
 module.exports = {
   scheedule: async (req, res, next) => {
@@ -53,17 +62,78 @@ module.exports = {
     const filteredAvailableTime = availableTime.filter((time) => !formatHhMm.includes(time));
 
     // Kekurangan -> tidak bisa buka diatas jam 7
-    res.json({ filteredAvailableTime });
+    res.sendResponse(200, 'OK', null, filteredAvailableTime);
   },
 
-  booking: async (req, res, next) => {
-    await prisma.bookings.create({
+  createBooking: async (req, res, next) => {
+    const { serviceId, date, month, year, time } = req.body;
+
+    const wib = new Date(`${year}-${month}-${date} ${time}:00.000`);
+    const toUtc = moment.tz(wib, 'Asia/Jakarta').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+
+    const booking = await prisma.bookings.create({
       data: {
-        clientId: 1,
-        serviceId: 5,
-        dateTime: new Date(),
-        link: 'asdf',
+        clientId: req.client.id,
+        serviceId: Number(serviceId),
+        dateTime: new Date(`${toUtc}`),
       },
     });
+
+    res.sendResponse(201, 'Created', null, booking);
+  },
+
+  validateBooking: async (req, res, next) => {
+    const { id } = req.params;
+    const { isValidate } = req.body;
+
+    const validateBooking = await prisma.bookings.update({
+      where: { id: Number(id) },
+      data: { isValidate },
+      include: {
+        clients: {
+          select: {
+            fullName: true,
+            email: true,
+          },
+        },
+        services: {
+          include: {
+            doctors: {
+              select: { fullName: true, email: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (validateBooking.isValidate) {
+      const linkMeet = await createMeeting(formatTimeToWib(validateBooking.dateTime));
+
+      await prisma.bookings.update({
+        where: { id: Number(id) },
+        data: { linkClient: linkMeet.linkClient, linkHost: linkMeet.linkHost },
+      });
+
+      const html = await getHtml('booking-successfull.ejs', {
+        client: {
+          fullName: validateBooking.clients.fullName,
+          dateTime: formatTimeToWib(validateBooking.dateTime),
+          linkZoom: validateBooking.linkClient,
+        },
+      });
+
+      const htmlDoctor = await getHtml('get-booking.ejs', {
+        doctor: {
+          fullName: validateBooking.services.doctors.fullName,
+          dateTime: formatTimeToWib(validateBooking.dateTime),
+          linkZoom: validateBooking.linkHost,
+        },
+      });
+
+      await sendEmail(validateBooking.clients.email, 'Konfirmasi Booking & Link Zoom Meeting', html);
+      await sendEmail(validateBooking.services.doctors.email, 'Konfirmasi Booking & Link Zoom Meeting', htmlDoctor);
+    }
+
+    res.sendResponse(200, 'OK', null, validateBooking);
   },
 };

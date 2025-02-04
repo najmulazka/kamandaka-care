@@ -82,9 +82,10 @@ model Bookings {
   clientId   Int
   serviceId  Int
   dateTime   DateTime
-  link       String
+  linkClient String?  
+  linkHost   String?  
   createdAt  DateTime @default(now())
-  isValidate Boolean  @default(false)
+  isValidate Boolean?
   clients    Clients  @relation(fields: [clientId], references: [id])
   services   Services @relation(fields: [serviceId], references: [id])
 }

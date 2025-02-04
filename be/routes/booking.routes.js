@@ -1,8 +1,10 @@
-const { booking, scheedule } = require('../controllers/booking.controllers');
+const { scheedule, createBooking, validateBooking } = require('../controllers/booking.controllers');
+const { restrict } = require('../middlewares/restrict.middleware');
 
 const router = require('express').Router();
 
-router.get('/scheedule', scheedule);
-router.get('/', booking);
+router.post('/scheedule', scheedule);
+router.post('/', restrict, createBooking);
+router.put('/:id', validateBooking);
 
 module.exports = router;

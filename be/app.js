@@ -8,6 +8,7 @@ const { jsonResponse } = require('./middlewares/jsonresponse.middleware');
 const { PORT } = process.env;
 
 app.use(express.json());
+app.set('view engine', 'ejs')
 app.use(morgan('dev'));
 app.use(jsonResponse);
 

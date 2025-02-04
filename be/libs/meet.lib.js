@@ -21,10 +21,11 @@ const getAccessToken = async () => {
     console.error('Error getting access token:', error.response.data);
   }
 };
+  // const wibTime = '2025-02-04 12:05:00';
 
 const createMeeting = async (time) => {
   const accessToken = await getAccessToken();
-  // const wibTime = '2025-02-01T21:16:00';
+  // const wibTime = '2025-02-04 12:05:00';
   const wibTime = time; // fortmat wib
   const utcTime = moment.tz(wibTime, 'Asia/Jakarta').utc().format();
 
@@ -51,7 +52,8 @@ const createMeeting = async (time) => {
         },
       }
     );
-    
+
+    // console.log({ linkClient: response.data.join_url, linkHost: response.data.start_url });
     return { linkClient: response.data.join_url, linkHost: response.data.start_url };
   } catch (error) {
     console.error('Error creating scheduled meeting:', error.response ? error.response.data : error.message);
