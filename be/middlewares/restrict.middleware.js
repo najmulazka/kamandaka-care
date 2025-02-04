@@ -30,4 +30,32 @@ module.exports = {
       next(err);
     });
   },
+  
+  doctor: (req, res, next) => {
+    const { authorization } = req.headers;
+    if (!authorization) {
+      return res.status(401).json({
+        status: false,
+        message: 'Unauthorized',
+        err: 'Missing Authorizaion on header',
+        data: null,
+      });
+    }
+
+    jwt.verify(authorization, JWT_SECRET_KEY, async (err, decoded) => {
+      console.log('decoded', decoded);
+      if (err) {
+        return res.status(401).json({
+          status: false,
+          message: 'Unauthorization',
+          err: err.message,
+          data: null,
+        });
+      }
+
+      req.doctor = await prisma.doctors.findUnique({ where: { id: decoded.id } });
+
+      next(err);
+    });
+  },
 };

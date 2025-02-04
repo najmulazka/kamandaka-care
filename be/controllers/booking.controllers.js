@@ -150,4 +150,42 @@ module.exports = {
 
     res.sendResponse(200, 'OK', null, validateBooking);
   },
+
+  getBookings: async (req, res, next) => {
+    const bookings = await prisma.bookings.findMany({
+      include: {
+        clients: true,
+        services: {
+          include: {
+            doctors: {
+              select: { fullName: true, specialist: true },
+            },
+          },
+        },
+      },
+      orderBy: {
+        isValidate: { nulls: 'first', sort: 'asc' },
+      },
+    });
+
+    res.sendResponse(200, 'OK', null, bookings);
+  },
+
+  getBookingDoctors: async (req, res, next) => {
+    const bookings = await prisma.bookings.findMany({
+      where: { services: { doctors: { id: req.doctor.id } } },
+      include: {
+        clients: true,
+        services: {
+          include: {
+            doctors: {
+              select: { fullName: true, specialist: true },
+            },
+          },
+        },
+      },
+    });
+
+    res.sendResponse(200, 'OK', null, bookings);
+  },
 };
