@@ -119,6 +119,7 @@ module.exports = {
           fullName: validateBooking.clients.fullName,
           dateTime: formatTimeToWib(validateBooking.dateTime),
           linkZoom: validateBooking.linkClient,
+          service: validateBooking.services.serviceName,
         },
       });
 
@@ -127,11 +128,24 @@ module.exports = {
           fullName: validateBooking.services.doctors.fullName,
           dateTime: formatTimeToWib(validateBooking.dateTime),
           linkZoom: validateBooking.linkHost,
+          service: validateBooking.services.serviceName,
         },
       });
 
       await sendEmail(validateBooking.clients.email, 'Konfirmasi Booking & Link Zoom Meeting', html);
       await sendEmail(validateBooking.services.doctors.email, 'Konfirmasi Booking & Link Zoom Meeting', htmlDoctor);
+    }
+
+    if (!validateBooking.isValidate) {
+      const html = await getHtml('booking-failed.ejs', {
+        client: {
+          fullName: validateBooking.clients.fullName,
+          dateTime: formatTimeToWib(validateBooking.dateTime),
+          service: validateBooking.services.serviceName,
+        },
+      });
+
+      await sendEmail(validateBooking.clients.email, 'Booking Layanan Konsultasi Gagal', html);
     }
 
     res.sendResponse(200, 'OK', null, validateBooking);

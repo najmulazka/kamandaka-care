@@ -86,7 +86,7 @@
                           <tr>
                             <td style="overflow-wrap: break-word; word-break: break-word; padding: 10px; font-family: arial, helvetica, sans-serif" align="left">
                               <h1 style="margin: 0px; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 22px; font-weight: 400">
-                                <span> <span>Konfirmasi Booking &amp; Link Zoom Meeting</span> </span>
+                                <span> <span>Booking Layanan Konsultasi Gagal</span> </span>
                               </h1>
                             </td>
                           </tr>
@@ -100,16 +100,14 @@
                               <div style="font-size: 14px; line-height: 140%; text-align: left; word-wrap: break-word">
                                 <p style="line-height: 140%; margin: 0px">Halo <%= client.fullName %>,</p>
                                 <p style="line-height: 140%; margin: 0px">&nbsp;</p>
-                                <p style="line-height: 140%; margin: 0px">Terima kasih telah melakukan booking layanan kami. Berikut adalah detail meeting yang telah dijadwalkan:</p>
-                                <p style="line-height: 140%; margin: 0px">&nbsp;</p>
                                 <p style="line-height: 140%; margin: 0px">
-                                  <strong>Layanan:</strong> <%= client.service %><br />📅 <strong>Tanggal &amp; Waktu:</strong> <%= client.dateTime %><br />🔗 <strong>Link Zoom:</strong> <%= client.linkZoom %>
+                                  Terima kasih telah melakukan booking layanan kami. Namun, kami mohon maaf karena booking layanan <%= client.service %> anda pada <%= client.dateTime %> <strong>Gagal</strong> dikarenakan bukti pembayaran
+                                  tidak valid.
                                 </p>
                                 <p style="line-height: 140%; margin: 0px">&nbsp;</p>
-                                <p style="line-height: 140%; margin: 0px">Silakan bergabung pada waktu yang telah ditentukan melalui link di atas. Jika ada pertanyaan atau kendala, jangan ragu untuk menghubungi kami.</p>
-                                <p style="line-height: 140%; margin: 0px">Sampai jumpa di meeting!</p>
-                                <p style="line-height: 140%; margin: 0px">Salam,</p>
-                                <p style="line-height: 140%; margin: 0px"><br />Kamandaka Care</p>
+                                <p style="line-height: 140%; margin: 0px">Jika ada pertanyaan atau kendala, jangan ragu untuk menghubungi kami.</p>
+                                <p style="line-height: 140%; margin: 0px"><br />Salam,</p>
+                                <p style="line-height: 140%; margin: 0px">Kamandaka Care</p>
                               </div>
                             </td>
                           </tr>
