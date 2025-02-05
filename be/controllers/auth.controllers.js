@@ -1,4 +1,4 @@
-const { JWT_SECRET_KEY } = process.env;
+const { JWT_SECRET_KEY, URL } = process.env;
 const jwt = require('jsonwebtoken');
 const prisma = require('../libs/prisma.lib');
 const bcrypt = require('bcrypt');
@@ -89,11 +89,8 @@ module.exports = {
   googleOauth2: async (req, res, next) => {
     const token = jwt.sign({ id: req.user.id }, JWT_SECRET_KEY);
 
-    res.status(200).json({
-      status: true,
-      message: 'OK',
-      data: { user: req.user, token },
-    });
+    const redirectUrl = `${URL}/callback?token=${token}`;
+    res.redirect(redirectUrl);
   },
 
   whoami: async (req, res, next) => {

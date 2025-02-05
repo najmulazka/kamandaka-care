@@ -37,7 +37,7 @@ module.exports = {
     });
 
     const available = services.serviceTime[0][day.toLowerCase()];
-    if (!available) return res.sendResponse(200, 'OK', '', null);
+    if (!available) return res.sendResponse(200, 'OK', '', []);
 
     const startTime = `startTime${day}`;
     const endTime = `endTime${day}`;
