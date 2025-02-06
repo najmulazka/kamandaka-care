@@ -1,8 +1,25 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { whoami } from '../../services/auth.service';
 
 const HeaderClient = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [name, setName] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await whoami();
+        setName(response.user.fullName);
+      } catch (err) {
+        if (err.message.includes('Unauthorized')) {
+          navigate('/');
+        }
+      }
+    };
+    fetchData();
+  }, [navigate]);
 
   return (
     <header className="inset-x-0 top-0 z-50 sticky bg-white shadow">
@@ -29,13 +46,13 @@ const HeaderClient = () => {
           <Link to="/client" className="text-sm font-semibold text-gray-900">
             Booking
           </Link>
-          <Link to="#" className="text-sm font-semibold text-gray-900">
+          <Link to="/client/order-history" className="text-sm font-semibold text-gray-900">
             Riwayat Booking
           </Link>
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <div className="text-sm font-semibold text-gray-900">Name</div>
+          <div className="text-sm font-semibold text-gray-900">{name}</div>
         </div>
       </nav>
 

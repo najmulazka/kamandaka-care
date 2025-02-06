@@ -2,6 +2,7 @@ const createMeeting = require('../libs/meet.lib');
 const { sendEmail, getHtml } = require('../libs/nodemailer.lib');
 const prisma = require('../libs/prisma.lib');
 const moment = require('moment-timezone');
+moment.locale('id');
 
 const formatTimeToWib = (isoString) => {
   const date = new Date(isoString);
@@ -168,10 +169,16 @@ module.exports = {
       },
     });
 
-    res.sendResponse(200, 'OK', null, bookings);
+    const bookingsWithWIB = bookings.map((booking) => ({
+      ...booking,
+      dateTime: formatTimeToWib(booking.dateTime),
+      createdAt: formatTimeToWib(booking.createdAt),
+    }));
+
+    res.sendResponse(200, 'OK', null, bookingsWithWIB);
   },
 
-  getBookingDoctors: async (req, res, next) => {
+  getBookingsDoctor: async (req, res, next) => {
     const bookings = await prisma.bookings.findMany({
       where: { services: { doctors: { id: req.doctor.id } } },
       include: {
@@ -186,6 +193,41 @@ module.exports = {
       },
     });
 
-    res.sendResponse(200, 'OK', null, bookings);
+    const bookingsWithWIB = bookings.map((booking) => ({
+      ...booking,
+      dateTime: formatTimeToWib(booking.dateTime),
+      createdAt: formatTimeToWib(booking.createdAt),
+    }));
+
+    res.sendResponse(200, 'OK', null, bookingsWithWIB);
+  },
+
+  getBookingsClient: async (req, res, next) => {
+    const bookings = await prisma.bookings.findMany({
+      where: { clientId: req.client.id },
+      include: {
+        clients: true,
+        services: {
+          include: {
+            doctors: {
+              select: { fullName: true, specialist: true },
+            },
+          },
+        },
+      },
+      orderBy: {
+        isValidate: {
+          nulls: 'first',
+          sort: 'asc',
+        },
+      },
+    });
+
+    const bookingsWithWIB = bookings.map((booking) => ({
+      ...booking,
+      dateTime: moment.utc(booking.dateTime).tz('Asia/Jakarta').format('dddd, YYYY-MM-DD HH:mm:ss'),
+      createdAt: moment.utc(booking.createdAt).tz('Asia/Jakarta').format('dddd, YYYY-MM-DD HH:mm:ss'),
+    }));
+    res.sendResponse(200, 'OK', null, bookingsWithWIB);
   },
 };

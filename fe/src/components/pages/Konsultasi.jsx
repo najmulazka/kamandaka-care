@@ -5,13 +5,18 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import HeaderClient from '../fragments/HeaderClient';
 import { getServices } from '../../services/service.service';
-import { getScheedule } from '../../services/booking.service';
+import { createBooking, getBookingsClient, getScheedule } from '../../services/booking.service';
+import { useNavigate } from 'react-router-dom';
 
 const Konsultasi = () => {
   const [date, setDate] = useState(new Date());
   const [services, setServices] = useState([]);
   const [availables, setAvailables] = useState([]);
   const [serviceId, setServiceId] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPopUp, setIsPopUp] = useState(false);
+  const [data, setData] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +54,38 @@ const Konsultasi = () => {
     }
   };
 
+  const handleAvailable = async (time) => {
+    if (serviceId == '') {
+      console.log(time);
+    } else {
+      const h = {
+        serviceId,
+        day: format(date, 'EEEE', { locale: id }),
+        date: format(date, 'dd', { locale: id }),
+        month: format(date, 'MM', { locale: id }),
+        year: format(date, 'yyyy', { locale: id }),
+        time,
+      };
+
+      setData(h);
+    }
+  };
+
+  const handleNext = async () => {
+    setIsLoading(!isLoading);
+    const response = await getBookingsClient();
+    const check = response.find((item) => item.isValidate === null);
+    if (check === undefined) {
+      await createBooking(data);
+      navigate('/client/payment');
+      setIsLoading(!isLoading);
+    } else {
+      setData({});
+      setIsPopUp(!isPopUp);
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div>
       <HeaderClient />
@@ -70,18 +107,26 @@ const Konsultasi = () => {
           </div>
         </div>
 
-        <div className="bg-blue-100 justify-center flex flex-wrap">
+        <div className="justify-center flex flex-wrap">
           <Calendar onChange={setDate} value={date} locale="id-ID" className="rounded-lg" />
+          {/* tileDisabled={({ date }) => date < new Date().setHours(0, 0, 0, 0)} */}
         </div>
 
-        <div className="flex flex-wrap bg-blue-400">
+        <div className="flex flex-wrap">
           {availables.length > 0 &&
             availables.map((available, index) => (
-              <div key={index} className="h-10 bg-blue-200 w-20 m-2 flex items-center justify-center rounded-md">
+              <div key={index} onClick={() => handleAvailable(available)} className={`${data.time == available ? 'bg-blue-600' : 'bg-blue-200'} h-10 cursor-pointer w-20 m-2 flex items-center justify-center rounded-md`}>
                 {available}
               </div>
             ))}
+
+          {serviceId == '' && <div>Silahkan pilih Layanan konsultasi terlebih dahulu</div>}
         </div>
+        <div onClick={handleNext} className="cursor-pointer">
+          {isLoading ? 'Loading...' : 'simpan'}
+        </div>
+
+        {isPopUp && <div>Maaf masih terdapat proses booking yang belum di bayar atau belum divalidasi oleh admin</div>}
       </div>
     </div>
   );

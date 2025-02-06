@@ -5,6 +5,8 @@ import CalendarComponent from '../components/pages/CalendarComponent';
 import DashboardClient from '../components/pages/DashboardClient';
 import Konsultasi from '../components/pages/Konsultasi';
 import CallbackPage from '../components/pages/CallbackPage';
+import Payment from '../components/pages/Payment';
+import OrderHistory from '../components/pages/OrderHistory';
 
 const RouterList = () => {
   return (
@@ -15,6 +17,8 @@ const RouterList = () => {
         <Route path="/callback" element={<CallbackPage />} />
         <Route path="/client" element={<DashboardClient />} />
         <Route path="/client/konsultasi" element={<Konsultasi />} />
+        <Route path="/client/payment" element={<Payment />} />
+        <Route path="/client/order-history" element={<OrderHistory />} />
         <Route path="/booking" element={<CalendarComponent />} />
       </Routes>
     </BrowserRouter>
