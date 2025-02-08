@@ -9,7 +9,7 @@ module.exports = {
 
     const service = await prisma.services.create({
       data: {
-        doctorId,
+        doctorId: Number(doctorId),
         serviceName,
         price,
       },
@@ -49,7 +49,7 @@ module.exports = {
 
     const service = await prisma.services.update({
       where: { id: Number(id) },
-      data: { doctorId, serviceName, price },
+      data: { doctorId: Number(doctorId), serviceName, price },
     });
     if (!service) return res.sendResponse(400, 'Bad request', 'error', null);
 

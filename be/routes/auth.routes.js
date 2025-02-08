@@ -1,11 +1,10 @@
 const router = require('express').Router();
-const { googleOauth2, whoami, addAdmin, loginAdmin, addDoctor, loginDoctor } = require('../controllers/auth.controllers');
+const { googleOauth2, whoami, addAdmin, loginAdmin, loginDoctor } = require('../controllers/auth.controllers');
 const passport = require('../libs/passport.lib');
 const { restrict } = require('../middlewares/restrict.middleware');
 
 router.post('/add-admin', addAdmin);
 router.post('/login-admin', loginAdmin);
-router.post('/add-doctor', addDoctor);
 router.post('/login-doctor', loginDoctor);
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

@@ -44,27 +44,6 @@ module.exports = {
     });
   },
 
-  addDoctor: async (req, res, next) => {
-    const { fullName, email, password, specialist } = req.body;
-
-    const doctorExist = await prisma.doctors.findUnique({ where: { email } });
-    if (doctorExist) {
-      res.sendResponse(400, 'Bad Request', 'Doctor already exist', null);
-    }
-
-    const encryptedPassword = await bcrypt.hash(password, 10);
-    const doctor = await prisma.doctors.create({
-      data: {
-        fullName,
-        email,
-        password: encryptedPassword,
-        specialist,
-      },
-    });
-
-    res.sendResponse(201, 'OK', null, doctor);
-  },
-
   loginDoctor: async (req, res, next) => {
     const { email, password } = req.body;
 
@@ -88,6 +67,7 @@ module.exports = {
 
   googleOauth2: async (req, res, next) => {
     const token = jwt.sign({ id: req.user.id }, JWT_SECRET_KEY);
+    console.log(token);
 
     const redirectUrl = `${URL}/callback?token=${token}`;
     res.redirect(redirectUrl);
