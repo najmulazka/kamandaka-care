@@ -113,9 +113,9 @@ model BookingTest {
   id          Int       @id @default(autoincrement())
   clientId    Int
   testTypeId  Int
-  resultId    String?
-  resultUrl    String?
-  questionUrl String?
+  fileId      String?   @unique
+  resultUrl   String?
+  questionUrl String?   @unique
   isValidate  Boolean?
   clients     Clients   @relation(fields: [clientId], references: [id])
   testypes    TestTypes @relation(fields: [testTypeId], references: [id])

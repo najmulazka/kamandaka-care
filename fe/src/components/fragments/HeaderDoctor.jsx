@@ -1,9 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { whoami } from '../../services/auth.service';
 import { CookiesKey, CookiesStorage } from '../../utils/cookies';
+import { whoDoctor } from '../../services/auth.service';
 
-const HeaderClient = () => {
+const HeaderDoctor = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropDown, setIsDropDown] = useState(false);
   const [isDropDownLogout, setIsDropDownLogout] = useState(false);
@@ -13,7 +13,7 @@ const HeaderClient = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await whoami();
+        const response = await whoDoctor();
         setName(response.user.fullName);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
@@ -33,8 +33,8 @@ const HeaderClient = () => {
   };
 
   const handleLogout = () => {
-    CookiesStorage.remove(CookiesKey.TokenClient);
-    navigate('/');
+    CookiesStorage.remove(CookiesKey.TokenDoctor);
+    navigate('/login-doctor');
   };
 
   return (
@@ -59,25 +59,23 @@ const HeaderClient = () => {
 
         {/* Desktop navigation */}
         <div className="hidden lg:flex lg:gap-x-10">
-          <Link to="/client" className="text-base font-bold text-sky-500">
-            Booking
-          </Link>
           <div className="text-base font-bold text-sky-500 relative flex cursor-pointer" onClick={handleOrderHistory}>
-            Riwayat Booking
+            Booking
             <svg className="size-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
               <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
             </svg>
             {isDropDown && (
               <div className="absolute right-0 top-10 w-48 bg-white rounded-md shadow-lg">
-                <Link to="/client/order-history-konsultasi" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                <Link to="/doctor/booking" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                   Konsultasi
                 </Link>
-                <Link to="/client/order-history-psychology-test" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                <Link to="/doctor/booking-test" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                   Tes Psikologi
                 </Link>
               </div>
             )}
           </div>
+          <div className="text-base font-bold text-sky-500 relative flex cursor-pointer">Layanan</div>
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end relative">
@@ -133,4 +131,4 @@ const HeaderClient = () => {
   );
 };
 
-export default HeaderClient;
+export default HeaderDoctor;

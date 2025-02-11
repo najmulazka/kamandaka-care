@@ -2,22 +2,22 @@ import { useEffect, useState } from 'react';
 import HeaderClient from '../fragments/HeaderClient';
 import { useNavigate } from 'react-router-dom';
 import { getBookingsClient } from '../../services/booking.service';
+import { getBookingTestClient } from '../../services/bookingTest.service';
 
 const Payment = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  console.log(data);
-  data
-    .filter((item) => {
-      item.isValidate === null;
-    })
-    .map((maping) => console.log(maping.id));
+  const [dataBooking, setDataBooking] = useState([]);
+  const [dataBookingTest, setDataBookingTest] = useState([]);
+  console.log(dataBookingTest);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getBookingsClient();
-        setData(response);
+        setDataBooking(response);
+
+        const response1 = await getBookingTestClient();
+        setDataBookingTest(response1);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           navigate('/');
@@ -31,12 +31,24 @@ const Payment = () => {
     <div>
       <HeaderClient />
 
-      <div>Payment</div>
-      <br />
-      <div>Silahkan lakukan pembayaran dengan nominal Rp{data.length > 0 && data.find((item) => item.isValidate === null).services.price} ke nomor rekening 123456789 an.Kamandaka Care</div>
-      <div>atau scan qr code</div>
-      <br />
-      <div>Jika sudah melakukan pembayaran harap kirim bukti pembayaran ke whatsapp</div>
+      <div className="w-full flex font-semibold justify-center mt-6 text-gray-900">Pembayaran</div>
+      <div className="px-8 py-12 flex justify-center">
+        <div className="text-center">
+          {dataBooking.length > 0 && dataBooking.find((item) => item.isValidate === null) && (
+            <div>Silahkan lakukan pembayaran dengan nominal Rp {dataBooking.find((item) => item.isValidate === null).services.price} nomor rekening 123456789 an.Kamandaka Care</div>
+          )}
+          {dataBookingTest.length > 0 && dataBookingTest.find((item) => item.isValidate === null) && (
+            <div>Silahkan lakukan pembayaran dengan nominal Rp {dataBookingTest.find((item) => item.isValidate === null).testypes.price} nomor rekening 123456789 an.Kamandaka Care</div>
+          )}
+          <div className="m-4">atau scan qr code</div>
+          <div className="align-center flex justify-center">
+            <img className="border border-black" src="/qr.png" alt="" />
+          </div>
+        </div>
+      </div>
+      <div className="text-center">
+        Jika sudah melakukan pembayaran harap kirim bukti pembayaran ke <strong className="text-sky-500 underline">whatsapp admin</strong>
+      </div>
     </div>
   );
 };

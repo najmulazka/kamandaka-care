@@ -28,12 +28,12 @@ module.exports = {
 
     const adminExist = await prisma.admin.findUnique({ where: { username } });
     if (!adminExist) {
-      res.sendResponse(400, 'Bad request', 'Username or password wrong', null);
+      return res.sendResponse(400, 'Bad request', 'Username or password wrong', null);
     }
 
     const passwordCorrect = await bcrypt.compare(password, adminExist.password);
     if (!passwordCorrect) {
-      res.sendResponse(400, 'Bad request', 'Username or password wrong', null);
+      return res.sendResponse(400, 'Bad request', 'Username or password wrong', null);
     }
 
     const token = jwt.sign({ id: adminExist.id }, JWT_SECRET_KEY);
@@ -49,12 +49,12 @@ module.exports = {
 
     const doctorExist = await prisma.doctors.findUnique({ where: { email } });
     if (!doctorExist) {
-      res.sendResponse(400, 'Bad request', 'Email or password wrong', null);
+      return res.sendResponse(400, 'Bad request', 'Email or password wrong', null);
     }
 
     const passwordCorrect = await bcrypt.compare(password, doctorExist.password);
     if (!passwordCorrect) {
-      res.sendResponse(400, 'Bad request', 'Username or password wrong', null);
+      return res.sendResponse(400, 'Bad request', 'Username or password wrong', null);
     }
 
     const token = jwt.sign({ id: doctorExist.id }, JWT_SECRET_KEY);
@@ -79,6 +79,15 @@ module.exports = {
       message: 'OK',
       err: null,
       data: { user: req.client },
+    });
+  },
+  
+  whoDoctor: async (req, res, next) => {
+    res.status(200).json({
+      status: true,
+      message: 'OK',
+      err: null,
+      data: { user: req.doctor },
     });
   },
 };

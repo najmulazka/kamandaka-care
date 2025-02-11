@@ -1,3 +1,5 @@
+const imagekit = require('../libs/imagekit.libs');
+const path = require('path');
 const { sendEmail } = require('../libs/nodemailer.lib');
 const prisma = require('../libs/prisma.lib');
 const { createQuestion, getAnswer } = require('../libs/test.lib');
@@ -42,16 +44,16 @@ module.exports = {
 
     if (bookingTest.isValidate) {
       const questions = await createQuestion();
-      await prisma.bookingTest.update({
+      const a = await prisma.bookingTest.update({
         where: { id: Number(id) },
         data: {
           questionUrl: `https://form.jotform.com/${questions.formId}`,
         },
       });
 
-      sendEmail(bookingTest.clients.email, bookingTest.testypes.testName, `<b>https://form.jotform.com/${questions}</>`);
+      sendEmail(bookingTest.clients.email, bookingTest.testypes.testName, `<b>https://form.jotform.com/${questions.formId}</>`);
 
-      return res.sendResponse(200, 'OK', null, bookingTest);
+      return res.sendResponse(200, 'OK', null, a);
     }
 
     res.sendResponse(200, 'OK', null, bookingTest);
@@ -69,6 +71,9 @@ module.exports = {
             },
           },
         },
+      },
+      orderBy: {
+        id: 'desc',
       },
     });
     res.sendResponse(200, 'OK', null, bookingTest);
@@ -95,11 +100,11 @@ module.exports = {
 
     const formId = bookingTest.questionUrl.split('/')[3];
 
-    const answer = getAnswer(formId);
-    res.sendResponse(200, 'OK', null, { bookingTest, answers: answer.answers });
+    const answer = await getAnswer(formId);
+    res.sendResponse(200, 'OK', null, { bookingTest, answers: answer.answers[0].answers });
   },
 
-  getBookingTestsClient: async (req, res, next) => {
+  getBookingTestClient: async (req, res, next) => {
     const bookingTest = await prisma.bookingTest.findMany({
       where: {
         clientId: req.client.id,
@@ -118,7 +123,7 @@ module.exports = {
     res.sendResponse(200, 'OK', null, bookingTest);
   },
 
-  getBookingTestsDoctor: async (req, res, next) => {
+  getBookingTestDoctor: async (req, res, next) => {
     const bookingTest = await prisma.bookingTest.findMany({
       where: {
         testypes: {
@@ -134,6 +139,64 @@ module.exports = {
         clients: true,
       },
     });
+
     res.sendResponse(200, 'OK', null, bookingTest);
+  },
+
+  getAnswerTest: async (req, res, next) => {
+    try {
+      const { formId } = req.params;
+      const answer = await getAnswer(formId);
+
+      if (answer.answers.length === 0) {
+        return res.sendResponse(200, 'OK', null, answer.answers);
+      }
+
+      res.sendResponse(200, 'OK', null, answer.answers[0].answers);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  updateResultTest: async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          status: false,
+          message: 'Bad Request',
+          err: 'File is required',
+          data: null,
+        });
+      }
+
+      let strFile = req.file.buffer.toString('base64');
+      const { url, fileId } = await imagekit.upload({
+        fileName: Date.now() + path.extname(req.file.originalname),
+        file: strFile,
+      });
+
+      const bookingTestExist = await prisma.bookingTest.findUnique({
+        where: { id: Number(id) },
+      });
+
+      if (bookingTestExist.fileId !== null) {
+        imagekit.deleteFile(bookingTestExist.fileId);
+      }
+
+      const bookingTest = await prisma.bookingTest.update({
+        where: { id: Number(id) },
+        data: {
+          resultUrl: url,
+          fileId,
+        },
+        include: { clients: true, testypes: true },
+      });
+
+      await sendEmail(bookingTest.clients.email, `Hasil tes ${bookingTest.testypes.testName}`, bookingTest.resultUrl);
+      res.sendResponse(200, 'OK', null, bookingTest);
+    } catch (err) {
+      next(err);
+    }
   },
 };

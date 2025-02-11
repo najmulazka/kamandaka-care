@@ -18,7 +18,7 @@ module.exports = {
   },
 
   getEducations: async (req, res, next) => {
-    const education = await prisma.educations.findMany();
+    const education = await prisma.educations.findMany({ include: { TestType: true } });
 
     res.sendResponse(200, 'OK', null, education);
   },

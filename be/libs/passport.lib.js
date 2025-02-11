@@ -14,7 +14,7 @@ passport.use(
       try {
         let user = await prisma.clients.upsert({
           where: { email: profile.emails[0].value },
-          update: { fullName: profile.displayName, googleId: profile.id },
+          update: { googleId: profile.id },
           create: {
             email: profile.emails[0].value,
             fullName: profile.displayName,
