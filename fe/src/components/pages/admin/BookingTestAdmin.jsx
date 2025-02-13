@@ -16,7 +16,7 @@ const BookingTestAdmin = () => {
         setBookingTests(data);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          navigate('/');
+          navigate('/login-admin');
         }
       }
     };

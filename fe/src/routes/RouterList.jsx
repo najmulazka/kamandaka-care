@@ -15,6 +15,11 @@ import BookingTestAdmin from '../components/pages/admin/BookingTestAdmin';
 import LoginDoctor from '../components/pages/doctor/LoginDoctor';
 import BookingDoctor from '../components/pages/doctor/BookingDoctor';
 import BookingTestDoctor from '../components/pages/doctor/BookingTestDoctor';
+import BookingTestAnswerDoctor from '../components/pages/doctor/BookingTestAnswerDoctor';
+import AvailableDoctor from '../components/pages/doctor/AvailableDoctor';
+import DoctorAdmin from '../components/pages/admin/DoctorAdmin';
+import KonsultasiAdmin from '../components/pages/admin/KonsultasiAdmin';
+import EducationAdmin from '../components/pages/admin/EducationAdmin';
 
 const RouterList = () => {
   return (
@@ -31,9 +36,14 @@ const RouterList = () => {
         <Route path="/client/order-history-psychology-test" element={<OrderHistoryPsychologyTest />} />
         <Route path="/booking" element={<CalendarComponent />} />
         <Route path="/admin/booking" element={<BookingAdmin />} />
+        <Route path="/admin/doctor" element={<DoctorAdmin />} />
+        <Route path="/admin/konsultasi" element={<KonsultasiAdmin />} />
+        <Route path="/admin/education" element={<EducationAdmin />} />
         <Route path="/admin/booking-test" element={<BookingTestAdmin />} />
+        <Route path="/doctor/available/:id" element={<AvailableDoctor />} />
         <Route path="/doctor/booking" element={<BookingDoctor />} />
         <Route path="/doctor/booking-test" element={<BookingTestDoctor />} />
+        <Route path="/doctor/booking-test/answer/:formId" element={<BookingTestAnswerDoctor />} />
 
         <Route path="/login-admin" element={<LoginAdmin />} />
         <Route path="/login-doctor" element={<LoginDoctor />} />

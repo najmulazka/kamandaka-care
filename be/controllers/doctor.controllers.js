@@ -28,4 +28,38 @@ module.exports = {
 
     res.sendResponse(201, 'OK', null, doctor);
   },
+
+  updateDoctors: async (req, res, next) => {
+    const { id } = req.params;
+    const { fullName, email, password, specialist } = req.body;
+    const doctorExist = await prisma.doctors.findUnique({ where: { id: Number(id) } });
+    if (!doctorExist) {
+      return res.sendResponse(404, 'Not Found', 'Resource Not Found', null);
+    }
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    const doctor = await prisma.doctors.update({
+      where: { id: Number(id) },
+      data: {
+        fullName,
+        email,
+        password: encryptedPassword,
+        specialist,
+      },
+    });
+
+    res.sendResponse(200, 'OK', null, doctor);
+  },
+
+  deleteDoctors: async (req, res, next) => {
+    const { id } = req.params;
+    const doctorExist = await prisma.doctors.findUnique({ where: { id: Number(id) } });
+    if (!doctorExist) {
+      return res.sendResponse(404, 'Not Found', 'Resource Not Found', null);
+    }
+
+    await prisma.doctors.delete({ where: { id: Number(id) } });
+
+    res.sendResponse(200, 'Deleted', null, null);
+  },
 };

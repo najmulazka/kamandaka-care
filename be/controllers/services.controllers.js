@@ -26,7 +26,13 @@ module.exports = {
   },
 
   getServices: async (req, res, next) => {
-    const services = await prisma.services.findMany();
+    const services = await prisma.services.findMany({
+      include: {
+        doctors: {
+          select: { email: true, fullName: true },
+        },
+      },
+    });
 
     res.sendResponse(200, 'OK', null, services);
   },

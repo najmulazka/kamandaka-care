@@ -72,10 +72,11 @@ const HeaderAdmin = () => {
               </div>
             )}
           </div>
-          <div className="text-base font-bold text-sky-500 relative flex cursor-pointer">Doctor</div>
-          <div className="text-base font-bold text-sky-500 relative flex cursor-pointer">Konsultasi</div>
-          <div className="text-base font-bold text-sky-500 relative flex cursor-pointer">Pendidikan</div>
+          <Link to="/admin/konsultasi" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Konsultasi</Link>
           <div className="text-base font-bold text-sky-500 relative flex cursor-pointer">Tes Psikologi</div>
+          <Link to="/admin/education" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Pendidikan</Link>
+          <Link to="/admin/doctor" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Doctor</Link>
+        
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end relative">

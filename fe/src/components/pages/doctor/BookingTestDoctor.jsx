@@ -1,18 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getBookingTest, updateBookingTestResult } from '../../../services/bookingTest.service';
+import React, { useRef, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { getBookingTestDoctor, updateBookingTestResult } from '../../../services/bookingTest.service';
 import HeaderDoctor from '../../fragments/HeaderDoctor';
 
 const BookingTestDoctor = () => {
   const navigate = useNavigate();
-  const [bookingTests, setBookingTests] = useState({});
-  let index = 1;
+  const [bookingTests, setBookingTests] = useState([]);
+  const fileInputRefs = useRef({});
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getBookingTest();
+        const data = await getBookingTestDoctor();
         setBookingTests(data);
+
+        const refs = {};
+        data.forEach((item) => {
+          refs[item.id] = refs[item.id] || React.createRef();
+        });
+        fileInputRefs.current = refs;
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           navigate('/');
@@ -25,7 +31,7 @@ const BookingTestDoctor = () => {
   const handleResult = async (id, e) => {
     const file = e.target.files[0];
     const formData = new FormData();
-    formData.append(`result`, file);
+    formData.append('result', file);
     await updateBookingTestResult(id, formData);
   };
 
@@ -45,38 +51,39 @@ const BookingTestDoctor = () => {
             </tr>
           </thead>
           <tbody>
-            {bookingTests.length > 0 &&
-              bookingTests.map((item) => (
-                <tr key={item.id}>
-                  <td className="border border-gray-400 p-1">{index++}</td>
-                  <td className="border border-gray-400 p-1">{item.clients.fullName}</td>
-                  <td className="border border-gray-400 p-1">{item.clients.email}</td>
-                  <td className="border border-gray-400 p-1">{item.testypes.testName}</td>
-                  <td className="border border-gray-400 p-1">Lihat Jawaban</td>
-                  <td className="border border-gray-400 p-1">
-                    {item.resultUrl !== null ? (
-                      <div>
-                        {item.id}
-                        <a href={item.resultUrl} target="_blank">
-                          Lihat Hasil
-                        </a>
-                        <button className="border border-green-400 text-green-400 px-4 py-1 font-semibold rounded-full mb-6" onClick={() => document.getElementById('fileInput').click()}>
-                          Upload Hasil
-                        </button>
-                        <input id="fileInput" type="file" accept=".pdf" onChange={(e) => handleResult(item.id, e)} style={{ display: 'none' }} />
-                      </div>
-                    ) : (
-                      <div>
-                        {item.id}
-                        <button className="border border-green-400 text-green-400 px-4 py-1 font-semibold rounded-full mb-6" onClick={() => document.getElementById('fileInput').click()}>
-                          Upload Hasil
-                        </button>
-                        <input id="fileInput" type="file" accept=".pdf" onChange={(e) => handleResult(item.id, e)} style={{ display: 'none' }} />
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
+            {bookingTests.map((item, index) => (
+              <tr key={item.id}>
+                <td className="border border-gray-400 p-1">{index + 1}</td>
+                <td className="border border-gray-400 p-1">{item.clients.fullName}</td>
+                <td className="border border-gray-400 p-1">{item.clients.email}</td>
+                <td className="border border-gray-400 p-1">{item.testypes.testName}</td>
+                <td className="border border-gray-400 p-1">
+                  <Link to={`/doctor/booking-test/answer/${item.questionUrl.split('/').pop()}`} className="text-sky-500 font-semibold">
+                    Lihat Jawaban
+                  </Link>
+                </td>
+                <td className="border border-gray-400 p-1">
+                  {item.resultUrl ? (
+                    <div>
+                      <a href={item.resultUrl} target="_blank" rel="noopener noreferrer">
+                        Lihat Hasil
+                      </a>
+                      <button className="border border-green-400 text-green-400 px-4 py-1 font-semibold rounded-full mb-6" onClick={() => fileInputRefs.current[item.id].current.click()}>
+                        Upload Hasil
+                      </button>
+                      <input ref={fileInputRefs.current[item.id]} type="file" accept=".pdf" onChange={(e) => handleResult(item.id, e)} style={{ display: 'none' }} />
+                    </div>
+                  ) : (
+                    <div>
+                      <button className="border border-green-400 text-green-400 px-4 py-1 font-semibold rounded-full mb-6" onClick={() => fileInputRefs.current[item.id].current.click()}>
+                        Upload Hasil
+                      </button>
+                      <input ref={fileInputRefs.current[item.id]} type="file" accept=".pdf" onChange={(e) => handleResult(item.id, e)} style={{ display: 'none' }} />
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
