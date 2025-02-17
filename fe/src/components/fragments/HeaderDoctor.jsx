@@ -87,7 +87,7 @@ const HeaderDoctor = () => {
 
         {/* Desktop navigation */}
         <div className="hidden lg:flex lg:gap-x-10">
-          <div className="text-base font-bold text-sky-500 relative flex cursor-pointer" onClick={handleOrderHistory}>
+          <div className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer" onClick={handleOrderHistory}>
             Booking
             {bookingTests.length > 0 && (
               <svg className="size-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
@@ -106,7 +106,7 @@ const HeaderDoctor = () => {
             )}
           </div>
 
-          <div className="text-base font-bold text-sky-500 relative flex cursor-pointer" onClick={handleLayanan}>
+          <div className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer" onClick={handleLayanan}>
             Layanan
             {filteredServices.length > 1 && (
               <svg className="size-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
@@ -123,11 +123,9 @@ const HeaderDoctor = () => {
               </div>
             )}
           </div>
-
-          {/* <Link to={'/doctor/available'} className="text-base font-bold text-sky-500 relative flex cursor-pointer">Layanan</Link> */}
         </div>
 
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end relative">
+        <div className="hidden lg:flex lg:flex-1 justify-end relative">
           <div className="text-base font-semibold text-gray-900 flex items-center cursor-pointer" onClick={handleDropLogout}>
             {data.fullName}
             <svg className="size-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
@@ -160,17 +158,62 @@ const HeaderDoctor = () => {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                <Link to="/client" className="-mx-3 block rounded-lg px-3 py-2 text-base font-bold text-sky-500 hover:bg-gray-50">
-                  Booking
-                </Link>
-                <Link to="#" className="-mx-3 block rounded-lg px-3 py-2 text-base font-bold text-sky-500 hover:bg-gray-50">
-                  Riwayat Booking
-                </Link>
+                <div className="-mx-3 block rounded-lg items-center text-base font-bold text-sky-500 hover:bg-gray-100" onClick={handleOrderHistory}>
+                  <div className="flex items-center px-3 py-2">
+                    <div>Booking</div>
+                    {bookingTests.length > 0 && (
+                      <svg className={`size-5 ${isDropDown ? 'rotate-180' : ''} flex-none text-gray-400`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                        <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+
+                  {isDropDown && (
+                    <div className="w-full">
+                      <Link to="/doctor/booking" className="block hover:bg-gray-200 px-4 py-2 text-gray-700 ">
+                        Konsultasi
+                      </Link>
+                      <Link to="/doctor/booking-test" className="block hover:bg-gray-200 px-4 py-2 text-gray-700">
+                        Tes Psikologi
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                <div className="-mx-3 block rounded-lg items-center text-base font-bold text-sky-500 hover:bg-gray-100" onClick={handleLayanan}>
+                  <div className="flex items-center px-3 py-2">
+                    <div>Layanan</div>
+                    {filteredServices.length > 1 && (
+                      <svg className={`size-5 ${isDropDownAvailable ? 'rotate-180' : ''} flex-none text-gray-400`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                        <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+
+                  {isDropDownAvailable && filteredServices.length > 1 && (
+                    <div className="w-full">
+                      {filteredServices.map((item) => (
+                        <Link key={item.id} to={`/doctor/available/${item.id}`} onClick={() => setIsOpen(false)} className="block hover:bg-gray-200 px-4 py-2 text-gray-700 ">
+                          {item.serviceName}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="py-6">
-                <Link to="#" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-bold text-sky-500 hover:bg-gray-50">
-                  Logout
-                </Link>
+
+              <div className="-mx-3 block rounded-lg items-center text-base font-bold text-sky-500 hover:bg-gray-100">
+                <div className="flex items-center px-3 py-2" onClick={handleDropLogout}>
+                  {data.fullName}
+                  <svg className={`size-5 ${isDropDownAvailable ? 'rotate-180' : ''} flex-none text-gray-400`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                    <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                {isDropDownLogout && (
+                  <div className="block hover:bg-gray-200 px-4 py-2 text-gray-700 " onClick={handleLogout}>
+                    Logout
+                  </div>
+                )}
               </div>
             </div>
           </div>

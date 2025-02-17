@@ -15,7 +15,7 @@ const Konsultasi = () => {
   const [services, setServices] = useState([]);
   const [availables, setAvailables] = useState([]);
   const [serviceId, setServiceId] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isProcess, setIsProcess] = useState(false);
   const [isPopUp, setIsPopUp] = useState(false);
   console.log(isPopUp);
   const [message, setMessage] = useState('');
@@ -76,7 +76,7 @@ const Konsultasi = () => {
   };
 
   const handleNext = async () => {
-    setIsLoading(!isLoading);
+    setIsProcess(!isProcess);
     const response = await getBookingsClient();
     const check = response.find((item) => item.isValidate === null);
 
@@ -85,16 +85,16 @@ const Konsultasi = () => {
     if (data.serviceId === undefined || data.day === undefined || data.time === undefined) {
       setMessage('Silahkan Pilih Jenis layanan dan waktu untuk konsultasi');
       setIsPopUp(true);
-      setIsLoading(false);
+      setIsProcess(false);
     } else if (check === undefined && check1 === undefined) {
       await createBooking(data);
       navigate('/client/payment');
-      setIsLoading(false);
+      setIsProcess(false);
     } else {
       setData({});
       setMessage('Maaf masih terdapat proses booking yang belum di bayar atau belum divalidasi oleh admin');
       setIsPopUp(true);
-      setIsLoading(false);
+      setIsProcess(false);
     }
   };
 
@@ -140,7 +140,10 @@ const Konsultasi = () => {
         <div className="flex flex-wrap">
           {availables.length > 0 &&
             availables.map((available, index) => (
-              <div key={index} onClick={() => handleAvailable(available)} className={`${data.time == available ? 'bg-sky-600' : 'bg-sky-300'} cursor-pointer px-2 py-1 mr-2 my-2 flex items-center justify-center rounded-md`}>
+              <div
+                key={index}
+                onClick={() => handleAvailable(available)}
+                className={`${data.time == available ? 'bg-sky-600 text-white' : 'bg-sky-300'} cursor-pointer hover:bg-sky-600 px-2 py-1 mr-2 my-2 flex items-center justify-center rounded-md`}>
                 {available}
               </div>
             ))}
@@ -150,8 +153,8 @@ const Konsultasi = () => {
         </div>
       </div>
       <div className="absolute bottom-8 lg:bottom-0 px-6 lg:px-8 w-full text-center">
-        <div onClick={handleNext} className="cursor-pointer bg-sky-500 px-4 py-1 rounded-md">
-          {isLoading ? 'Loading...' : 'Bayar'}
+        <div onClick={!isProcess ? handleNext : undefined} className={`cursor-pointer bg-sky-500 hover:bg-sky-700  px-4 py-1 rounded-md ${isProcess ? 'opacity-50 pointer-events-none' : ''}`}>
+          {isProcess ? 'Loading...' : 'Bayar'}
         </div>
       </div>
 

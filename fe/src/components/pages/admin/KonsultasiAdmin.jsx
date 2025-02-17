@@ -15,21 +15,24 @@ const KonsultasiAdmin = () => {
     price: '',
     doctorId: '',
   });
-  console.log(formData);
   const [errorMessage, setErrorMessage] = useState('');
   const [popUpConfirmationDelete, setPopUpConfirmationDelete] = useState(false);
   const [popUpInput, setPopUpInput] = useState(false);
   const [idDelete, setIdDelete] = useState('');
   const [refresh, setRefresh] = useState(false);
+  const [isProcess, setIsProcess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   let index = 1;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await getServices();
         setServices(response);
 
         setDoctors(await getDoctors());
+        setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           navigate('/login-admin');
@@ -68,6 +71,7 @@ const KonsultasiAdmin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsProcess(true);
     setErrorMessage('');
     const data = {
       serviceName: e.target.serviceName?.value,
@@ -115,6 +119,7 @@ const KonsultasiAdmin = () => {
         }
       }
     }
+    setIsProcess(false);
   };
 
   const handleEdit = (service) => {
@@ -128,14 +133,16 @@ const KonsultasiAdmin = () => {
   };
 
   const handleDeleteYes = async () => {
+    setIsProcess(true);
     await deleteService(idDelete);
-    setPopUpConfirmationDelete(false);
     setIdDelete('');
     setRefresh(!refresh);
+    setIsProcess(false);
+    setPopUpConfirmationDelete(false);
   };
 
   const handleCancel = async () => {
-    setPopUpConfirmationDelete(false);
+    setIsProcess(true);
     setPopUpInput(false);
     setIdDelete('');
     setFormData({
@@ -143,6 +150,8 @@ const KonsultasiAdmin = () => {
       price: '',
       doctorId: '',
     });
+    setIsProcess(false);
+    setPopUpConfirmationDelete(false);
   };
 
   return (
@@ -150,54 +159,60 @@ const KonsultasiAdmin = () => {
       <HeaderAdmin />
       <div className="flex flex-col items-center p-6 px-8">
         <div className="font-semibold text-gray-900 mb-6 text-xl">MANAGE KONSULTASI</div>
-        <div className="w-full text-right">
-          <button
-            type="button"
-            onClick={() => setPopUpInput(true)}
-            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-            Tambah +
-          </button>
-        </div>
-        <table className="border-collapse border border-gray-400 w-full">
-          <thead className="bg-sky-300">
-            <tr>
-              <th className="border border-gray-400 w-5 text-left p-2">No</th>
-              <th className="border border-gray-400 text-left p-2">Nama Layanan</th>
-              <th className="border border-gray-400 text-left p-2">Harga</th>
-              <th className="border border-gray-400 text-left p-2">Dokter</th>
-              <th className="border border-gray-400 text-left p-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {services.length > 0 &&
-              services.map((item) => (
-                <tr key={item.id}>
-                  <td className="border border-gray-400 p-1">{index++}</td>
-                  <td className="border border-gray-400 p-1">{item.serviceName}</td>
-                  <td className="border border-gray-400 p-1">{item.price}</td>
-                  <td className="border border-gray-400 p-1">{item.doctors.fullName}</td>
-                  <td className="border border-gray-400 w-48 p-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleEdit(item);
-                      }}
-                      className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(item.id)}
-                      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                      Hapus
-                    </button>
-                  </td>
+        {isLoading ? (
+          'Loading...'
+        ) : (
+          <div className="w-full">
+            <div className="w-full text-right">
+              <button
+                type="button"
+                onClick={() => setPopUpInput(true)}
+                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                Tambah +
+              </button>
+            </div>
+            <table className="border-collapse border border-gray-400 w-full">
+              <thead className="bg-sky-300">
+                <tr>
+                  <th className="border border-gray-400 w-5 text-left p-2">No</th>
+                  <th className="border border-gray-400 text-left p-2">Nama Layanan</th>
+                  <th className="border border-gray-400 text-left p-2">Harga</th>
+                  <th className="border border-gray-400 text-left p-2">Dokter</th>
+                  <th className="border border-gray-400 text-left p-2">Action</th>
                 </tr>
-              ))}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {services.length > 0 &&
+                  services.map((item) => (
+                    <tr key={item.id}>
+                      <td className="border border-gray-400 p-1">{index++}</td>
+                      <td className="border border-gray-400 p-1">{item.serviceName}</td>
+                      <td className="border border-gray-400 p-1">{item.price}</td>
+                      <td className="border border-gray-400 p-1">{item.doctors.fullName}</td>
+                      <td className="border border-gray-400 w-48 p-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleEdit(item);
+                          }}
+                          className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(item.id)}
+                          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                          Hapus
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-      <PopUpConfirmation isOpen={popUpConfirmationDelete} message="Anda yakin akan menghapus data?" cancel={handleCancel} yes={handleDeleteYes} />
+      <PopUpConfirmation isOpen={popUpConfirmationDelete} message="Anda yakin akan menghapus data?" cancel={handleCancel} process={isProcess} yes={isProcess ? undefined : handleDeleteYes} />
 
       {/* Inputan */}
       {popUpInput && (
@@ -221,7 +236,7 @@ const KonsultasiAdmin = () => {
 
               <div className="font-semibold">{editData ? 'Update' : 'Input'} Layanan Konsultasi</div>
               {errorMessage !== '' && <div className="text-red-500">{errorMessage}</div>}
-              <form onSubmit={handleSubmit} className="flex flex-col space-y-2 my-4">
+              <form onSubmit={isProcess ? undefined : handleSubmit} className="flex flex-col space-y-2 my-4">
                 <input type="text" value={formData.serviceName} onChange={handleChange} required name="serviceName" placeholder="Nama Layanan Konsultasi" className="border border-gray-500 px-2 py-1 rounded-lg" />
                 <input type="number" value={formData.price} onChange={handleChange} required name="price" placeholder="Harga" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
                 <select name="doctorId" required value={formData.doctorId} onChange={handleChange} className="border border-gray-500 px-2 py-1 rounded-lg">
@@ -233,8 +248,8 @@ const KonsultasiAdmin = () => {
                       </option>
                     ))}
                 </select>
-                <button type="submit" className="bg-sky-500 text-white px-4 py-2 rounded-lg w-full">
-                {editData ? 'Update' : 'Simpan'}
+                <button type="submit" className={`bg-sky-500 hover:bg-sky-700 ${isProcess ? 'opacity-50 pointer-events-none' : ''} text-white px-4 py-2 rounded-lg w-full`}>
+                  {isProcess ? 'Loading...' : editData ? 'Update' : 'Simpan'}
                 </button>
               </form>
             </div>

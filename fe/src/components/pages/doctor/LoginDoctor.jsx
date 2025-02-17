@@ -10,12 +10,15 @@ const LoginDoctor = () => {
     password: '',
   });
   const [error, setError] = useState('');
+  const [isProcess, setIsProcess] = useState(false);
 
   const onSubmit = async (event) => {
     event.preventDefault();
     try {
+      setIsProcess(true);
       await loginDoctor(data);
       navigate('/doctor/booking');
+      setIsProcess(false);
     } catch (err) {
       setError(err.response.data.err);
     }
@@ -47,7 +50,7 @@ const LoginDoctor = () => {
             className="border border-gray-500 rounded-md px-2 py-1"
           />
           <button type="submit " className="bg-sky-500 py-1 rounded-md font-semibold hover:bg-sky-800 hover:text-white">
-            LOGIN
+            {isProcess ? 'Loading...' : 'LOGIN'}
           </button>
         </form>
       </div>

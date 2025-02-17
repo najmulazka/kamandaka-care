@@ -46,7 +46,7 @@ const BookingDoctor = () => {
                   <td className="border border-gray-400 p-1">{item.clients.email}</td>
                   <td className="border border-gray-400 p-1">{item.services.serviceName}</td>
                   <td className="border border-gray-400 p-1">{item.dateTime}</td>
-                  <td className="border border-gray-400 p-1 font-semibold text-sky-500 hover:text-sky-700">
+                  <td className="border border-gray-400 p-1 font-semibold text-sky-500">
                     <a href={item.linkHost}>Link</a>
                   </td>
                 </tr>

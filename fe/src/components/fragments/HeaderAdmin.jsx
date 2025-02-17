@@ -56,7 +56,7 @@ const HeaderAdmin = () => {
 
         {/* Desktop navigation */}
         <div className="hidden lg:flex lg:gap-x-10">
-          <div className="text-base font-bold text-sky-500 relative flex cursor-pointer" onClick={handleOrderHistory}>
+          <div className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer" onClick={handleOrderHistory}>
             Booking
             <svg className="size-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
               <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
@@ -72,11 +72,18 @@ const HeaderAdmin = () => {
               </div>
             )}
           </div>
-          <Link to="/admin/konsultasi" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Konsultasi</Link>
-          <Link to="/admin/psychology-test" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Tes Psikologi</Link>
-          <Link to="/admin/education" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Pendidikan</Link>
-          <Link to="/admin/doctor" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Doctor</Link>
-        
+          <Link to="/admin/konsultasi" className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer">
+            Konsultasi
+          </Link>
+          <Link to="/admin/psychology-test" className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer">
+            Tes Psikologi
+          </Link>
+          <Link to="/admin/education" className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer">
+            Pendidikan
+          </Link>
+          <Link to="/admin/doctor" className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer">
+            Doctor
+          </Link>
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end relative">
@@ -112,11 +119,36 @@ const HeaderAdmin = () => {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                <Link to="/client" className="-mx-3 block rounded-lg px-3 py-2 text-base font-bold text-sky-500 hover:bg-gray-50">
-                  Booking
+                <div className="-mx-3 block rounded-lg items-center text-base font-bold text-sky-500 hover:bg-gray-100" onClick={handleOrderHistory}>
+                  <div className="flex items-center px-3 py-2">
+                    <div>Booking</div>
+                    <svg className={`size-5 ${isDropDown ? 'rotate-180' : ''} flex-none text-gray-400`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                      <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+
+                  {isDropDown && (
+                    <div className="w-full">
+                      <Link to="/admin/booking" className="block hover:bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        Konsultasi
+                      </Link>
+                      <Link to="/admin/booking-test" className="block hover:bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        Tes Psikologi
+                      </Link>
+                    </div>
+                  )}
+                </div>
+                <Link to="/admin/konsultasi" className="-mx-3 block rounded-lg px-3 py-2 flex items-center text-base font-bold text-sky-500 hover:bg-gray-100">
+                  Konsultasi
                 </Link>
-                <Link to="#" className="-mx-3 block rounded-lg px-3 py-2 text-base font-bold text-sky-500 hover:bg-gray-50">
-                  Riwayat Booking
+                <Link to="/admin/psychology-test" className="-mx-3 block rounded-lg px-3 py-2 flex items-center text-base font-bold text-sky-500 hover:bg-gray-100">
+                  Tes Psikologi
+                </Link>
+                <Link to="/admin/education" className="-mx-3 block rounded-lg px-3 py-2 flex items-center text-base font-bold text-sky-500 hover:bg-gray-100">
+                  Pendidikan
+                </Link>
+                <Link to="/admin/doctor" className="-mx-3 block rounded-lg px-3 py-2 flex items-center text-base font-bold text-sky-500 hover:bg-gray-100">
+                  Doctor
                 </Link>
               </div>
               <div className="py-6">

@@ -13,6 +13,8 @@ const EducationAdmin = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [refresh, setRefresh] = useState(false);
   const [popUpInput, setPopUpInput] = useState(false);
+  const [isProcess, setIsProcess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     educationLevel: '',
   });
@@ -21,8 +23,10 @@ const EducationAdmin = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await getEducations();
         setEducations(response);
+        setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           navigate('/login-admin');
@@ -34,7 +38,6 @@ const EducationAdmin = () => {
 
   useEffect(() => {
     if (editData) {
-      console.log(editData);
       setFormData({
         educationLevel: editData.educationLevel,
         price: editData.price,
@@ -59,6 +62,7 @@ const EducationAdmin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsProcess(true);
     setErrorMessage('');
     const data = {
       educationLevel: e.target.educationLevel?.value,
@@ -92,6 +96,7 @@ const EducationAdmin = () => {
         }
       }
     }
+    setIsProcess(false);
   };
 
   const handleEdit = (education) => {
@@ -105,19 +110,23 @@ const EducationAdmin = () => {
   };
 
   const handleDeleteYes = async () => {
+    setIsProcess(true);
     await deleteEducation(idDelete);
-    setPopUpConfirmationDelete(false);
     setIdDelete('');
     setRefresh(!refresh);
+    setIsProcess(false);
+    setPopUpConfirmationDelete(false);
   };
 
   const handleCancel = async () => {
-    setPopUpConfirmationDelete(false);
+    setIsProcess(true);
     setPopUpInput(false);
     setIdDelete('');
     setFormData({
       educationLevel: '',
     });
+    setIsProcess(false);
+    setPopUpConfirmationDelete(false);
   };
 
   return (
@@ -125,50 +134,56 @@ const EducationAdmin = () => {
       <HeaderAdmin />
       <div className="flex flex-col items-center p-6 px-8">
         <div className="font-semibold text-gray-900 mb-6 text-xl">MANAGE PENDIDIKAN</div>
-        <div className="w-full text-right">
-          <button
-            type="button"
-            onClick={() => setPopUpInput(true)}
-            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-            Tambah +
-          </button>
-        </div>
-        <table className="border-collapse border border-gray-400 w-full">
-          <thead className="bg-sky-300">
-            <tr>
-              <th className="border border-gray-400 w-5 text-left p-2">No</th>
-              <th className="border border-gray-400 text-left p-2">Tingkat Pendidikan</th>
-              <th className="border border-gray-400 text-left p-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {educations.length > 0 &&
-              educations.map((item) => (
-                <tr key={item.id}>
-                  <td className="border border-gray-400 p-1">{index++}</td>
-                  <td className="border border-gray-400 p-1">{item.educationLevel}</td>
-                  <td className="border border-gray-400 w-48 p-1">
-                    <button
-                      type="button"
-                      onClick={() => handleEdit(item)}
-                      className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleDelete(item.id);
-                      }}
-                      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                      Hapus
-                    </button>
-                  </td>
+        {isLoading ? (
+          'Loading...'
+        ) : (
+          <div className="w-full">
+            <div className="w-full text-right">
+              <button
+                type="button"
+                onClick={() => setPopUpInput(true)}
+                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                Tambah +
+              </button>
+            </div>
+            <table className="border-collapse border border-gray-400 w-full">
+              <thead className="bg-sky-300">
+                <tr>
+                  <th className="border border-gray-400 w-5 text-left p-2">No</th>
+                  <th className="border border-gray-400 text-left p-2">Tingkat Pendidikan</th>
+                  <th className="border border-gray-400 text-left p-2">Action</th>
                 </tr>
-              ))}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {educations.length > 0 &&
+                  educations.map((item) => (
+                    <tr key={item.id}>
+                      <td className="border border-gray-400 p-1">{index++}</td>
+                      <td className="border border-gray-400 p-1">{item.educationLevel}</td>
+                      <td className="border border-gray-400 w-48 p-1">
+                        <button
+                          type="button"
+                          onClick={() => handleEdit(item)}
+                          className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleDelete(item.id);
+                          }}
+                          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                          Hapus
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-      <PopUpConfirmation isOpen={popUpConfirmationDelete} message="Anda yakin akan menghapus data?" cancel={handleCancel} yes={handleDeleteYes} />
+      <PopUpConfirmation isOpen={popUpConfirmationDelete} process={isProcess} message="Anda yakin akan menghapus data?" cancel={handleCancel} yes={isProcess ? undefined : handleDeleteYes} />
 
       {/* Inputan */}
       {popUpInput && (
@@ -192,10 +207,10 @@ const EducationAdmin = () => {
 
               <div className="font-semibold">{editData ? 'Update' : 'Input'} data pendidikan</div>
               {errorMessage !== '' && <div className="text-red-500">{errorMessage}</div>}
-              <form onSubmit={handleSubmit} className="flex flex-col space-y-2 my-4">
+              <form onSubmit={isProcess ? undefined : handleSubmit} className="flex flex-col space-y-2 my-4">
                 <input type="text" value={formData.educationLevel} onChange={handleChange} required name="educationLevel" placeholder="Nama Layanan Konsultasi" className="border border-gray-500 px-2 py-1 rounded-lg" />
-                <button type="submit" className="bg-sky-500 text-white px-4 py-2 rounded-lg w-full">
-                  {editData ? 'Update' : 'Simpan'}
+                <button type="submit" className={`bg-sky-500 hover:bg-sky-700 ${isProcess ? 'opacity-50 pointer-events-none' : ''} text-white px-4 py-2 rounded-lg w-full`}>
+                  {isProcess ? 'Loading...' : editData ? 'Update' : 'Simpan'}
                 </button>
               </form>
             </div>

@@ -47,16 +47,18 @@ const OrderHistoryPsychologyTest = () => {
                     <td className="border border-gray-400 text-center p-1">{item.testypes.testName}</td>
                     <td className="border border-gray-400 text-center p-1">
                       {item.questionUrl != null ? (
-                        <a href={item.questionUrl} target="_blank" className="text-sky-500 font-semibold">
+                        <a href={item.questionUrl} target="_blank" className="text-sky-500 hover:text-sky-700  font-semibold">
                           Kerjakan Test
                         </a>
+                      ) : item.resultUrl != null ? (
+                        'Anda sudah mengerjakan'
                       ) : (
                         '-'
                       )}
                     </td>
                     <td className="border border-gray-400 text-center p-1">
                       {item.resultUrl != null ? (
-                        <a href={item.resultUrl} target="_blank" className="text-sky-500 font-semibold">
+                        <a href={item.resultUrl} target="_blank" className="text-sky-500 hover:text-sky-700 font-semibold">
                           Lihat Hasil Test
                         </a>
                       ) : (
@@ -64,8 +66,8 @@ const OrderHistoryPsychologyTest = () => {
                       )}
                     </td>
                     <td className="border border-gray-400 text-center p-1">{item.isValidate === null ? 'Menunggu pembayaran' : item.isValidate === true ? 'Sudah bayar' : 'Belum bayar'}</td>
-                    <td className="border border-gray-400 text-center p-1 font-semibold text-sky-500">
-                      <a href={`${item.isValidate === null ? 'payment' : ''}`}>{item.isValidate === null ? 'Cek' : ''}</a>
+                    <td className="border border-gray-400 text-center p-1 font-semibold text-sky-500 hover:text-sky-700">
+                      <a href={`${item.isValidate === null ? 'payment' : ''}`}>{item.isValidate === null ? 'Cek' : '  '}</a>
                     </td>
                   </tr>
                 ))}

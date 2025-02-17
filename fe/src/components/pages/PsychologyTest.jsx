@@ -12,7 +12,7 @@ const PsychologyTest = () => {
   const [educations, setEducations] = useState([]);
   const [testTypes, setTestTypes] = useState({});
   const [testType, setTestType] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isProcess, setIsProcess] = useState(false);
   const [isPopUp, setIsPopUp] = useState(false);
   const [message, setMessage] = useState('');
   console.log(testTypes);
@@ -43,7 +43,7 @@ const PsychologyTest = () => {
   };
 
   const handleCreateBookingTest = async () => {
-    setIsLoading(!isLoading);
+    setIsProcess(!isProcess);
     const response = await getBookingsClient();
     const check = response.find((item) => item.isValidate === null);
 
@@ -52,16 +52,16 @@ const PsychologyTest = () => {
     if (testType == '') {
       setMessage('Silahkan pilih jenis tes terlebih dahulu');
       setIsPopUp(true);
-      setIsLoading(false);
+      setIsProcess(false);
     } else if (check === undefined && check1 === undefined) {
       await createBookingTest({ testTypeId: testType });
       navigate('/client/payment');
-      setIsLoading(false);
+      setIsProcess(false);
     } else {
       setTestType('');
       setMessage('Maaf masih terdapat proses booking yang belum di bayar atau belum divalidasi oleh admin');
       setIsPopUp(true);
-      setIsLoading(false);
+      setIsProcess(false);
     }
   };
 
@@ -102,48 +102,18 @@ const PsychologyTest = () => {
               testTypes
                 .filter((data) => data.educationId == education)
                 .map((item) => (
-                  <div key={item.id} onClick={() => handleTesType(item.id)} className={`${item.id == testType ? 'bg-sky-600 text-white' : 'bg-sky-300'} cursor-pointer p-2 rounded-md`}>
+                  <div key={item.id} onClick={() => handleTesType(item.id)} className={`${item.id == testType ? 'bg-sky-600 text-white' : 'bg-sky-300'} hover:bg-sky-600 cursor-pointer p-2 rounded-md`}>
                     <div>{item.testName}</div>
-                    <div className={`text-xs ${item.id == testType ? 'text-gray-300' : 'text-gray-500'}`}>Harga Rp{item.price}</div>
+                    <div className={`text-xs  ${item.id == testType ? 'text-gray-300' : 'text-gray-500'}`}>Harga Rp{item.price}</div>
                   </div>
                 ))}
-            <div className="w-full py-2 cursor-pointer">
-              <div className="bg-sky-300 p-2 rounded-md">
-                <div>Tes Pembelajaran</div>
-                <div className="text-xs text-gray-500">Harga Rp300.000</div>
-              </div>
-            </div>
-            <div className="w-full py-2 cursor-pointer">
-              <div className="bg-sky-300 p-2 rounded-md">
-                <div>Tes Pembelajaran</div>
-                <div className="text-xs text-gray-500">Harga Rp300.000</div>
-              </div>
-            </div>
-            <div className="w-full py-2 cursor-pointer">
-              <div className="bg-sky-300 p-2 rounded-md">
-                <div>Tes Pembelajaran</div>
-                <div className="text-xs text-gray-500">Harga Rp300.000</div>
-              </div>
-            </div>
-            <div className="w-full py-2 cursor-pointer">
-              <div className="bg-sky-300 p-2 rounded-md">
-                <div>Tes Pembelajaran</div>
-                <div className="text-xs text-gray-500">Harga Rp300.000</div>
-              </div>
-            </div>
-            <div className="w-full py-2 cursor-pointer">
-              <div className="bg-sky-300 p-2 rounded-md">
-                <div>Tes Pembelajaran</div>
-                <div className="text-xs text-gray-500">Harga Rp300.000</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
       <div className="absolute bottom-8 lg:bottom-0 px-6 lg:px-8 w-full text-center">
-        <div onClick={handleCreateBookingTest} className="cursor-pointer bg-sky-500 px-4 py-1 rounded-md">
-          {isLoading ? 'Loading...' : 'Bayar'}
+        <div onClick={!isProcess ? handleCreateBookingTest : undefined} className={`cursor-pointer bg-sky-500 hover:bg-sky-700 px-4 py-1 rounded-md ${isProcess ? 'opacity-50 pointer-events-none' : ''}`}>
+          {isProcess ? 'Loading...' : 'Bayar'}
         </div>
       </div>
 

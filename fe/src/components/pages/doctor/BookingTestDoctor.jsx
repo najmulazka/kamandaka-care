@@ -58,7 +58,7 @@ const BookingTestDoctor = () => {
                 <td className="border border-gray-400 p-1">{item.clients.email}</td>
                 <td className="border border-gray-400 p-1">{item.testypes.testName}</td>
                 <td className="border border-gray-400 p-1">
-                  <Link to={`/doctor/booking-test/answer/${item.questionUrl.split('/').pop()}`} className="text-sky-500 font-semibold">
+                  <Link to={`/doctor/booking-test/answer/${item.questionUrl.split('/').pop()}`} className="text-sky-500 hover:text-sky-700 font-semibold">
                     Lihat Jawaban
                   </Link>
                 </td>
@@ -68,14 +68,14 @@ const BookingTestDoctor = () => {
                       <a href={item.resultUrl} target="_blank" rel="noopener noreferrer">
                         Lihat Hasil
                       </a>
-                      <button className="border border-green-400 text-green-400 px-4 py-1 font-semibold rounded-full mb-6" onClick={() => fileInputRefs.current[item.id].current.click()}>
+                      <button className="border bg-green-500 hover:bg-green-700 text-white px-4 py-1 font-semibold rounded-full" onClick={() => fileInputRefs.current[item.id].current.click()}>
                         Upload Hasil
                       </button>
                       <input ref={fileInputRefs.current[item.id]} type="file" accept=".pdf" onChange={(e) => handleResult(item.id, e)} style={{ display: 'none' }} />
                     </div>
                   ) : (
-                    <div>
-                      <button className="border border-green-400 text-green-400 px-4 py-1 font-semibold rounded-full mb-6" onClick={() => fileInputRefs.current[item.id].current.click()}>
+                    <div className="">
+                      <button className="border bg-green-500 text-white hover:bg-green-700 px-4 py-1 font-semibold rounded-full" onClick={() => fileInputRefs.current[item.id].current.click()}>
                         Upload Hasil
                       </button>
                       <input ref={fileInputRefs.current[item.id]} type="file" accept=".pdf" onChange={(e) => handleResult(item.id, e)} style={{ display: 'none' }} />

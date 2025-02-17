@@ -45,8 +45,10 @@ const OrderHistoryKonsultasi = () => {
                     <td className="border border-gray-400 text-center p-1">{item.services.serviceName}</td>
                     <td className="border border-gray-400 text-center p-1">{item.dateTime}</td>
                     <td className="border border-gray-400 text-center p-1">{item.isValidate === null ? 'Menunggu pembayaran' : item.isValidate === true ? 'Sudah bayar' : 'Belum bayar'}</td>
-                    <td className="border border-gray-400 text-center p-1 font-semibold text-sky-500">
-                      <a href={`${item.linkClient === null ? 'payment' : item.linkClient}`}>{item.linkClient === null ? 'Cek' : 'Zoom'}</a>
+                    <td className="border border-gray-400 text-center p-1 font-semibold text-sky-500 hover:text-sky-700">
+                      <a href={`${item.linkClient === null ? 'payment' : item.linkClient}`} target={`${item.linkClient === null ? '_parent' : '_blank'}`}>
+                        {item.linkClient === null ? 'Cek' : 'Zoom'}
+                      </a>
                     </td>
                   </tr>
                 ))}
