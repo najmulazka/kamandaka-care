@@ -73,7 +73,7 @@ const HeaderAdmin = () => {
             )}
           </div>
           <Link to="/admin/konsultasi" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Konsultasi</Link>
-          <div className="text-base font-bold text-sky-500 relative flex cursor-pointer">Tes Psikologi</div>
+          <Link to="/admin/psychology-test" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Tes Psikologi</Link>
           <Link to="/admin/education" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Pendidikan</Link>
           <Link to="/admin/doctor" className="text-base font-bold text-sky-500 relative flex cursor-pointer">Doctor</Link>
         

@@ -8,7 +8,7 @@ import { getServices } from '../../services/service.service';
 import { createBooking, getBookingsClient, getScheedule } from '../../services/booking.service';
 import { Link, useNavigate } from 'react-router-dom';
 import { getBookingTestClient } from '../../services/bookingTest.service';
-import PopUpConfirmDelete from '../fragments/PopUpConfirmDelete';
+import PopUpAlert from '../fragments/PopUpAlert';
 
 const Konsultasi = () => {
   const [date, setDate] = useState(new Date());
@@ -17,6 +17,8 @@ const Konsultasi = () => {
   const [serviceId, setServiceId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isPopUp, setIsPopUp] = useState(false);
+  console.log(isPopUp);
+  const [message, setMessage] = useState('');
   const [data, setData] = useState({});
   const navigate = useNavigate();
 
@@ -80,15 +82,25 @@ const Konsultasi = () => {
 
     const response1 = await getBookingTestClient();
     const check1 = response1.find((item) => item.isValidate === null);
-    if (check === undefined && check1 === undefined) {
+    if (data.serviceId === undefined || data.day === undefined || data.time === undefined) {
+      setMessage('Silahkan Pilih Jenis layanan dan waktu untuk konsultasi');
+      setIsPopUp(true);
+      setIsLoading(false);
+    } else if (check === undefined && check1 === undefined) {
       await createBooking(data);
       navigate('/client/payment');
-      setIsLoading(!isLoading);
+      setIsLoading(false);
     } else {
       setData({});
-      setIsPopUp(!isPopUp);
+      setMessage('Maaf masih terdapat proses booking yang belum di bayar atau belum divalidasi oleh admin');
+      setIsPopUp(true);
       setIsLoading(false);
     }
+  };
+
+  const toggleModal = () => {
+    setData({});
+    setIsPopUp(false);
   };
 
   return (
@@ -138,18 +150,14 @@ const Konsultasi = () => {
         </div>
       </div>
       <div className="absolute bottom-8 lg:bottom-0 px-6 lg:px-8 w-full text-center">
-        {/* <div className="cursor-pointer bg-sky-500 px-4 py-1 rounded-md">
-          <Link to="/client">Kembali</Link>
-        </div> */}
-
         <div onClick={handleNext} className="cursor-pointer bg-sky-500 px-4 py-1 rounded-md">
           {isLoading ? 'Loading...' : 'Bayar'}
         </div>
       </div>
 
-      <PopUpConfirmDelete />
-
-      {isPopUp && <div>Maaf masih terdapat proses booking yang belum di bayar atau belum divalidasi oleh admin</div>}
+      <PopUpAlert isOpen={isPopUp} toggleModal={toggleModal}>
+        {message}
+      </PopUpAlert>
     </div>
   );
 };

@@ -20,6 +20,7 @@ import AvailableDoctor from '../components/pages/doctor/AvailableDoctor';
 import DoctorAdmin from '../components/pages/admin/DoctorAdmin';
 import KonsultasiAdmin from '../components/pages/admin/KonsultasiAdmin';
 import EducationAdmin from '../components/pages/admin/EducationAdmin';
+import PsychologyTestAdmin from '../components/pages/admin/PsychologyTestAdmin';
 
 const RouterList = () => {
   return (
@@ -38,6 +39,7 @@ const RouterList = () => {
         <Route path="/admin/booking" element={<BookingAdmin />} />
         <Route path="/admin/doctor" element={<DoctorAdmin />} />
         <Route path="/admin/konsultasi" element={<KonsultasiAdmin />} />
+        <Route path="/admin/psychology-test" element={<PsychologyTestAdmin />} />
         <Route path="/admin/education" element={<EducationAdmin />} />
         <Route path="/admin/booking-test" element={<BookingTestAdmin />} />
         <Route path="/doctor/available/:id" element={<AvailableDoctor />} />

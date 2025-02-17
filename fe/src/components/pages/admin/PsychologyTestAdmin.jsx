@@ -1,31 +1,39 @@
 import { useEffect, useState } from 'react';
 import HeaderAdmin from '../../fragments/HeaderAdmin';
-import { createDoctor, deleteDoctor, getDoctors, updateDoctor } from '../../../services/doctor.service';
 import { useNavigate } from 'react-router-dom';
+// import { createService, deleteService, getServices, updateService } from '../../../services/service.service';
 import PopUpConfirmation from '../../fragments/PopUpConfirmation';
+import { getDoctors } from '../../../services/doctor.service';
+import { createTestType, deleteTestType, getTestTypes, updateTestType } from '../../../services/testType.service';
+import { getEducations } from '../../../services/education.service';
 
-const DoctorAdmin = () => {
+const PsychologyTestAdmin = () => {
   const navigate = useNavigate();
-  const [doctors, setDoctors] = useState({});
-  const [popUpConfirmationDelete, setPopUpConfirmationDelete] = useState(false);
-  const [idDelete, setIdDelete] = useState('');
+  const [psychologyTests, setPsychologyTests] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [educations, setEducations] = useState([]);
   const [editData, setEditData] = useState();
-  const [errorMessage, setErrorMessage] = useState('');
-  const [refresh, setRefresh] = useState(false);
-  const [popUpInput, setPopUpInput] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    specialist: '',
+    testName: '',
+    price: '',
+    educationId: '',
+    doctorId: '',
   });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [popUpConfirmationDelete, setPopUpConfirmationDelete] = useState(false);
+  const [popUpInput, setPopUpInput] = useState(false);
+  const [idDelete, setIdDelete] = useState('');
+  const [refresh, setRefresh] = useState(false);
   let index = 1;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getDoctors();
-        setDoctors(response);
+        const response = await getTestTypes();
+        setPsychologyTests(response);
+
+        setDoctors(await getDoctors());
+        setEducations(await getEducations());
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           navigate('/login-admin');
@@ -38,19 +46,19 @@ const DoctorAdmin = () => {
   useEffect(() => {
     if (editData) {
       setFormData({
-        fullName: editData.fullName,
-        email: editData.email,
-        password: editData.password,
-        specialist: editData.specialist,
+        testName: editData.testName,
+        price: editData.price,
+        educationId: editData.educationId,
+        doctorId: editData.doctorId,
       });
     }
     if (!popUpInput) {
       setEditData(null);
       setFormData({
-        fullName: '',
-        email: '',
-        password: '',
-        specialist: '',
+        testName: '',
+        price: '',
+        educationId: '',
+        doctorId: '',
       });
     }
   }, [editData, popUpInput]);
@@ -67,25 +75,30 @@ const DoctorAdmin = () => {
     e.preventDefault();
     setErrorMessage('');
     const data = {
-      fullName: e.target.fullName?.value,
-      email: e.target.email?.value,
-      password: e.target.password?.value,
-      specialist: e.target.specialist?.value,
+      testName: e.target.testName?.value,
+      price: e.target.price?.value,
+      educationId: e.target.educationId?.value,
+      doctorId: e.target.doctorId?.value,
     };
 
     if (editData) {
       try {
-        await updateDoctor(editData.id, data);
-        setRefresh(!refresh);
-        setEditData(null);
-        setFormData({
-          fullName: '',
-          email: '',
-          password: '',
-
-          specialist: '',
-        });
-        setPopUpInput(false);
+        if (data.doctorId == 'Select') {
+          setErrorMessage('Silahkan pilih dokter terlebih dahulu');
+        } else if (data.educationId == 'Select') {
+          setErrorMessage('Silahkan pilih pendidikan terlebih dahulu');
+        } else {
+          await updateTestType(editData.id, data);
+          setRefresh(!refresh);
+          setEditData(null);
+          setFormData({
+            testName: '',
+            price: '',
+            educationId: '',
+            doctorId: '',
+          });
+          setPopUpInput(false);
+        }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           navigate('/login-admin');
@@ -93,16 +106,19 @@ const DoctorAdmin = () => {
       }
     } else {
       try {
-        await createDoctor(data);
-        setRefresh(!refresh);
-        setFormData({
-          fullName: '',
-          email: '',
-          password: '',
-
-          specialist: '',
-        });
-        setPopUpInput(false);
+        if (data.doctorId == 'Select') {
+          setErrorMessage('Silahkan pilih dokter terlebih dahulu');
+        } else {
+          await createTestType(data);
+          setRefresh(!refresh);
+          setFormData({
+            testName: '',
+            price: '',
+            educationId: '',
+            doctorId: '',
+          });
+          setPopUpInput(false);
+        }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           navigate('/login-admin');
@@ -111,8 +127,8 @@ const DoctorAdmin = () => {
     }
   };
 
-  const handleEdit = (education) => {
-    setEditData(education);
+  const handleEdit = (testType) => {
+    setEditData(testType);
     setPopUpInput(true);
   };
 
@@ -122,7 +138,7 @@ const DoctorAdmin = () => {
   };
 
   const handleDeleteYes = async () => {
-    await deleteDoctor(idDelete);
+    await deleteTestType(idDelete);
     setPopUpConfirmationDelete(false);
     setIdDelete('');
     setRefresh(!refresh);
@@ -133,10 +149,10 @@ const DoctorAdmin = () => {
     setPopUpInput(false);
     setIdDelete('');
     setFormData({
-      fullName: '',
-      email: '',
-      password: '',
-      specialist: '',
+      testName: '',
+      price: '',
+      educationId: '',
+      doctorId: '',
     });
   };
 
@@ -144,7 +160,7 @@ const DoctorAdmin = () => {
     <div>
       <HeaderAdmin />
       <div className="flex flex-col items-center p-6 px-8">
-        <div className="font-semibold text-gray-900 mb-6 text-xl">MANAGE DOCTOR</div>
+        <div className="font-semibold text-gray-900 mb-6 text-xl">MANAGE PSYCHOLOGY TEST</div>
         <div className="w-full text-right">
           <button
             type="button"
@@ -157,24 +173,28 @@ const DoctorAdmin = () => {
           <thead className="bg-sky-300">
             <tr>
               <th className="border border-gray-400 w-5 text-left p-2">No</th>
-              <th className="border border-gray-400 text-left p-2">Nama Lengkap</th>
-              <th className="border border-gray-400 text-left p-2">Email</th>
-              <th className="border border-gray-400 text-left p-2">Specialist</th>
+              <th className="border border-gray-400 text-left p-2">Nama Test</th>
+              <th className="border border-gray-400 text-left p-2">Harga</th>
+              <th className="border border-gray-400 text-left p-2">Pendidikan</th>
+              <th className="border border-gray-400 text-left p-2">Dokter</th>
               <th className="border border-gray-400 text-left p-2">Action</th>
             </tr>
           </thead>
           <tbody>
-            {doctors.length > 0 &&
-              doctors.map((item) => (
+            {psychologyTests.length > 0 &&
+              psychologyTests.map((item) => (
                 <tr key={item.id}>
                   <td className="border border-gray-400 p-1">{index++}</td>
-                  <td className="border border-gray-400 p-1">{item.fullName}</td>
-                  <td className="border border-gray-400 p-1">{item.email}</td>
-                  <td className="border border-gray-400 p-1">{item.specialist}</td>
+                  <td className="border border-gray-400 p-1">{item.testName}</td>
+                  <td className="border border-gray-400 p-1">{item.price}</td>
+                  <td className="border border-gray-400 p-1">{item.educations.educationLevel}</td>
+                  <td className="border border-gray-400 p-1">{item.doctors.fullName}</td>
                   <td className="border border-gray-400 w-48 p-1">
                     <button
                       type="button"
-                      onClick={() => handleEdit(item)}
+                      onClick={() => {
+                        handleEdit(item);
+                      }}
                       className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                       Edit
                     </button>
@@ -190,7 +210,6 @@ const DoctorAdmin = () => {
           </tbody>
         </table>
       </div>
-
       <PopUpConfirmation isOpen={popUpConfirmationDelete} message="Anda yakin akan menghapus data?" cancel={handleCancel} yes={handleDeleteYes} />
 
       {/* Inputan */}
@@ -213,13 +232,29 @@ const DoctorAdmin = () => {
                 <span className="sr-only">Close modal</span>
               </button>
 
-              <div className="font-semibold">{editData ? 'Update' : 'Input'} Layanan Konsultasi</div>
+              <div className="font-semibold">{editData ? 'Update' : 'Input'} Jenis Test Psikologi</div>
               {errorMessage !== '' && <div className="text-red-500">{errorMessage}</div>}
               <form onSubmit={handleSubmit} className="flex flex-col space-y-2 my-4">
-                <input type="text" value={formData.fullName} onChange={handleChange} required name="fullName" placeholder="Nama Lengkap" className="border border-gray-500 px-2 py-1 rounded-lg" />
-                <input type="email" value={formData.email} onChange={handleChange} required name="email" placeholder="Email" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
-                <input type="text" value={formData.password} onChange={handleChange} required name="password" placeholder="Password" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
-                <input type="text" value={formData.specialist} onChange={handleChange} required name="specialist" placeholder="Specialist" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
+                <input type="text" value={formData.testName} onChange={handleChange} required name="testName" placeholder="Nama Jenis Test" className="border border-gray-500 px-2 py-1 rounded-lg" />
+                <input type="number" value={formData.price} onChange={handleChange} required name="price" placeholder="Harga" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
+                <select name="educationId" required value={formData.educationId} onChange={handleChange} className="border border-gray-500 px-2 py-1 rounded-lg">
+                  <option value="Select">Pilih Pendidikan</option>
+                  {educations.length > 0 &&
+                    educations.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.educationLevel}
+                      </option>
+                    ))}
+                </select>
+                <select name="doctorId" required value={formData.doctorId} onChange={handleChange} className="border border-gray-500 px-2 py-1 rounded-lg">
+                  <option value="Select">Pilih Dokter</option>
+                  {doctors.length > 0 &&
+                    doctors.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.fullName}
+                      </option>
+                    ))}
+                </select>
                 <button type="submit" className="bg-sky-500 text-white px-4 py-2 rounded-lg w-full">
                   {editData ? 'Update' : 'Simpan'}
                 </button>
@@ -232,4 +267,4 @@ const DoctorAdmin = () => {
   );
 };
 
-export default DoctorAdmin;
+export default PsychologyTestAdmin;

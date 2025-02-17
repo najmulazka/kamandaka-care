@@ -21,7 +21,12 @@ module.exports = {
   },
 
   getTestTypes: async (req, res, next) => {
-    const testType = await prisma.testTypes.findMany();
+    const testType = await prisma.testTypes.findMany({
+      include: {
+        educations: true,
+        doctors: { select: { fullName: true } },
+      },
+    });
 
     res.sendResponse(200, 'OK', null, testType);
   },

@@ -8,6 +8,7 @@ import { getBookingTestDoctor } from '../../services/bookingTest.service';
 const HeaderDoctor = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropDown, setIsDropDown] = useState(false);
+  const [isDropDownAvailable, setIsDropDownAvailable] = useState(false);
   const [isDropDownLogout, setIsDropDownLogout] = useState(false);
   const [data, setData] = useState({});
   const [services, setServices] = useState({});
@@ -35,7 +36,7 @@ const HeaderDoctor = () => {
   }, [navigate]);
 
   const handleOrderHistory = () => {
-    if (bookingTests.length > 1) {
+    if (bookingTests.length > 0) {
       setIsDropDown(!isDropDown);
     } else {
       navigate(`/doctor/booking`);
@@ -60,7 +61,7 @@ const HeaderDoctor = () => {
     if (filteredServices.length === 1) {
       navigate(`/doctor/available/${filteredServices[0].id}`);
     } else {
-      setIsDropDown(!isDropDown);
+      setIsDropDownAvailable(!isDropDownAvailable);
     }
   };
 
@@ -88,7 +89,7 @@ const HeaderDoctor = () => {
         <div className="hidden lg:flex lg:gap-x-10">
           <div className="text-base font-bold text-sky-500 relative flex cursor-pointer" onClick={handleOrderHistory}>
             Booking
-            {bookingTests.length > 1 && (
+            {bookingTests.length > 0 && (
               <svg className="size-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
                 <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
               </svg>
@@ -112,7 +113,7 @@ const HeaderDoctor = () => {
                 <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
               </svg>
             )}
-            {isDropDown && filteredServices.length > 1 && (
+            {isDropDownAvailable && filteredServices.length > 1 && (
               <div className="absolute right-0 top-10 w-48 bg-white rounded-md shadow-lg">
                 {filteredServices.map((item) => (
                   <Link key={item.id} to={`/doctor/available/${item.id}`} className="block px-4 py-2 text-gray-700 hover:bg-gray-100">

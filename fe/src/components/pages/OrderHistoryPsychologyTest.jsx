@@ -26,34 +26,54 @@ const OrderHistoryPsychologyTest = () => {
   return (
     <div>
       <HeaderClient />
-      <div className="p-8 px-8 align-center flex justify-center">
-        <table className="border-collapse border border-gray-400">
-          <thead className="bg-sky-300">
-            <tr>
-              <th className="border border-gray-400 text-left p-2">No</th>
-              <th className="border border-gray-400 w-64 text-left p-2">Jenis Test</th>
-              <th className="border border-gray-400 w-64 text-left p-2">Link Test</th>
-              <th className="border border-gray-400 w-48 text-left p-2">Hasil Test</th>
-              <th className="border border-gray-400 w-48 text-left p-2">Status</th>
-              <th className="border border-gray-400 w-20 text-left p-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.length > 0 &&
-              data.map((item) => (
-                <tr key={item.id}>
-                  <td className="border border-gray-400 p-1">{index++}</td>
-                  <td className="border border-gray-400 p-1">{item.testypes.testName}</td>
-                  <td className="border border-gray-400 p-1">{item.questionUrl}</td>
-                  <td className="border border-gray-400 p-1">{item.resultUrl}</td>
-                  <td className="border border-gray-400 p-1">{item.isValidate === null ? 'Menunggu pembayaran' : item.isValidate === true ? 'Sudah bayar' : 'Belum bayar'}</td>
-                  <td className="border border-gray-400 p-1 font-semibold text-sky-500">
-                    <a href={`${item.isValidate === null ? 'payment' : ''}`}>{item.isValidate === null ? 'Cek' : ''}</a>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+      <div className="p-8 px-8 align-center lg:flex justify-center">
+        {data.length > 0 && (
+          <table className="border-collapse border border-gray-400">
+            <thead className="bg-sky-300">
+              <tr>
+                <th className="border border-gray-400 text-center p-2">No</th>
+                <th className="border border-gray-400 w-64 text-center p-2">Jenis Test</th>
+                <th className="border border-gray-400 w-64 text-center p-2">Link Test</th>
+                <th className="border border-gray-400 w-48 text-center p-2">Hasil Test</th>
+                <th className="border border-gray-400 w-48 text-center p-2">Status</th>
+                <th className="border border-gray-400 w-20 text-center p-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.length > 0 &&
+                data.map((item) => (
+                  <tr key={item.id}>
+                    <td className="border border-gray-400 text-center p-1">{index++}</td>
+                    <td className="border border-gray-400 text-center p-1">{item.testypes.testName}</td>
+                    <td className="border border-gray-400 text-center p-1">
+                      {item.questionUrl != null ? (
+                        <a href={item.questionUrl} target="_blank" className="text-sky-500 font-semibold">
+                          Kerjakan Test
+                        </a>
+                      ) : (
+                        '-'
+                      )}
+                    </td>
+                    <td className="border border-gray-400 text-center p-1">
+                      {item.resultUrl != null ? (
+                        <a href={item.resultUrl} target="_blank" className="text-sky-500 font-semibold">
+                          Lihat Hasil Test
+                        </a>
+                      ) : (
+                        '-'
+                      )}
+                    </td>
+                    <td className="border border-gray-400 text-center p-1">{item.isValidate === null ? 'Menunggu pembayaran' : item.isValidate === true ? 'Sudah bayar' : 'Belum bayar'}</td>
+                    <td className="border border-gray-400 text-center p-1 font-semibold text-sky-500">
+                      <a href={`${item.isValidate === null ? 'payment' : ''}`}>{item.isValidate === null ? 'Cek' : ''}</a>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        )}
+
+        {data.length == 0 && <div>Belum terdapat riwayat booking tes psikologi</div>}
       </div>
     </div>
   );

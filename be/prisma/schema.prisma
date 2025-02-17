@@ -47,7 +47,7 @@ model Services {
   price       String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  doctors     Doctors       @relation(fields: [doctorId], references: [id])
+  doctors     Doctors       @relation(fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   serviceTime ServiceTime[]
   bookings    Bookings[]
 }
@@ -76,7 +76,7 @@ model ServiceTime {
   minggu          Boolean  @default(true)
   startTimeMinggu DateTime @default(now()) @db.Time()
   endTimeMinggu   DateTime @default(now()) @db.Time()
-  services        Services @relation(fields: [servicesId], references: [id])
+  services        Services @relation(fields: [servicesId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Bookings {
@@ -88,8 +88,8 @@ model Bookings {
   linkHost   String?
   createdAt  DateTime @default(now())
   isValidate Boolean?
-  clients    Clients  @relation(fields: [clientId], references: [id])
-  services   Services @relation(fields: [serviceId], references: [id])
+  clients    Clients  @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  services   Services @relation(fields: [serviceId], references: [id],  onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Educations {
@@ -104,8 +104,8 @@ model TestTypes {
   doctorId    Int
   testName    String        @unique
   price       String
-  educations  Educations    @relation(fields: [educationId], references: [id])
-  doctors     Doctors       @relation(fields: [doctorId], references: [id])
+  educations  Educations    @relation(fields: [educationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  doctors     Doctors       @relation(fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   BookingTest BookingTest[]
 }
 
@@ -117,6 +117,6 @@ model BookingTest {
   resultUrl   String?
   questionUrl String?   @unique
   isValidate  Boolean?
-  clients     Clients   @relation(fields: [clientId], references: [id])
-  testypes    TestTypes @relation(fields: [testTypeId], references: [id])
+  clients     Clients   @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  testypes    TestTypes @relation(fields: [testTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

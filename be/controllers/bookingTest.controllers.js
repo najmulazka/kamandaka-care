@@ -1,6 +1,6 @@
 const imagekit = require('../libs/imagekit.libs');
 const path = require('path');
-const { sendEmail } = require('../libs/nodemailer.lib');
+const { sendEmail, getHtml } = require('../libs/nodemailer.lib');
 const prisma = require('../libs/prisma.lib');
 const { createQuestion, getAnswer } = require('../libs/test.lib');
 
@@ -49,11 +49,43 @@ module.exports = {
         data: {
           questionUrl: `https://form.jotform.com/${questions.formId}`,
         },
+        include: {
+          clients: true,
+          testypes: true,
+        },
       });
 
-      sendEmail(bookingTest.clients.email, bookingTest.testypes.testName, `<b>https://form.jotform.com/${questions.formId}</>`);
+      const html = await getHtml('booking-test-successfull.ejs', {
+        client: {
+          fullName: bookingTest.clients.fullName,
+          testName: bookingTest.testypes.testName,
+          questionUrl: a.questionUrl,
+        },
+      });
+
+      const htmlDoctor = await getHtml('get-booking-test.ejs', {
+        doctor: {
+          fullName: bookingTest.testypes.doctors.fullName,
+          testName: bookingTest.testypes.testName,
+          questionUrl: a.questionUrl,
+        },
+      });
+      await sendEmail(bookingTest.clients.email, bookingTest.testypes.testName, html);
+      await sendEmail(bookingTest.testypes.doctors.email, bookingTest.testypes.testName, htmlDoctor);
 
       return res.sendResponse(200, 'OK', null, a);
+    }
+
+    if (!bookingTest.isValidate) {
+      const html = await getHtml('booking-test-failed.ejs', {
+        client: {
+          fullName: bookingTest.clients.fullName,
+          testName: bookingTest.testypes.testName,
+        },
+      });
+
+      await sendEmail(bookingTest.clients.email, 'Booking Test Psikologi Gagal', html);
+      return res.sendResponse(200, 'OK', null, bookingTest);
     }
 
     res.sendResponse(200, 'OK', null, bookingTest);

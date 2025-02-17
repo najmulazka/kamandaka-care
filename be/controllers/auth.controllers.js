@@ -81,7 +81,7 @@ module.exports = {
       data: { user: req.client },
     });
   },
-  
+
   whoDoctor: async (req, res, next) => {
     res.status(200).json({
       status: true,
