@@ -45,7 +45,7 @@ const RouterList = () => {
         <Route path="/doctor/available/:id" element={<AvailableDoctor />} />
         <Route path="/doctor/booking" element={<BookingDoctor />} />
         <Route path="/doctor/booking-test" element={<BookingTestDoctor />} />
-        <Route path="/doctor/booking-test/answer/:formId" element={<BookingTestAnswerDoctor />} />
+        <Route path="/doctor/booking-test/answer/:id" element={<BookingTestAnswerDoctor />} />
 
         <Route path="/login-admin" element={<LoginAdmin />} />
         <Route path="/login-doctor" element={<LoginDoctor />} />

@@ -63,9 +63,9 @@ export const getBookingTestDoctor = async () => {
   }
 };
 
-export const getBookingTestAnswer = async (formId) => {
+export const getBookingTestAnswer = async (id) => {
   // try {
-  const response = await axios.get(`${BASE_URL}/booking-test/answer/${formId}`);
+  const response = await axios.get(`${BASE_URL}/booking-test/answer/${id}`);
   return response.data.data;
   // } catch (error) {
   //   if (error.response && error.response.status === 401) {

@@ -4,7 +4,7 @@ import HeaderDoctor from '../../fragments/HeaderDoctor';
 import { getBookingTestAnswer } from '../../../services/bookingTest.service';
 
 const BookingTestAnswerDoctor = () => {
-  const { formId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
@@ -15,7 +15,7 @@ const BookingTestAnswerDoctor = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await getBookingTestAnswer(formId);
+        const data = await getBookingTestAnswer(id);
         setAnswers(data);
         setLoading(false);
       } catch (err) {
@@ -38,12 +38,12 @@ const BookingTestAnswerDoctor = () => {
             <thead className="bg-sky-300">
               <tr>
                 <th className="border border-gray-400 text-left p-2">No</th>
-                <th className="border border-gray-400 w-64 text-left p-2">Soal</th>
+                <th className="border border-gray-400 w-64 lg:w-auto text-left p-2">Soal</th>
                 <th className="border border-gray-400 w-64 text-left p-2">Jawaban</th>
               </tr>
             </thead>
             <tbody>
-              {Object.values(answers).map((item) =>
+              {/* {Object.values(answers).map((item) =>
                 item.type !== 'control_button' && item.type !== 'control_head' ? (
                   <tr key={item.order}>
                     <td className="border border-gray-400 p-1">{index++}</td>
@@ -51,7 +51,16 @@ const BookingTestAnswerDoctor = () => {
                     <td className="border border-gray-400 p-1">{item.answer}</td>
                   </tr>
                 ) : null
-              )}
+              )} */}
+
+              {Object.entries(answers).map(([key, value]) => (
+                // console.log(`Key: ${key}, Value: ${value}`);
+                <tr key={index}>
+                  <td className="border border-gray-400 p-1">{index++}</td>
+                  <td className="border border-gray-400 p-1">{key}</td>
+                  <td className="border border-gray-400 p-1">{value}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         )}

@@ -6,7 +6,7 @@ const router = require('express').Router();
 
 router.get('/client', restrict, getBookingTestClient);
 router.get('/doctor', doctor, getBookingTestDoctor);
-router.get('/answer/:formId', getAnswerTest);
+router.get('/answer/:id', getAnswerTest);
 router.get('/:id', getBookingTest);
 router.get('/', getBookingTests);
 router.post('/', restrict, createBookingTest);

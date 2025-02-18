@@ -43,7 +43,7 @@ model Doctors {
 model Services {
   id          Int           @id @default(autoincrement())
   doctorId    Int
-  serviceName String        @unique
+  serviceName String       
   price       String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt

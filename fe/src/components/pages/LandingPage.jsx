@@ -1,14 +1,15 @@
+import vector from '../../assets/vector.png';
+
 const LandingPage = () => {
   const handleLogin = () => {
     window.location.href = `${import.meta.env.VITE_URL}/auth/google`;
   };
   return (
     <div>
-      <header className="sticky top-0 bg-white shadow">
-        <nav className="mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
+      <header className="sticky z-50 top-0 bg-white shadow-md">
+        <nav className="mx-auto flex items-center justify-between p-4 lg:px-20" aria-label="Global">
           <div className="flex">
             <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
               <img className="h-14 w-auto" src="/logo.png" alt="" />
             </a>
           </div>
@@ -87,11 +88,28 @@ const LandingPage = () => {
       </header>
 
       {/* Hero */}
-      <div className="p-4 lg:px-8 text-base h-48 lg:h-64 bg-[url(/hero.jpg)] bg-cover bg-bottom bg-no-repeat ... lg:text-2xl items-center flex flex-col justify-center font-semibold text-sky-500 text-center border border-gray-200 border-t-0 border-l-0 border-r-0 border-b-1">
-        <div>
-          &quot;Menyatukan kesehatan Indonesia dengan jaringan klinik terpercaya.&quot;
-          <br />
-          Jaringan klinik terstandarisasi untuk kesehatan yang lebih baik
+      {/* bg-[url(/hero.jpg)] bg-cover bg-bottom bg-no-repeat ... */}
+      <div className="p-4 py-14 lg:px-20 lg:py-28 bg-sky-500 lg:grid lg:grid-cols-2 " style={{ backgroundImage: `url(${vector})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'right' }}>
+        <div className="w-4/5">
+          <div className="text-7xl text-white font-bold text-left">Melayani Dengan Sepenuh Hati</div>
+          <div className="lg:w-2/3 bg-white font-semibold rounded-lg mt-10 mb-10 text-gray-800 px-4 py-2">
+            <div>Daftar Konsultasi Online atau Tes Psikologi Online</div>
+            <hr className="m-2" />
+            <div className="bg-sky-700 text-white px-6 inline-block py-2 rounded-lg">Daftar</div>
+          </div>
+        </div>
+        <div className="hidden h-full lg:flex justify-center items-center">
+          <div className="border border-gray-900 h-2/3 w-1/2">
+            <img src="/logo.png" className="" alt="Gambar" />
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4 lg:px-20 h-96">
+        <div className="lg:w-full relative">
+          <div className="bg-white w-full px-10 py-10 rounded-xl absolute -top-10 lg:-top-20 shadow-md">
+            Layanan
+          </div>
         </div>
       </div>
 

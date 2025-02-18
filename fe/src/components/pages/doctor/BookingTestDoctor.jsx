@@ -58,7 +58,10 @@ const BookingTestDoctor = () => {
                 <td className="border border-gray-400 p-1">{item.clients.email}</td>
                 <td className="border border-gray-400 p-1">{item.testypes.testName}</td>
                 <td className="border border-gray-400 p-1">
-                  <Link to={`/doctor/booking-test/answer/${item.questionUrl.split('/').pop()}`} className="text-sky-500 hover:text-sky-700 font-semibold">
+                  {/* <Link to={`/doctor/booking-test/answer/${item.questionUrl.split('/').pop()}`} className="text-sky-500 hover:text-sky-700 font-semibold">
+                    Lihat Jawaban
+                  </Link> */}
+                  <Link to={`/doctor/booking-test/answer/${item.id}`} className="text-sky-500 hover:text-sky-700 font-semibold">
                     Lihat Jawaban
                   </Link>
                 </td>

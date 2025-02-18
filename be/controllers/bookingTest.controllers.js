@@ -3,6 +3,8 @@ const path = require('path');
 const { sendEmail, getHtml } = require('../libs/nodemailer.lib');
 const prisma = require('../libs/prisma.lib');
 const { createQuestion, getAnswer } = require('../libs/test.lib');
+const { getAnswerr } = require('../libs/answerr.libs');
+const { GOOGLE_FORM_INTELIGENSI, GOOGLE_FORM_GAYA_BELAJAR, GOOGLE_FORM_KEPRIBADIAN, GOOGLE_FORM_MINAT, GOOGLE_FORM_GANGGUAN_PSIKOLOGI, GOOGLE_FORM_REKRUITMEN_PEKERJAAN } = process.env;
 
 module.exports = {
   createBookingTest: async (req, res, next) => {
@@ -42,12 +44,28 @@ module.exports = {
       },
     });
 
+    let questionUrl = '';
     if (bookingTest.isValidate) {
-      const questions = await createQuestion();
+      // const questions = await createQuestion(bookingTest.testypes.testName);
+      if (bookingTest.testypes.testName.toLowerCase().includes('inteligensi')) {
+        questionUrl = GOOGLE_FORM_INTELIGENSI;
+      } else if (bookingTest.testypes.testName.toLowerCase().includes('belajar')) {
+        questionUrl = GOOGLE_FORM_GAYA_BELAJAR;
+      } else if (bookingTest.testypes.testName.toLowerCase().includes('kepribadian')) {
+        questionUrl = GOOGLE_FORM_KEPRIBADIAN;
+      } else if (bookingTest.testypes.testName.toLowerCase().includes('minat')) {
+        questionUrl = GOOGLE_FORM_MINAT;
+      } else if (bookingTest.testypes.testName.toLowerCase().includes('psikologi')) {
+        questionUrl = GOOGLE_FORM_GANGGUAN_PSIKOLOGI;
+      } else if (bookingTest.testypes.testName.toLowerCase().includes('pekerjaan')) {
+        questionUrl = GOOGLE_FORM_REKRUITMEN_PEKERJAAN;
+      }
+
       const a = await prisma.bookingTest.update({
         where: { id: Number(id) },
         data: {
-          questionUrl: `https://form.jotform.com/${questions.formId}`,
+          // questionUrl: `https://form.jotform.com/${questions.formId}`,
+          questionUrl: questionUrl,
         },
         include: {
           clients: true,
@@ -130,10 +148,15 @@ module.exports = {
       },
     });
 
-    const formId = bookingTest.questionUrl.split('/')[3];
+    if (!bookingTest) {
+      return res.sendResponse(404, 'Not Found', 'Resource Not Found', null);
+    }
 
-    const answer = await getAnswer(formId);
-    res.sendResponse(200, 'OK', null, { bookingTest, answers: answer.answers[0].answers });
+    // const formId = bookingTest.questionUrl.split('/')[3];
+
+    // const answer = await getAnswer(formId);
+    // res.sendResponse(200, 'OK', null, { bookingTest, answers: answer.answers[0].answers });
+    res.sendResponse(200, 'OK', null, { bookingTest });
   },
 
   getBookingTestClient: async (req, res, next) => {
@@ -177,14 +200,31 @@ module.exports = {
 
   getAnswerTest: async (req, res, next) => {
     try {
-      const { formId } = req.params;
-      const answer = await getAnswer(formId);
+      // const { formId } = req.params;
+      // const answer = await getAnswer(formId);
+      const { id } = req.params;
+      const bookingTest = await prisma.bookingTest.findUnique({
+        where: { id: Number(id) },
+        include: {
+          clients: true,
+          testypes: {
+            include: {
+              doctors: {
+                select: { fullName: true, email: true },
+              },
+            },
+          },
+        },
+      });
 
-      if (answer.answers.length === 0) {
-        return res.sendResponse(200, 'OK', null, answer.answers);
-      }
+      const answer = await getAnswerr(bookingTest.testypes.testName, bookingTest.clients.email);
 
-      res.sendResponse(200, 'OK', null, answer.answers[0].answers);
+      // if (answer.answers.length === 0) {
+      //   return res.sendResponse(200, 'OK', null, answer.answers);
+      // }
+
+      // res.sendResponse(200, 'OK', null, answer.answers[0].answers);
+      res.sendResponse(200, 'OK', null, answer);
     } catch (err) {
       next(err);
     }
