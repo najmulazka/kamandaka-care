@@ -1,8 +1,17 @@
-const { google } = require('googleapis');
-const sheets = google.sheets('v4');
 require('dotenv').config();
+const { google } = require('googleapis');
+const prisma = require('./prisma.lib');
+const sheets = google.sheets('v4');
+const moment = require('moment-timezone');
+moment.locale('id');
 const { SPREADSHEET_ANSWER_ID_INTELIGENSI, SPREADSHEET_ANSWER_ID_GAYA_BELAJAR, SPREADSHEET_ANSWER_ID_KEPRIBADIAN, SPREADSHEET_ANSWER_ID_MINAT, SPREADSHEET_ANSWER_ID_GANGGUAN_PSIKOLOGI, SPREADSHEET_ANSWER_ID_REKRUITMEN_PEKERJAAN } =
   process.env;
+
+const formatTimeToWib = (isoString) => {
+  const date = new Date(isoString);
+  const wib = moment.utc(date).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm:ss');
+  return wib;
+};
 
 const auth = new google.auth.GoogleAuth({
   keyFile: 'credentials.json',
@@ -10,8 +19,7 @@ const auth = new google.auth.GoogleAuth({
 });
 
 let SPREADSHEET_ID = '';
-
-async function getAnswerr(auth, testName, email) {
+async function getAnswerr(auth, id, testName, email) {
   if (testName.toLowerCase().includes('inteligensi')) {
     SPREADSHEET_ID = SPREADSHEET_ANSWER_ID_INTELIGENSI;
   } else if (testName.toLowerCase().includes('belajar')) {
@@ -61,14 +69,22 @@ async function getAnswerr(auth, testName, email) {
       return obj;
     }, {});
   });
-  console.log(data.filter((item) => item['Email Address'] == 'najmulazka225@gmail.com').pop() || {});
-  return data.filter((item) => item['Email Address'] == 'najmulazka225@gmail.com').pop() || {};
+
+  const bookingTest = await prisma.bookingTest.findUnique({ where: { id: Number(id) } });
+  bookingTest.createdAt = formatTimeToWib(bookingTest.createdAt);
+
+  const userExist = data.filter((item) => item['Email Address'] == email) || [];
+  const firstLargerTimestamp = userExist.find(({ Timestamp }) => {
+    return Timestamp > bookingTest.createdAt;
+  });
+  console.log(firstLargerTimestamp);
+  return firstLargerTimestamp ? firstLargerTimestamp : {};
 }
 
 module.exports = {
-  getAnswerr: async (testName, email) => {
+  getAnswerr: async (id, testName, email) => {
     try {
-      const dataSpreadSheets = await getAnswerr(auth, testName, email);
+      const dataSpreadSheets = await getAnswerr(auth, id, testName, email);
       // res.json({ questions: dataSpreadSheets });
       return dataSpreadSheets;
     } catch (err) {

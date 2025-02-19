@@ -217,7 +217,7 @@ module.exports = {
         },
       });
 
-      const answer = await getAnswerr(bookingTest.testypes.testName, bookingTest.clients.email);
+      const answer = await getAnswerr(bookingTest.id, bookingTest.testypes.testName, bookingTest.clients.email);
 
       // if (answer.answers.length === 0) {
       //   return res.sendResponse(200, 'OK', null, answer.answers);
