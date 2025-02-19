@@ -64,16 +64,19 @@ export const getBookingTestDoctor = async () => {
 };
 
 export const getBookingTestAnswer = async (id) => {
-  // try {
-  const response = await axios.get(`${BASE_URL}/booking-test/answer/${id}`);
-  return response.data.data;
-  // } catch (error) {
-  //   if (error.response && error.response.status === 401) {
-  //     CookiesStorage.remove(CookiesKey.TokenClient);
-  //     throw new Error('Unauthorized: Token is invalid');
-  //   }
-  //   throw error;
-  // }
+  try {
+    const token = CookiesStorage.get(CookiesKey.TokenDoctor);
+    const response = await axios.get(`${BASE_URL}/booking-test/answer/${id}`, {
+      headers: { Authorization: token },
+    });
+    return response.data.data;
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      CookiesStorage.remove(CookiesKey.TokenClient);
+      throw new Error('Unauthorized: Token is invalid');
+    }
+    throw error;
+  }
 };
 
 export const updateBookingTestResult = async (id, data) => {
@@ -94,7 +97,10 @@ export const updateBookingTestResult = async (id, data) => {
 
 export const getBookingTest = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/booking-test`);
+    const token = CookiesStorage.get(CookiesKey.TokenAdmin);
+    const response = await axios.get(`${BASE_URL}/booking-test`, {
+      headers: { Authorization: token },
+    });
     return response.data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {

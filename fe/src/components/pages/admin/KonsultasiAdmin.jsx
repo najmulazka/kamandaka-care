@@ -44,7 +44,6 @@ const KonsultasiAdmin = () => {
 
   useEffect(() => {
     if (editData) {
-      console.log(editData);
       setFormData({
         serviceName: editData.serviceName,
         price: editData.price,
@@ -133,12 +132,18 @@ const KonsultasiAdmin = () => {
   };
 
   const handleDeleteYes = async () => {
-    setIsProcess(true);
-    await deleteService(idDelete);
-    setIdDelete('');
-    setRefresh(!refresh);
-    setIsProcess(false);
-    setPopUpConfirmationDelete(false);
+    try {
+      setIsProcess(true);
+      await deleteService(idDelete);
+      setIdDelete('');
+      setRefresh(!refresh);
+      setIsProcess(false);
+      setPopUpConfirmationDelete(false);
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        navigate('/login-admin');
+      }
+    }
   };
 
   const handleCancel = async () => {

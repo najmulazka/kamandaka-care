@@ -3,9 +3,9 @@ import { CookiesKey, CookiesStorage } from '../utils/cookies';
 
 const BASE_URL = import.meta.env.VITE_URL;
 
+const token = CookiesStorage.get(CookiesKey.TokenAdmin);
 export const getDoctors = async () => {
   try {
-    const token = CookiesStorage.get(CookiesKey.TokenDoctor);
     const response = await axios.get(`${BASE_URL}/doctor`, {
       headers: {
         Authorization: token,
@@ -24,7 +24,6 @@ export const getDoctors = async () => {
 
 export const createDoctor = async (data) => {
   try {
-    const token = CookiesStorage.get(CookiesKey.TokenDoctor);
     const response = await axios.post(`${BASE_URL}/doctor`, data, {
       headers: {
         Authorization: token,
@@ -43,7 +42,6 @@ export const createDoctor = async (data) => {
 
 export const updateDoctor = async (id, data) => {
   try {
-    const token = CookiesStorage.get(CookiesKey.TokenDoctor);
     const response = await axios.put(`${BASE_URL}/doctor/${id}`, data, {
       headers: {
         Authorization: token,
@@ -62,7 +60,6 @@ export const updateDoctor = async (id, data) => {
 
 export const deleteDoctor = async (id) => {
   try {
-    const token = CookiesStorage.get(CookiesKey.TokenDoctor);
     const response = await axios.delete(`${BASE_URL}/doctor/${id}`, {
       headers: {
         Authorization: token,

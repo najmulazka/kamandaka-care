@@ -110,12 +110,18 @@ const EducationAdmin = () => {
   };
 
   const handleDeleteYes = async () => {
-    setIsProcess(true);
-    await deleteEducation(idDelete);
-    setIdDelete('');
-    setRefresh(!refresh);
-    setIsProcess(false);
-    setPopUpConfirmationDelete(false);
+    try {
+      setIsProcess(true);
+      await deleteEducation(idDelete);
+      setIdDelete('');
+      setRefresh(!refresh);
+      setIsProcess(false);
+      setPopUpConfirmationDelete(false);
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        navigate('/login-admin');
+      }
+    }
   };
 
   const handleCancel = async () => {

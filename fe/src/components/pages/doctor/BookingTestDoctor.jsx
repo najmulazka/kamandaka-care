@@ -6,6 +6,8 @@ import HeaderDoctor from '../../fragments/HeaderDoctor';
 const BookingTestDoctor = () => {
   const navigate = useNavigate();
   const [bookingTests, setBookingTests] = useState([]);
+  const [isProcess, setIsProcess] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const fileInputRefs = useRef({});
 
   useEffect(() => {
@@ -21,18 +23,27 @@ const BookingTestDoctor = () => {
         fileInputRefs.current = refs;
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          navigate('/');
+          navigate('/login-doctor');
         }
       }
     };
     fetchData();
-  }, [navigate]);
+  }, [refresh, navigate]);
 
   const handleResult = async (id, e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('result', file);
-    await updateBookingTestResult(id, formData);
+    try {
+      setIsProcess(true);
+      const file = e.target.files[0];
+      const formData = new FormData();
+      formData.append('result', file);
+      await updateBookingTestResult(id, formData);
+      setRefresh(!refresh);
+      setIsProcess(false);
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        navigate('/login-doctor');
+      }
+    }
   };
 
   return (
@@ -71,15 +82,19 @@ const BookingTestDoctor = () => {
                       <a href={item.resultUrl} target="_blank" rel="noopener noreferrer">
                         Lihat Hasil
                       </a>
-                      <button className="border bg-green-500 hover:bg-green-700 text-white px-4 py-1 font-semibold rounded-full" onClick={() => fileInputRefs.current[item.id].current.click()}>
-                        Upload Hasil
+                      <button
+                        className={`border ${isProcess ? 'opacity-50 pointer-event-none' : ''} bg-green-500 hover:bg-green-700 text-white px-4 py-1 font-semibold rounded-full`}
+                        onClick={isProcess ? undefined : () => fileInputRefs.current[item.id].current.click()}>
+                        {isProcess ? 'Loading...' : 'Upload Hasil'}
                       </button>
                       <input ref={fileInputRefs.current[item.id]} type="file" accept=".pdf" onChange={(e) => handleResult(item.id, e)} style={{ display: 'none' }} />
                     </div>
                   ) : (
                     <div className="">
-                      <button className="border bg-green-500 text-white hover:bg-green-700 px-4 py-1 font-semibold rounded-full" onClick={() => fileInputRefs.current[item.id].current.click()}>
-                        Upload Hasil
+                      <button
+                        className={`border ${isProcess ? 'opacity-50' : ''} bg-green-500 text-white hover:bg-green-700 px-4 py-1 font-semibold rounded-full`}
+                        onClick={isProcess ? undefined : () => fileInputRefs.current[item.id].current.click()}>
+                        {isProcess ? 'Loading...' : 'Upload Hasil'}
                       </button>
                       <input ref={fileInputRefs.current[item.id]} type="file" accept=".pdf" onChange={(e) => handleResult(item.id, e)} style={{ display: 'none' }} />
                     </div>

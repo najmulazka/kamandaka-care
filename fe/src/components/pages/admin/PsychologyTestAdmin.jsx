@@ -144,12 +144,18 @@ const PsychologyTestAdmin = () => {
   };
 
   const handleDeleteYes = async () => {
-    setIsProcess(true);
-    await deleteTestType(idDelete);
-    setIdDelete('');
-    setRefresh(!refresh);
-    setIsProcess(false);
-    setPopUpConfirmationDelete(false);
+    try {
+      setIsProcess(true);
+      await deleteTestType(idDelete);
+      setIdDelete('');
+      setRefresh(!refresh);
+      setIsProcess(false);
+      setPopUpConfirmationDelete(false);
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        navigate('/login-admin');
+      }
+    }
   };
 
   const handleCancel = async () => {

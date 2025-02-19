@@ -35,7 +35,7 @@ const BookingTestAdmin = () => {
       setIsProcess(false);
     } catch (err) {
       if (err.message.includes('Unauthorized')) {
-        navigate('/');
+        navigate('/login-admin');
       }
     }
   };

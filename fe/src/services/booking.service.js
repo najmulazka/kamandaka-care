@@ -5,7 +5,12 @@ const BASE_URL = import.meta.env.VITE_URL;
 
 export const getScheedule = async (data) => {
   try {
-    const response = await axios.post(`${BASE_URL}/booking/scheedule`, data);
+    const token = CookiesStorage.get(CookiesKey.TokenClient);
+    const response = await axios.post(`${BASE_URL}/booking/scheedule`, data, {
+      headers: {
+        Authorization: token,
+      },
+    });
     return response.data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {

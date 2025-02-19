@@ -32,7 +32,7 @@ const AvailableDoctor = () => {
         setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          navigate('/');
+          navigate('/login-doctor');
         }
       }
     };
@@ -54,31 +54,37 @@ const AvailableDoctor = () => {
   };
 
   const handleSimpan = async () => {
-    setIsProcess(true);
-    await putServiceTime(selectedServiceTime.id, {
-      senin: availableDays.Senin.checked,
-      startTimeSenin: availableDays.Senin.startTime,
-      endTimeSenin: availableDays.Senin.endTime,
-      selasa: availableDays.Selasa.checked,
-      startTimeSelasa: availableDays.Selasa.startTime,
-      endTimeSelasa: availableDays.Selasa.endTime,
-      rabu: availableDays.Rabu.checked,
-      startTimeRabu: availableDays.Rabu.startTime,
-      endTimeRabu: availableDays.Rabu.endTime,
-      kamis: availableDays.Kamis.checked,
-      startTimeKamis: availableDays.Kamis.startTime,
-      endTimeKamis: availableDays.Kamis.endTime,
-      jumat: availableDays.Jumat.checked,
-      startTimeJumat: availableDays.Jumat.startTime,
-      endTimeJumat: availableDays.Jumat.endTime,
-      sabtu: availableDays.Sabtu.checked,
-      startTimeSabtu: availableDays.Sabtu.startTime,
-      endTimeSabtu: availableDays.Sabtu.endTime,
-      minggu: availableDays.Minggu.checked,
-      startTimeMinggu: availableDays.Minggu.startTime,
-      endTimeMinggu: availableDays.Minggu.endTime,
-    });
-    setIsProcess(false);
+    try {
+      setIsProcess(true);
+      await putServiceTime(selectedServiceTime.id, {
+        senin: availableDays.Senin.checked,
+        startTimeSenin: availableDays.Senin.startTime,
+        endTimeSenin: availableDays.Senin.endTime,
+        selasa: availableDays.Selasa.checked,
+        startTimeSelasa: availableDays.Selasa.startTime,
+        endTimeSelasa: availableDays.Selasa.endTime,
+        rabu: availableDays.Rabu.checked,
+        startTimeRabu: availableDays.Rabu.startTime,
+        endTimeRabu: availableDays.Rabu.endTime,
+        kamis: availableDays.Kamis.checked,
+        startTimeKamis: availableDays.Kamis.startTime,
+        endTimeKamis: availableDays.Kamis.endTime,
+        jumat: availableDays.Jumat.checked,
+        startTimeJumat: availableDays.Jumat.startTime,
+        endTimeJumat: availableDays.Jumat.endTime,
+        sabtu: availableDays.Sabtu.checked,
+        startTimeSabtu: availableDays.Sabtu.startTime,
+        endTimeSabtu: availableDays.Sabtu.endTime,
+        minggu: availableDays.Minggu.checked,
+        startTimeMinggu: availableDays.Minggu.startTime,
+        endTimeMinggu: availableDays.Minggu.endTime,
+      });
+      setIsProcess(false);
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        navigate('/login-doctor');
+      }
+    }
   };
 
   return (

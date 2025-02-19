@@ -7,20 +7,21 @@ const BookingTestAnswerDoctor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({});
+  console.log(answers)
   const [loading, setLoading] = useState(false);
   let index = 1;
-  console.log(answers);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const data = await getBookingTestAnswer(id);
+        console.log(data)
         setAnswers(data);
         setLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          navigate('/');
+          navigate('/login-doctor');
         }
       }
     };
