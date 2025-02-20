@@ -2,7 +2,6 @@ import axios from 'axios';
 import { CookiesKey, CookiesStorage } from '../utils/cookies';
 const BASE_URL = import.meta.env.VITE_URL;
 
-const token = CookiesStorage.get(CookiesKey.TokenAdmin);
 export const getTestTypes = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/test-type`);
@@ -18,6 +17,8 @@ export const getTestTypes = async () => {
 
 export const createTestType = async (data) => {
   try {
+    const token = CookiesStorage.get(CookiesKey.TokenAdmin);
+
     const response = await axios.post(`${BASE_URL}/test-type`, data, {
       headers: {
         Authorization: token,
@@ -35,6 +36,8 @@ export const createTestType = async (data) => {
 
 export const updateTestType = async (id, data) => {
   try {
+    const token = CookiesStorage.get(CookiesKey.TokenAdmin);
+
     const response = await axios.put(`${BASE_URL}/test-type/${id}`, data, {
       headers: {
         Authorization: token,
@@ -52,6 +55,8 @@ export const updateTestType = async (id, data) => {
 
 export const deleteTestType = async (id) => {
   try {
+    const token = CookiesStorage.get(CookiesKey.TokenAdmin);
+
     const response = await axios.delete(`${BASE_URL}/test-type/${id}`, {
       headers: {
         Authorization: token,

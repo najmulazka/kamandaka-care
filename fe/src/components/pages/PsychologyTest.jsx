@@ -97,7 +97,7 @@ const PsychologyTest = () => {
         </div>
 
         <div className="lg:p-6">
-          <div className="">
+          <div className="flex flex-col space-y-2">
             {testTypes.length > 0 &&
               testTypes
                 .filter((data) => data.educationId == education)

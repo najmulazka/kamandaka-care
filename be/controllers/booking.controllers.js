@@ -119,7 +119,7 @@ module.exports = {
         client: {
           fullName: validateBooking.clients.fullName,
           dateTime: formatTimeToWib(validateBooking.dateTime),
-          linkZoom: validateBooking.linkClient,
+          linkZoom: linkMeet.linkClient,
           service: validateBooking.services.serviceName,
         },
       });
@@ -128,7 +128,7 @@ module.exports = {
         doctor: {
           fullName: validateBooking.services.doctors.fullName,
           dateTime: formatTimeToWib(validateBooking.dateTime),
-          linkZoom: validateBooking.linkHost,
+          linkZoom: linkMeet.linkHost,
           service: validateBooking.services.serviceName,
         },
       });

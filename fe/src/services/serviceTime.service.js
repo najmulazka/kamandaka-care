@@ -3,9 +3,9 @@ import { CookiesKey, CookiesStorage } from '../utils/cookies';
 
 const BASE_URL = import.meta.env.VITE_URL;
 
-const token = CookiesStorage.get(CookiesKey.TokenDoctor);
 export const getServiceTime = async () => {
   try {
+    const token = CookiesStorage.get(CookiesKey.TokenDoctor);
     const response = await axios.get(`${BASE_URL}/service-time`, {
       headers: { Authorization: token },
     });
@@ -21,6 +21,7 @@ export const getServiceTime = async () => {
 
 export const putServiceTime = async (id, data) => {
   try {
+    const token = CookiesStorage.get(CookiesKey.TokenDoctor);
     const response = await axios.put(`${BASE_URL}/service-time/${id}`, data, {
       headers: { Authorization: token },
     });

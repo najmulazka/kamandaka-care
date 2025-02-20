@@ -4,9 +4,6 @@ module.exports = {
   createTestType: async (req, res, next) => {
     const { educationId, doctorId, testName, price } = req.body;
 
-    const testTypeExist = await prisma.testTypes.findUnique({ where: { testName } });
-    if (testTypeExist) return res.sendResponse(400, 'Bad request', 'Test name already exist', null);
-
     const testType = await prisma.testTypes.create({
       data: {
         educationId: Number(educationId),
