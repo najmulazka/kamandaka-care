@@ -4,9 +4,9 @@ const morgan = require('morgan');
 const cors = require('cors');
 const app = express();
 const routes = require('./routes');
-const createMeeting = require('./libs/meet.lib');
 const { jsonResponse } = require('./middlewares/jsonresponse.middleware');
-const {notFoundHandler, internalErrorHandler} = require('./middlewares/errorHandler.middlewared')
+const { notFoundHandler, internalErrorHandler } = require('./middlewares/errorHandler.middlewares');
+const { firstRun } = require('./middlewares/firstRun.middlewares');
 const { PORT } = process.env;
 
 app.use(express.json());
@@ -15,7 +15,9 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(jsonResponse);
 
-app.get('/meet', createMeeting);
+(async () => {
+  await firstRun();
+})();
 app.get('/', async (req, res) => {
   res.status(200).json({ data: 'Welcome To Kamandaka Care' });
 });

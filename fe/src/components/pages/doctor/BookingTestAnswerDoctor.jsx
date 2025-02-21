@@ -8,7 +8,6 @@ const BookingTestAnswerDoctor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({});
-  console.log(answers);
   const [loading, setLoading] = useState(false);
   let index = 1;
 
