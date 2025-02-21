@@ -6,6 +6,7 @@ import PopUpConfirmation from '../../fragments/PopUpConfirmation';
 import { getDoctors } from '../../../services/doctor.service';
 import { createTestType, deleteTestType, getTestTypes, updateTestType } from '../../../services/testType.service';
 import { getEducations } from '../../../services/education.service';
+import { toast } from 'react-toastify';
 
 const PsychologyTestAdmin = () => {
   const navigate = useNavigate();
@@ -40,7 +41,12 @@ const PsychologyTestAdmin = () => {
         setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          navigate('/login-admin');
+               toast.warn('Please Login Now');
+navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     };
@@ -106,7 +112,12 @@ const PsychologyTestAdmin = () => {
         }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          navigate('/login-admin');
+               toast.warn('Please Login Now');
+navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     } else {
@@ -126,7 +137,12 @@ const PsychologyTestAdmin = () => {
         }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          navigate('/login-admin');
+               toast.warn('Please Login Now');
+navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     }

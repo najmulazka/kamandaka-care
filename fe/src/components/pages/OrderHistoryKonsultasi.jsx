@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import HeaderClient from '../fragments/HeaderClient';
 import { useNavigate } from 'react-router-dom';
 import { getBookingsClient } from '../../services/booking.service';
+import { toast } from 'react-toastify';
 
 const OrderHistoryKonsultasi = () => {
   const navigate = useNavigate();
@@ -15,7 +16,11 @@ const OrderHistoryKonsultasi = () => {
         setData(response);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
         }
       }
     };
@@ -25,14 +30,17 @@ const OrderHistoryKonsultasi = () => {
   return (
     <div>
       <HeaderClient />
-      <div className="p-8 px-8 align-center lg:flex justify-center">
+      <div className="p-8 px-8 align-center lg:flex flex-col justify-center">
+        <div className="font-semibold text-xl text-center mb-4">DATA BOOKING KONSULTASI</div>
+
         {data.length > 0 && (
           <table className="border-collapse border border-gray-400">
             <thead className="bg-sky-300">
               <tr>
-                <th className="border border-gray-400 text-center p-2">No</th>
+                <th className="border border-gray-400 w-12 text-center p-2">No</th>
                 <th className="border border-gray-400 w-64 text-center p-2">Jenis Layanan</th>
-                <th className="border border-gray-400 w-64 text-center p-2">Tanggal</th>
+                <th className="border border-gray-400 w-64 text-center p-2">Tanggal Booking</th>
+                <th className="border border-gray-400 w-64 text-center p-2">Tanggal Konsultasi</th>
                 <th className="border border-gray-400 w-48 text-center p-2">Status</th>
                 <th className="border border-gray-400 w-20 text-center p-2">Action</th>
               </tr>
@@ -43,6 +51,7 @@ const OrderHistoryKonsultasi = () => {
                   <tr key={item.id}>
                     <td className="border border-gray-400 text-center p-1">{index++}</td>
                     <td className="border border-gray-400 text-center p-1">{item.services.serviceName}</td>
+                    <td className="border border-gray-400 text-center p-1">{item.createdAt}</td>
                     <td className="border border-gray-400 text-center p-1">{item.dateTime}</td>
                     <td className="border border-gray-400 text-center p-1">{item.isValidate === null ? 'Menunggu pembayaran' : item.isValidate === true ? 'Sudah bayar' : 'Belum bayar'}</td>
                     <td className="border border-gray-400 text-center p-1 font-semibold text-sky-500 hover:text-sky-700">

@@ -3,6 +3,7 @@ import HeaderAdmin from '../../fragments/HeaderAdmin';
 import { createDoctor, deleteDoctor, getDoctors, updateDoctor } from '../../../services/doctor.service';
 import { useNavigate } from 'react-router-dom';
 import PopUpConfirmation from '../../fragments/PopUpConfirmation';
+import { toast } from 'react-toastify';
 
 const DoctorAdmin = () => {
   const navigate = useNavigate();
@@ -32,7 +33,12 @@ const DoctorAdmin = () => {
         setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     };
@@ -87,13 +93,17 @@ const DoctorAdmin = () => {
           fullName: '',
           email: '',
           password: '',
-
           specialist: '',
         });
         setPopUpInput(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     } else {
@@ -110,7 +120,13 @@ const DoctorAdmin = () => {
         setPopUpInput(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
+
           navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     }

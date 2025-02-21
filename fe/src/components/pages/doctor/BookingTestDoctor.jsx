@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getBookingTestDoctor, updateBookingTestResult } from '../../../services/bookingTest.service';
 import HeaderDoctor from '../../fragments/HeaderDoctor';
+import { toast } from 'react-toastify';
 
 const BookingTestDoctor = () => {
   const navigate = useNavigate();
@@ -23,7 +24,12 @@ const BookingTestDoctor = () => {
         fileInputRefs.current = refs;
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/login-doctor');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     };
@@ -49,7 +55,8 @@ const BookingTestDoctor = () => {
   return (
     <div>
       <HeaderDoctor />
-      <div className="p-6 px-8 lg:justify-center lg:flex">
+      <div className="p-6 px-8 lg:justify-center lg:flex flex-col">
+        <div className="font-semibold text-xl text-center mb-4">DATA BOOKING TES PESIKOLOG</div>
         <table className="border-collapse border border-gray-400">
           <thead className="bg-sky-300">
             <tr>
@@ -57,6 +64,7 @@ const BookingTestDoctor = () => {
               <th className="border border-gray-400 w-64 text-left p-2">Nama</th>
               <th className="border border-gray-400 w-64 text-left p-2">Email</th>
               <th className="border border-gray-400 w-64 text-left p-2">Jenis Test</th>
+              <th className="border border-gray-400 w-64 text-left p-2">Waktu Booking</th>
               <th className="border border-gray-400 w-28 text-left p-2">Jawaban</th>
               <th className="border border-gray-400 w-48 text-left p-2">Hasil Test</th>
             </tr>
@@ -68,6 +76,7 @@ const BookingTestDoctor = () => {
                 <td className="border border-gray-400 p-1">{item.clients.fullName}</td>
                 <td className="border border-gray-400 p-1">{item.clients.email}</td>
                 <td className="border border-gray-400 p-1">{item.testypes.testName}</td>
+                <td className="border border-gray-400 p-1">{item.createdAt}</td>
                 <td className="border border-gray-400 p-1">
                   {/* <Link to={`/doctor/booking-test/answer/${item.questionUrl.split('/').pop()}`} className="text-sky-500 hover:text-sky-700 font-semibold">
                     Lihat Jawaban

@@ -6,6 +6,7 @@ const app = express();
 const routes = require('./routes');
 const createMeeting = require('./libs/meet.lib');
 const { jsonResponse } = require('./middlewares/jsonresponse.middleware');
+const {notFoundHandler, internalErrorHandler} = require('./middlewares/errorHandler.middlewared')
 const { PORT } = process.env;
 
 app.use(express.json());
@@ -19,5 +20,8 @@ app.get('/', async (req, res) => {
   res.status(200).json({ data: 'Welcome To Kamandaka Care' });
 });
 app.use('/api/v1', routes);
+
+app.use(notFoundHandler);
+app.use(internalErrorHandler);
 
 app.listen(PORT, () => console.log('Running app in port', PORT));

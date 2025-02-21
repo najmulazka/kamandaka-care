@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import HeaderDoctor from '../../fragments/HeaderDoctor';
 import { getServiceTime, putServiceTime } from '../../../services/serviceTime.service';
+import { toast } from 'react-toastify';
 
 const AvailableDoctor = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedServiceTime, setSelectedServiceTime] = useState(null);
+  console.log(selectedServiceTime);
   const [availableDays, setAvailableDays] = useState({});
   const [isProcess, setIsProcess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -79,10 +81,17 @@ const AvailableDoctor = () => {
         startTimeMinggu: availableDays.Minggu.startTime,
         endTimeMinggu: availableDays.Minggu.endTime,
       });
+      alert('Waktu Layanan Berhasil di Perbarui');
+      toast.success('Waktu Layanan Berhasil di Perbarui', { position: 'top-center' });
       setIsProcess(false);
     } catch (err) {
       if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now')
         navigate('/login-doctor');
+      }
+      if (err.status == 400) {
+        toast.error(err.response.data.err);
+        setIsProcess(false);
       }
     }
   };
@@ -91,7 +100,7 @@ const AvailableDoctor = () => {
     <div>
       <HeaderDoctor />
       <div className="flex flex-col items-center p-6 px-8">
-        <div className="font-semibold text-gray-900 text-xl">WAKTU LAYANAN</div>
+        <div className="font-semibold text-gray-900 text-xl">Waktu Layanan {selectedServiceTime && selectedServiceTime.services.serviceName}</div>
         {isLoading ? (
           'Loading...'
         ) : (

@@ -5,6 +5,7 @@ import { getTestTypes } from '../../services/testType.service';
 import { createBookingTest, getBookingTestClient } from '../../services/bookingTest.service';
 import { getBookingsClient } from '../../services/booking.service';
 import PopUpAlert from '../fragments/PopUpAlert';
+import { toast } from 'react-toastify';
 
 const PsychologyTest = () => {
   const navigate = useNavigate();
@@ -27,7 +28,12 @@ const PsychologyTest = () => {
         setTestTypes(types);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     };
@@ -43,25 +49,36 @@ const PsychologyTest = () => {
   };
 
   const handleCreateBookingTest = async () => {
-    setIsProcess(!isProcess);
-    const response = await getBookingsClient();
-    const check = response.find((item) => item.isValidate === null);
+    try {
+      setIsProcess(!isProcess);
+      const response = await getBookingsClient();
+      const check = response.find((item) => item.isValidate === null);
 
-    const response1 = await getBookingTestClient();
-    const check1 = response1.find((item) => item.isValidate === null);
-    if (testType == '') {
-      setMessage('Silahkan pilih jenis tes terlebih dahulu');
-      setIsPopUp(true);
-      setIsProcess(false);
-    } else if (check === undefined && check1 === undefined) {
-      await createBookingTest({ testTypeId: testType });
-      navigate('/client/payment');
-      setIsProcess(false);
-    } else {
-      setTestType('');
-      setMessage('Maaf masih terdapat proses booking yang belum di bayar atau belum divalidasi oleh admin');
-      setIsPopUp(true);
-      setIsProcess(false);
+      const response1 = await getBookingTestClient();
+      const check1 = response1.find((item) => item.isValidate === null);
+      if (testType == '') {
+        setMessage('Silahkan pilih jenis tes terlebih dahulu');
+        setIsPopUp(true);
+        setIsProcess(false);
+      } else if (check === undefined && check1 === undefined) {
+        await createBookingTest({ testTypeId: testType });
+        navigate('/client/payment');
+        setIsProcess(false);
+      } else {
+        setTestType('');
+        setMessage('Maaf masih terdapat proses booking yang belum di bayar atau belum divalidasi oleh admin');
+        setIsPopUp(true);
+        setIsProcess(false);
+      }
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/');
+      }
+      if (err.status == 400) {
+        toast.warn(err.response.data.err);
+        setIsProcess(false);
+      }
     }
   };
 

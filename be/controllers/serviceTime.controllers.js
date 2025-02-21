@@ -16,8 +16,7 @@ const formatTimeToWib = (isoString) => {
 
 module.exports = {
   getServiceTimes: async (req, res, next) => {
-    const serviceTimes = await prisma.serviceTime.findMany();
-    console.log(serviceTimes);
+    const serviceTimes = await prisma.serviceTime.findMany({ include: { services: true } });
 
     const formattedData = serviceTimes.map((item) => ({
       id: item.id,
@@ -43,6 +42,7 @@ module.exports = {
       minggu: item.minggu,
       startTimeMinggu: formatTimeToWib(item.startTimeMinggu),
       endTimeMinggu: formatTimeToWib(item.endTimeMinggu),
+      services: item.services,
     }));
 
     res.sendResponse(200, 'OK', null, formattedData);
@@ -73,6 +73,30 @@ module.exports = {
       startTimeMinggu,
       endTimeMinggu,
     } = req.body;
+
+    const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    const timeFields = {
+      startTimeSenin,
+      endTimeSenin,
+      startTimeSelasa,
+      endTimeSelasa,
+      startTimeRabu,
+      endTimeRabu,
+      startTimeKamis,
+      endTimeKamis,
+      startTimeJumat,
+      endTimeJumat,
+      startTimeSabtu,
+      endTimeSabtu,
+      startTimeMinggu,
+      endTimeMinggu,
+    };
+
+    for (const [key, value] of Object.entries(timeFields)) {
+      if (value && !timePattern.test(value)) {
+        return res.sendResponse(400, 'Bad Request', `Format waktu salah pada ${key}: ${value}. Gunakan format HH:mm (contoh: 14:00).`, null);
+      }
+    }
 
     const serviceTimeExist = await prisma.serviceTime.findUnique({ where: { id: Number(id) } });
     if (!serviceTimeExist) return res.sendResponse(400, 'Bad request', 'Service does not exist', null);

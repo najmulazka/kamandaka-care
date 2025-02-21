@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import HeaderDoctor from '../../fragments/HeaderDoctor';
 import { getBookingTestAnswer } from '../../../services/bookingTest.service';
+import { toast } from 'react-toastify';
 
 const BookingTestAnswerDoctor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({});
-  console.log(answers)
+  console.log(answers);
   const [loading, setLoading] = useState(false);
   let index = 1;
 
@@ -16,12 +17,16 @@ const BookingTestAnswerDoctor = () => {
       try {
         setLoading(true);
         const data = await getBookingTestAnswer(id);
-        console.log(data)
+        console.log(data);
         setAnswers(data);
         setLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/login-doctor');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
         }
       }
     };

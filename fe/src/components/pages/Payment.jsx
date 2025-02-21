@@ -3,6 +3,7 @@ import HeaderClient from '../fragments/HeaderClient';
 import { useNavigate } from 'react-router-dom';
 import { getBookingsClient } from '../../services/booking.service';
 import { getBookingTestClient } from '../../services/bookingTest.service';
+import { toast } from 'react-toastify';
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -20,7 +21,11 @@ const Payment = () => {
         setDataBookingTest(response1);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
         }
       }
     };

@@ -4,6 +4,7 @@ const { sendEmail, getHtml } = require('../libs/nodemailer.lib');
 const prisma = require('../libs/prisma.lib');
 const { createQuestion, getAnswer } = require('../libs/test.lib');
 const { getAnswerr } = require('../libs/answerr.libs');
+const { formatTimeToWib } = require('../libs/formatTimeToWib.libs');
 const { GOOGLE_FORM_INTELIGENSI, GOOGLE_FORM_GAYA_BELAJAR, GOOGLE_FORM_KEPRIBADIAN, GOOGLE_FORM_MINAT, GOOGLE_FORM_GANGGUAN_PSIKOLOGI, GOOGLE_FORM_REKRUITMEN_PEKERJAAN } = process.env;
 
 module.exports = {
@@ -126,7 +127,13 @@ module.exports = {
         id: 'desc',
       },
     });
-    res.sendResponse(200, 'OK', null, bookingTest);
+
+    const bookingsWithWIB = bookingTest.map((booking) => ({
+      ...booking,
+      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
+    }));
+
+    res.sendResponse(200, 'OK', null, bookingsWithWIB);
   },
 
   getBookingTest: async (req, res, next) => {
@@ -152,11 +159,16 @@ module.exports = {
       return res.sendResponse(404, 'Not Found', 'Resource Not Found', null);
     }
 
+    const bookingsWithWIB = bookingTest.map((booking) => ({
+      ...booking,
+      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
+    }));
+
     // const formId = bookingTest.questionUrl.split('/')[3];
 
     // const answer = await getAnswer(formId);
     // res.sendResponse(200, 'OK', null, { bookingTest, answers: answer.answers[0].answers });
-    res.sendResponse(200, 'OK', null, { bookingTest });
+    res.sendResponse(200, 'OK', null, bookingsWithWIB);
   },
 
   getBookingTestClient: async (req, res, next) => {
@@ -175,8 +187,13 @@ module.exports = {
         },
       },
     });
-    res.sendResponse(200, 'OK', null, bookingTest);
-  },
+
+    const bookingsWithWIB = bookingTest.map((booking) => ({
+      ...booking,
+      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
+    }));
+    res.sendResponse(200, 'OK', null, bookingsWithWIB);
+  }, // update
 
   getBookingTestDoctor: async (req, res, next) => {
     const bookingTest = await prisma.bookingTest.findMany({
@@ -195,7 +212,12 @@ module.exports = {
       },
     });
 
-    res.sendResponse(200, 'OK', null, bookingTest);
+    const bookingsWithWIB = bookingTest.map((booking) => ({
+      ...booking,
+      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
+    }));
+
+    res.sendResponse(200, 'OK', null, bookingsWithWIB);
   },
 
   getAnswerTest: async (req, res, next) => {

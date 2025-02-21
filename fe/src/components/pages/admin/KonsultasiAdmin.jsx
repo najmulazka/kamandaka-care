@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { createService, deleteService, getServices, updateService } from '../../../services/service.service';
 import PopUpConfirmation from '../../fragments/PopUpConfirmation';
 import { getDoctors } from '../../../services/doctor.service';
+import { toast } from 'react-toastify';
 
 const KonsultasiAdmin = () => {
   const navigate = useNavigate();
@@ -35,7 +36,12 @@ const KonsultasiAdmin = () => {
         setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          navigate('/login-admin');
+               toast.warn('Please Login Now');
+navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     };
@@ -95,7 +101,12 @@ const KonsultasiAdmin = () => {
         }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          navigate('/login-admin');
+               toast.warn('Please Login Now');
+navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     } else {
@@ -114,7 +125,12 @@ const KonsultasiAdmin = () => {
         }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          navigate('/login-admin');
+               toast.warn('Please Login Now');
+navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     }

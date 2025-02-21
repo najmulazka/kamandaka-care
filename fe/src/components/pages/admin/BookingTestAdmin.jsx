@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import HeaderAdmin from '../../fragments/HeaderAdmin';
 import { useNavigate } from 'react-router-dom';
 import { getBookingTest, validateBookingTest } from '../../../services/bookingTest.service';
+import { toast } from 'react-toastify';
 
 const BookingTestAdmin = () => {
   const navigate = useNavigate();
@@ -20,7 +21,12 @@ const BookingTestAdmin = () => {
         setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     };
@@ -43,7 +49,8 @@ const BookingTestAdmin = () => {
   return (
     <div>
       <HeaderAdmin />
-      <div className="p-6 px-8 lg:justify-center lg:flex">
+      <div className="p-6 px-8 lg:justify-center lg:flex flex-col">
+        <div className='font-semibold text-xl text-center mb-4'>DATA BOOKING TEST PESIKOLOGI</div>
         {isLoading ? (
           'Loading...'
         ) : (
@@ -53,6 +60,7 @@ const BookingTestAdmin = () => {
                 <th className="border border-gray-400 text-left p-2">No</th>
                 <th className="border border-gray-400 w-64 text-left p-2">Nama</th>
                 <th className="border border-gray-400 w-64 text-left p-2">Email</th>
+                <th className="border border-gray-400 w-64 text-left p-2">Tanggal Booking</th>
                 <th className="border border-gray-400 w-64 text-left p-2">Jenis Test</th>
                 <th className="border border-gray-400 w-28 text-left p-2">Mengerjakan</th>
                 <th className="border border-gray-400 w-48 text-left p-2">Hasil Test</th>
@@ -67,6 +75,7 @@ const BookingTestAdmin = () => {
                     <td className="border border-gray-400 p-1">{index++}</td>
                     <td className="border border-gray-400 p-1">{item.clients.fullName}</td>
                     <td className="border border-gray-400 p-1">{item.clients.email}</td>
+                    <td className="border border-gray-400 p-1">{item.createdAt}</td>
                     <td className="border border-gray-400 p-1">{item.testypes.testName}</td>
                     <td className="border border-gray-400 p-1">Belum/Sudah</td>
                     <td className="border border-gray-400 p-1">

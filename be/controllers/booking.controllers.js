@@ -1,14 +1,15 @@
 const createMeeting = require('../libs/meet.lib');
 const { sendEmail, getHtml } = require('../libs/nodemailer.lib');
 const prisma = require('../libs/prisma.lib');
+const { formatTimeToWib } = require('../libs/formatTimeToWib.libs');
 const moment = require('moment-timezone');
 moment.locale('id');
 
-const formatTimeToWib = (isoString) => {
-  const date = new Date(isoString);
-  const wib = moment.utc(date).tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
-  return wib;
-};
+// const formatTimeToWib 'YYYY-MM-DD HH:mm:ss',= (isoString) => {
+//   const date = new Date(isoString);
+//   const wib = moment.utc(date).tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+//   return wib;
+// };
 
 // const formatTimeToUtc = (hhmm) => {
 //   const clean = hhmm.trim();
@@ -56,7 +57,7 @@ module.exports = {
 
     let booked = [];
     while (booked.length < booking.length) {
-      booked.push(formatTimeToWib(booking[booked.length].dateTime));
+      booked.push(formatTimeToWib('YYYY-MM-DD HH:mm:ss', booking[booked.length].dateTime));
     }
 
     const formatHhMm = booked.map((w) => moment(w, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Jakarta').format('HH:mm'));
@@ -108,7 +109,7 @@ module.exports = {
     });
 
     if (validateBooking.isValidate) {
-      const linkMeet = await createMeeting(formatTimeToWib(validateBooking.dateTime));
+      const linkMeet = await createMeeting(formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime));
 
       await prisma.bookings.update({
         where: { id: Number(id) },
@@ -118,7 +119,7 @@ module.exports = {
       const html = await getHtml('booking-successfull.ejs', {
         client: {
           fullName: validateBooking.clients.fullName,
-          dateTime: formatTimeToWib(validateBooking.dateTime),
+          dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
           linkZoom: linkMeet.linkClient,
           service: validateBooking.services.serviceName,
         },
@@ -127,7 +128,7 @@ module.exports = {
       const htmlDoctor = await getHtml('get-booking.ejs', {
         doctor: {
           fullName: validateBooking.services.doctors.fullName,
-          dateTime: formatTimeToWib(validateBooking.dateTime),
+          dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
           linkZoom: linkMeet.linkHost,
           service: validateBooking.services.serviceName,
         },
@@ -141,7 +142,7 @@ module.exports = {
       const html = await getHtml('booking-failed.ejs', {
         client: {
           fullName: validateBooking.clients.fullName,
-          dateTime: formatTimeToWib(validateBooking.dateTime),
+          dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
           service: validateBooking.services.serviceName,
         },
       });
@@ -171,8 +172,8 @@ module.exports = {
 
     const bookingsWithWIB = bookings.map((booking) => ({
       ...booking,
-      dateTime: formatTimeToWib(booking.dateTime),
-      createdAt: formatTimeToWib(booking.createdAt),
+      dateTime: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.dateTime),
+      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
     }));
 
     res.sendResponse(200, 'OK', null, bookingsWithWIB);
@@ -195,8 +196,8 @@ module.exports = {
 
     const bookingsWithWIB = bookings.map((booking) => ({
       ...booking,
-      dateTime: formatTimeToWib(booking.dateTime),
-      createdAt: formatTimeToWib(booking.createdAt),
+      dateTime: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.dateTime),
+      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
     }));
 
     res.sendResponse(200, 'OK', null, bookingsWithWIB);
@@ -228,6 +229,7 @@ module.exports = {
       dateTime: moment.utc(booking.dateTime).tz('Asia/Jakarta').format('dddd, YYYY-MM-DD HH:mm:ss'),
       createdAt: moment.utc(booking.createdAt).tz('Asia/Jakarta').format('dddd, YYYY-MM-DD HH:mm:ss'),
     }));
+
     res.sendResponse(200, 'OK', null, bookingsWithWIB);
   },
 };

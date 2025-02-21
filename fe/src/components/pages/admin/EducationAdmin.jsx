@@ -3,6 +3,7 @@ import HeaderAdmin from '../../fragments/HeaderAdmin';
 import { useNavigate } from 'react-router-dom';
 import { createEducation, deleteEducation, getEducations, updateEducation } from '../../../services/education.service';
 import PopUpConfirmation from '../../fragments/PopUpConfirmation';
+import { toast } from 'react-toastify';
 
 const EducationAdmin = () => {
   const navigate = useNavigate();
@@ -30,6 +31,10 @@ const EducationAdmin = () => {
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     };
@@ -79,7 +84,12 @@ const EducationAdmin = () => {
         setPopUpInput(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now')
           navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     } else {
@@ -92,7 +102,12 @@ const EducationAdmin = () => {
         setPopUpInput(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/login-admin');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
         }
       }
     }

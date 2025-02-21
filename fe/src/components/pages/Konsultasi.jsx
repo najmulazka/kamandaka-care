@@ -9,6 +9,7 @@ import { createBooking, getBookingsClient, getScheedule } from '../../services/b
 import { Link, useNavigate } from 'react-router-dom';
 import { getBookingTestClient } from '../../services/bookingTest.service';
 import PopUpAlert from '../fragments/PopUpAlert';
+import { toast } from 'react-toastify';
 
 const Konsultasi = () => {
   const [date, setDate] = useState(new Date());
@@ -43,7 +44,14 @@ const Konsultasi = () => {
           setAvailables(scheedule);
         }
       } catch (err) {
-        console.log(err);
+        if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
+          navigate('/');
+        }
+        if (err.status == 400) {
+          toast.warn(err.response.data.err);
+          setIsProcess(false);
+        }
       }
     };
 
@@ -76,25 +84,36 @@ const Konsultasi = () => {
   };
 
   const handleNext = async () => {
-    setIsProcess(!isProcess);
-    const response = await getBookingsClient();
-    const check = response.find((item) => item.isValidate === null);
+    try {
+      setIsProcess(!isProcess);
+      const response = await getBookingsClient();
+      const check = response.find((item) => item.isValidate === null);
 
-    const response1 = await getBookingTestClient();
-    const check1 = response1.find((item) => item.isValidate === null);
-    if (data.serviceId === undefined || data.day === undefined || data.time === undefined) {
-      setMessage('Silahkan Pilih Jenis layanan dan waktu untuk konsultasi');
-      setIsPopUp(true);
-      setIsProcess(false);
-    } else if (check === undefined && check1 === undefined) {
-      await createBooking(data);
-      navigate('/client/payment');
-      setIsProcess(false);
-    } else {
-      setData({});
-      setMessage('Maaf masih terdapat proses booking yang belum di bayar atau belum divalidasi oleh admin');
-      setIsPopUp(true);
-      setIsProcess(false);
+      const response1 = await getBookingTestClient();
+      const check1 = response1.find((item) => item.isValidate === null);
+      if (data.serviceId === undefined || data.day === undefined || data.time === undefined) {
+        setMessage('Silahkan Pilih Jenis layanan dan waktu untuk konsultasi');
+        setIsPopUp(true);
+        setIsProcess(false);
+      } else if (check === undefined && check1 === undefined) {
+        await createBooking(data);
+        navigate('/client/payment');
+        setIsProcess(false);
+      } else {
+        setData({});
+        setMessage('Maaf masih terdapat proses booking yang belum di bayar atau belum divalidasi oleh admin');
+        setIsPopUp(true);
+        setIsProcess(false);
+      }
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/');
+      }
+      if (err.status == 400) {
+        toast.warn(err.response.data.err);
+        setIsProcess(false);
+      }
     }
   };
 
