@@ -48,10 +48,10 @@ export const ProtectedClient = ({ children }) => {
 export const ProtectedDoctor = ({ children }) => {
   const [FirstLoad, setFirstLoad] = useState(false);
   const navigate = useNavigate();
-  const tokenClient = CookiesStorage.get(CookiesKey.TokenClient);
+  const tokenDoctor = CookiesStorage.get(CookiesKey.TokenDoctor);
 
   useEffect(() => {
-    if (tokenClient == undefined) {
+    if (tokenDoctor == undefined) {
       setFirstLoad(true);
     }
   }, []);

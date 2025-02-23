@@ -123,57 +123,63 @@ const Konsultasi = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="">
       {/* <HeaderClient /> */}
 
-      {/* <div className="relative my-4 mx-6 lg:mx-8"> */}
-      <div className="pl-6 pt-6 lg:p-4 lg:px-8 rounded-md flex">
-        <Link to="/client">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
-            <path fill="none" d="M0 0h24v24H0z"></path>
-            <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z"></path>
-          </svg>
-        </Link>
-      </div>
-      {/* </div> */}
+      <div className="lg:grid grid-cols-2">
+        <div>
+          <div className="pl-6 pt-6 lg:p-4 lg:px-8 rounded-md flex">
+            <Link to="/client">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z"></path>
+              </svg>
+            </Link>
+          </div>
+          {/* </div> */}
 
-      <div className="w-full flex font-semibold justify-center text-gray-900">Pilih Jadwal Konsultasi</div>
-      <div className="lg:grid lg:grid-cols-3 px-8 pt-8 pb-20">
-        <div className="lg:flex lg:flex-col lg:space-y-2 items-end mb-4">
-          <select name="service" id="" className="border border-gray-400 w-full lg:w-80 p-2 rounded-md" onChange={handleService}>
-            <option value="select">Pilih Layanan</option>
-            {services.length > 0 &&
-              services.map((service) => (
-                <option key={service.id} value={service.id}>
-                  {service.serviceName}
-                </option>
-              ))}
-          </select>
+          <div className="w-full flex font-semibold justify-center text-gray-900">Pilih Jadwal Konsultasi</div>
+          <div className="px-8 pt-8 pb-20">
+            <div className="lg:flex lg:flex-col lg:space-y-2 items-center mb-4">
+              <select name="service" id="" className="border border-gray-400 w-full lg:w-80 p-2 rounded-md" onChange={handleService}>
+                <option value="select">Pilih Layanan</option>
+                {services.length > 0 &&
+                  services.map((service) => (
+                    <option key={service.id} value={service.id}>
+                      {service.serviceName}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="justify-center flex mb-4">
+              <Calendar onChange={setDate} value={date} locale="id-ID" className="rounded-lg" tileDisabled={({ date }) => date < new Date().setHours(0, 0, 0, 0)} />
+              {/* tileDisabled={({ date }) => date < new Date().setHours(0, 0, 0, 0)} */}
+            </div>
+
+            <div className="flex flex-wrap w-full justify-center">
+              {availables.length > 0 &&
+                availables.map((available, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleAvailable(available)}
+                    className={`${data.time == available ? 'bg-[#BBE2EC] text-white' : 'bg-[#29ADB2]'} cursor-pointer hover:bg-[#BBE2EC] px-2 py-1 mr-2 my-2 flex items-center justify-center rounded-md`}>
+                    {available}
+                  </div>
+                ))}
+
+              {serviceId == '' && <div className="text-gray-500">Silahkan pilih Layanan konsultasi terlebih dahulu</div>}
+              {availables.length == 0 && serviceId != '' && <div className="flex items-center text-gray-500">Sayang sekali jadwal yang dipilih tidak tersedia untuk saat ini</div>}
+            </div>
+          </div>
+          <div className="mb-6 lg:mb-10 px-6 lg:px-8 w-full text-center">
+            <div onClick={!isProcess ? handleNext : undefined} className={`cursor-pointer bg-[#29ADB2] hover:bg-[#BBE2EC] px-4 py-1 rounded-md ${isProcess ? 'opacity-50 pointer-events-none' : ''}`}>
+              {isProcess ? 'Loading...' : 'Bayar'}
+            </div>
+          </div>
         </div>
-
-        <div className="justify-center flex mb-4">
-          <Calendar onChange={setDate} value={date} locale="id-ID" className="rounded-lg" tileDisabled={({ date }) => date < new Date().setHours(0, 0, 0, 0)} />
-          {/* tileDisabled={({ date }) => date < new Date().setHours(0, 0, 0, 0)} */}
-        </div>
-
-        <div className="flex flex-wrap">
-          {availables.length > 0 &&
-            availables.map((available, index) => (
-              <div
-                key={index}
-                onClick={() => handleAvailable(available)}
-                className={`${data.time == available ? 'bg-sky-600 text-white' : 'bg-sky-300'} cursor-pointer hover:bg-sky-600 px-2 py-1 mr-2 my-2 flex items-center justify-center rounded-md`}>
-                {available}
-              </div>
-            ))}
-
-          {serviceId == '' && <div className="flex items-center text-gray-500">Silahkan pilih Layanan konsultasi terlebih dahulu</div>}
-          {availables.length == 0 && serviceId != '' && <div className="flex items-center text-gray-500">Sayang sekali jadwal yang dipilih tidak tersedia untuk saat ini</div>}
-        </div>
-      </div>
-      <div className="absolute bottom-8 lg:bottom-0 px-6 lg:px-8 w-full text-center">
-        <div onClick={!isProcess ? handleNext : undefined} className={`cursor-pointer bg-sky-500 hover:bg-sky-700  px-4 py-1 rounded-md ${isProcess ? 'opacity-50 pointer-events-none' : ''}`}>
-          {isProcess ? 'Loading...' : 'Bayar'}
+        <div className="hidden lg:block min-h-screen">
+          <img src="/consultation.jpg" className='h-full object-cover object-right' alt="" />
         </div>
       </div>
 

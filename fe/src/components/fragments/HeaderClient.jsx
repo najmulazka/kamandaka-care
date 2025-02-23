@@ -59,10 +59,10 @@ const HeaderClient = () => {
 
         {/* Desktop navigation */}
         <div className="hidden lg:flex lg:gap-x-10">
-          <Link to="/client" className="text-base font-bold text-sky-500 hover:text-sky-700">
+          <Link to="/client" className="text-base font-bold text-[#29ADB2] hover:text-[#BBE2EC]">
             Booking
           </Link>
-          <div className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer" onClick={handleOrderHistory}>
+          <div className="text-base font-bold text-[#29ADB2] hover:text-[#BBE2EC] relative flex cursor-pointer" onClick={handleOrderHistory}>
             Riwayat Booking
             <svg className="size-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
               <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
@@ -113,13 +113,13 @@ const HeaderClient = () => {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                <Link to="/client" onClick={() => setIsOpen(false)} className="-mx-3 block rounded-lg px-3 py-2 text-base font-bold text-sky-500 hover:bg-gray-100">
+                <Link to="/client" onClick={() => setIsOpen(false)} className="-mx-3 block rounded-lg px-3 py-2 text-base font-bold text-[#29ADB2] hover:bg-gray-100">
                   Booking
                 </Link>
                 <div className="mt-6 flow-root">
                   <div className="-my-6 divide-y divide-gray-500/10">
                     <div className="space-y-2 py-6">
-                      <div className="-mx-3 block rounded-lg items-center text-base font-bold text-sky-500 hover:bg-gray-100" onClick={handleOrderHistory}>
+                      <div className="-mx-3 block rounded-lg items-center text-base font-bold text-[#29ADB2] hover:bg-gray-100" onClick={handleOrderHistory}>
                         <div className="flex items-center px-3 py-2">
                           <div>Riwayat Booking</div>
                           <svg className={`size-5 ${isDropDown ? 'rotate-180' : ''} flex-none text-gray-400`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
@@ -143,9 +143,9 @@ const HeaderClient = () => {
                 </div>
               </div>
               <div className="py-6">
-                <Link to="#" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-bold text-sky-500 hover:bg-gray-50">
+                <div onClick={handleLogout} className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-bold text-[#29ADB2] hover:bg-gray-50">
                   Logout
-                </Link>
+                </div>
               </div>
             </div>
           </div>

@@ -81,7 +81,6 @@ const AvailableDoctor = () => {
         startTimeMinggu: availableDays.Minggu.startTime,
         endTimeMinggu: availableDays.Minggu.endTime,
       });
-      alert('Waktu Layanan Berhasil di Perbarui');
       toast.success('Waktu Layanan Berhasil di Perbarui', { position: 'top-center' });
       setIsProcess(false);
     } catch (err) {

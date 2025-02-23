@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LandingPage from '../components/pages/LandingPage';
-import Invoice from '../components/pages/invoice';
+import Invoice from '../components/pages/Invoice';
 import CalendarComponent from '../components/pages/CalendarComponent';
 import DashboardClient from '../components/pages/DashboardClient';
 import Konsultasi from '../components/pages/Konsultasi';
@@ -22,6 +22,7 @@ import KonsultasiAdmin from '../components/pages/admin/KonsultasiAdmin';
 import EducationAdmin from '../components/pages/admin/EducationAdmin';
 import PsychologyTestAdmin from '../components/pages/admin/PsychologyTestAdmin';
 import { Protected, ProtectedClient, ProtectedDoctor } from '../utils/protected';
+import SyaratKetentuan from '../components/pages/SyaratKetentuan';
 
 const RouterList = () => {
   return (
@@ -29,6 +30,7 @@ const RouterList = () => {
       <Routes>
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/" element={<LandingPage />} />
+        <Route path="/syarat-ketentuan" element={<SyaratKetentuan />} />
         <Route path="/callback" element={<CallbackPage />} />
         <Route
           path="/client"

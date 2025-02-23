@@ -16,7 +16,6 @@ const PsychologyTest = () => {
   const [isProcess, setIsProcess] = useState(false);
   const [isPopUp, setIsPopUp] = useState(false);
   const [message, setMessage] = useState('');
-  console.log(testTypes);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,49 +87,56 @@ const PsychologyTest = () => {
   };
 
   return (
-    <div className="relative">
+    <div>
       {/* <HeaderClient /> */}
-      <div className="pl-6 pt-6 lg:p-4 lg:px-8 rounded-md flex">
-        <Link to="/client">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
-            <path fill="none" d="M0 0h24v24H0z"></path>
-            <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z"></path>
-          </svg>
-        </Link>
-      </div>
+      <div className="lg:grid grid-cols-2 ">
+        <div className='min-h-screen relative'>
+          <div className="pl-6 pt-6 lg:p-4 lg:px-8 rounded-md flex">
+            <Link to="/client">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z"></path>
+              </svg>
+            </Link>
+          </div>
 
-      <div className="w-full flex font-semibold justify-center text-gray-900">Pilih Jenis Tes</div>
-      <div className="lg:grid lg:grid-cols-2 lg:px-8 px-6 pt-4 pb-20">
-        <div className="py-6 lg:flex flex-col lg:items-end">
-          <select name="education" id="" className="border border-gray-400 w-full lg:w-80 p-2 rounded-md text-sm" onChange={handleChange}>
-            <option value="Select">Pilih Pendidikan</option>
-            {educations.length > 0 &&
-              educations.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.educationLevel}
-                </option>
-              ))}
-          </select>
-        </div>
+          <div className="w-full flex font-semibold justify-center text-gray-900">Pilih Jenis Tes</div>
+          <div className="lg:px-8 px-6 pt-4 pb-10">
+            <div className="py-6 lg:flex flex-col lg:items-center">
+              <select name="education" id="" className="border border-gray-400 w-full lg:w-80 p-2 rounded-md text-sm" onChange={handleChange}>
+                <option value="Select">Pilih Pendidikan</option>
+                {educations.length > 0 &&
+                  educations.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.educationLevel}
+                    </option>
+                  ))}
+              </select>
+            </div>
 
-        <div className="lg:p-6">
-          <div className="flex flex-col space-y-2">
-            {testTypes.length > 0 &&
-              testTypes
-                .filter((data) => data.educationId == education)
-                .map((item) => (
-                  <div key={item.id} onClick={() => handleTesType(item.id)} className={`${item.id == testType ? 'bg-sky-600 text-white' : 'bg-sky-300'} hover:bg-sky-600 cursor-pointer p-2 rounded-md`}>
-                    <div>{item.testName}</div>
-                    <div className={`text-xs  ${item.id == testType ? 'text-gray-300' : 'text-gray-500'}`}>Harga Rp{item.price}</div>
-                  </div>
-                ))}
+            <div className="lg:p-6">
+              <div className="flex flex-col space-y-2">
+                {testTypes.length > 0 &&
+                  testTypes
+                    .filter((data) => data.educationId == education)
+                    .map((item) => (
+                      <div key={item.id} onClick={() => handleTesType(item.id)} className={`${item.id == testType ? 'bg-[#BBE2EC] text-white' : 'bg-[#29ADB2]'} hover:bg-[#BBE2EC] cursor-pointer p-2 rounded-md`}>
+                        <div>{item.testName}</div>
+                        <div className={`text-xs  ${item.id == testType ? 'text-white' : 'text-gray-500'}`}>Harga Rp{item.price}</div>
+                      </div>
+                    ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6 lg:mb-10 px-6 lg:px-8 w-full text-center">
+            <div onClick={!isProcess ? handleCreateBookingTest : undefined} className={`cursor-pointer bg-[#29ADB2] hover:bg-[#BBE2EC] px-4 py-1 rounded-md ${isProcess ? 'opacity-50 pointer-events-none' : ''}`}>
+              {isProcess ? 'Loading...' : 'Bayar'}
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="absolute bottom-8 lg:bottom-0 px-6 lg:px-8 w-full text-center">
-        <div onClick={!isProcess ? handleCreateBookingTest : undefined} className={`cursor-pointer bg-sky-500 hover:bg-sky-700 px-4 py-1 rounded-md ${isProcess ? 'opacity-50 pointer-events-none' : ''}`}>
-          {isProcess ? 'Loading...' : 'Bayar'}
+        <div  className='hidden lg:block min-h-screen'>
+          <img src="/test.jpg" className='h-full object-cover' alt="" />
         </div>
       </div>
 

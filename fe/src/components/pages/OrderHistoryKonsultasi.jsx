@@ -31,11 +31,11 @@ const OrderHistoryKonsultasi = () => {
     <div>
       <HeaderClient />
       <div className="p-8 px-8 align-center lg:flex flex-col justify-center">
-        <div className="font-semibold text-xl text-center mb-4">DATA BOOKING KONSULTASI</div>
+        <div className="font-semibold text-xl text-center mb-4">RIWAYAT BOOKING KONSULTASI</div>
 
         {data.length > 0 && (
           <table className="border-collapse border border-gray-400">
-            <thead className="bg-sky-300">
+            <thead className="bg-[#29ADB2]">
               <tr>
                 <th className="border border-gray-400 w-12 text-center p-2">No</th>
                 <th className="border border-gray-400 w-64 text-center p-2">Jenis Layanan</th>
@@ -54,7 +54,7 @@ const OrderHistoryKonsultasi = () => {
                     <td className="border border-gray-400 text-center p-1">{item.createdAt}</td>
                     <td className="border border-gray-400 text-center p-1">{item.dateTime}</td>
                     <td className="border border-gray-400 text-center p-1">{item.isValidate === null ? 'Menunggu pembayaran' : item.isValidate === true ? 'Sudah bayar' : 'Belum bayar'}</td>
-                    <td className="border border-gray-400 text-center p-1 font-semibold text-sky-500 hover:text-sky-700">
+                    <td className="border border-gray-400 text-center p-1 font-semibold text-[#29ADB2] hover:text-[#BBE2EC]">
                       <a href={`${item.linkClient === null ? 'payment' : item.linkClient}`} target={`${item.linkClient === null ? '_parent' : '_blank'}`}>
                         {item.linkClient === null ? 'Cek' : 'Zoom'}
                       </a>

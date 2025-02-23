@@ -7,15 +7,15 @@ const DashboardClient = () => {
       <HeaderClient />
       <div className="p-4 lg:px-8">
         <div className="flex justify-center mt-6 mb-10 space-x-6">
-          <Link to="/client/konsultasi" className="h-16 w-36 bg-sky-500 hover:bg-sky-700 flex items-center justify-center rounded-md cursor-pointer">
+          <Link to="/client/konsultasi" className="h-16 w-36 bg-[#29ADB2] hover:bg-[#BBE2EC] flex items-center justify-center rounded-md cursor-pointer">
             Konsultasi
           </Link>
-          <Link to="/client/psychology-test" className="h-16 w-36 bg-sky-500 hover:bg-sky-700 flex items-center justify-center rounded-md cursor-pointer">
+          <Link to="/client/psychology-test" className="h-16 w-36 bg-[#29ADB2] hover:bg-[#BBE2EC] flex items-center justify-center rounded-md cursor-pointer">
             Tes Psikologi
           </Link>
         </div>
 
-        <div className="font-semibold mb-2 border border-2 border-sky-500 px-2 py-1 rounded-md shadow-md shadow-gray-400">Cara Melakukan Booking Konsultasi :</div>
+        <div className="font-semibold mb-2 border border-2 border-[#29ADB2] px-2 py-1 rounded-md shadow-md shadow-gray-400">Cara Melakukan Booking Konsultasi :</div>
         <div className="mb-1">
           1. Mulai proses pemesanan dengan menekan tombol Konsultasi
           {/* <strong>&rarr;</strong> */}
@@ -31,7 +31,7 @@ const DashboardClient = () => {
       </div>
 
       <div className="p-4 lg:px-8">
-        <div className="font-semibold mb-2 border border-2 border-sky-500 px-2 py-1 rounded-md shadow-md shadow-gray-400">Cara Melakukan Booking Tes Psikologi :</div>
+        <div className="font-semibold mb-2 border border-2 border-[#29ADB2] px-2 py-1 rounded-md shadow-md shadow-gray-400">Cara Melakukan Booking Tes Psikologi :</div>
         <div className="mb-1">
           1. Mulai proses pemesanan dengan menekan tombol Tes Psikologi
           {/* <strong>&rarr;</strong>
