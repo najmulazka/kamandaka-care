@@ -55,7 +55,7 @@ const OrderHistoryPsychologyTest = () => {
                     <td className="border border-gray-400 text-center p-1">{item.createdAt}</td>
                     <td className="border border-gray-400 text-center p-1">
                       {item.questionUrl != null ? (
-                        <a href={item.questionUrl} target="_blank" className="text-[#29ADB2] hover:text-[#BBE2EC]  font-semibold">
+                        <a href={item.questionUrl} target="_blank" className="text-[#29ADB2] hover:text-[#21878b]  font-semibold">
                           Kerjakan Test
                         </a>
                       ) : item.resultUrl != null ? (
@@ -66,7 +66,7 @@ const OrderHistoryPsychologyTest = () => {
                     </td>
                     <td className="border border-gray-400 text-center p-1">
                       {item.resultUrl != null ? (
-                        <a href={item.resultUrl} target="_blank" className="text-[#29ADB2] hover:text-[#BBE2EC] font-semibold">
+                        <a href={item.resultUrl} target="_blank" className="text-[#29ADB2] hover:text-[#21878b] font-semibold">
                           Lihat Hasil Test
                         </a>
                       ) : (
@@ -74,7 +74,7 @@ const OrderHistoryPsychologyTest = () => {
                       )}
                     </td>
                     <td className="border border-gray-400 text-center p-1">{item.isValidate === null ? 'Menunggu pembayaran' : item.isValidate === true ? 'Sudah bayar' : 'Belum bayar'}</td>
-                    <td className="border border-gray-400 text-center p-1 font-semibold text-[#29ADB2] hover:text-[#BBE2EC]">
+                    <td className="border border-gray-400 text-center p-1 font-semibold text-[#29ADB2] hover:text-[#21878b]">
                       <a href={`${item.isValidate === null ? 'payment' : ''}`}>{item.isValidate === null ? 'Cek' : '  '}</a>
                     </td>
                   </tr>

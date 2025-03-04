@@ -7,10 +7,10 @@ const DashboardClient = () => {
       <HeaderClient />
       <div className="p-4 lg:px-8">
         <div className="flex justify-center mt-6 mb-10 space-x-6">
-          <Link to="/client/konsultasi" className="h-16 w-36 bg-[#29ADB2] hover:bg-[#BBE2EC] flex items-center justify-center rounded-md cursor-pointer">
+          <Link to="/client/konsultasi" className="h-16 w-36 bg-[#29ADB2] hover:bg-[#21878b] flex items-center justify-center rounded-md cursor-pointer">
             Konsultasi
           </Link>
-          <Link to="/client/psychology-test" className="h-16 w-36 bg-[#29ADB2] hover:bg-[#BBE2EC] flex items-center justify-center rounded-md cursor-pointer">
+          <Link to="/client/psychology-test" className="h-16 w-36 bg-[#29ADB2] hover:bg-[#21878b] flex items-center justify-center rounded-md cursor-pointer">
             Tes Psikologi
           </Link>
         </div>

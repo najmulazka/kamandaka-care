@@ -19,6 +19,7 @@ import BookingTestAnswerDoctor from '../components/pages/doctor/BookingTestAnswe
 import AvailableDoctor from '../components/pages/doctor/AvailableDoctor';
 import DoctorAdmin from '../components/pages/admin/DoctorAdmin';
 import KonsultasiAdmin from '../components/pages/admin/KonsultasiAdmin';
+import BookingKonsultasiAdmin from '../components/pages/admin/BookingKonsultasiAdmin';
 import EducationAdmin from '../components/pages/admin/EducationAdmin';
 import PsychologyTestAdmin from '../components/pages/admin/PsychologyTestAdmin';
 import { Protected, ProtectedClient, ProtectedDoctor } from '../utils/protected';
@@ -87,6 +88,14 @@ const RouterList = () => {
             <Protected>
               {' '}
               <BookingAdmin />
+            </Protected>
+          }
+        />
+        <Route
+          path="/admin/add-booking-konsultasi"
+          element={
+            <Protected>
+              <BookingKonsultasiAdmin />
             </Protected>
           }
         />

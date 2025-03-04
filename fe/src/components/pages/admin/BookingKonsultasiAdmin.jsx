@@ -4,14 +4,13 @@ import 'react-calendar/dist/Calendar.css';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 // import HeaderClient from '../fragments/HeaderClient';
-import { getServices } from '../../services/service.service';
-import { createBooking, getBookingsClient, getScheedule } from '../../services/booking.service';
+import { getServices } from '../../../services/service.service';
+import { createBookingOffline, getScheedule } from '../../../services/booking.service';
 import { Link, useNavigate } from 'react-router-dom';
-import { getBookingTestClient } from '../../services/bookingTest.service';
-import PopUpAlert from '../fragments/PopUpAlert';
+import PopUpAlert from '../../fragments/PopUpAlert';
 import { toast } from 'react-toastify';
 
-const Konsultasi = () => {
+const BookingKonsultasiAdmin = () => {
   const [date, setDate] = useState(new Date());
   const [services, setServices] = useState([]);
   const [availables, setAvailables] = useState([]);
@@ -86,29 +85,18 @@ const Konsultasi = () => {
   const handleNext = async () => {
     try {
       setIsProcess(!isProcess);
-      const response = await getBookingsClient();
-      const check = response.find((item) => item.isValidate === null);
-
-      const response1 = await getBookingTestClient();
-      const check1 = response1.find((item) => item.isValidate === null);
       if (data.serviceId === undefined || data.day === undefined || data.time === undefined) {
         setMessage('Silahkan Pilih Jenis layanan dan waktu untuk konsultasi');
         setIsPopUp(true);
         setIsProcess(false);
-      } else if (check === undefined && check1 === undefined) {
-        await createBooking(data);
-        navigate('/client/payment');
-        setIsProcess(false);
       } else {
-        setData({});
-        setMessage('Maaf masih terdapat proses booking yang belum di bayar atau belum divalidasi oleh admin');
-        setIsPopUp(true);
+        await createBookingOffline(data);
         setIsProcess(false);
       }
     } catch (err) {
       if (err.message.includes('Unauthorized')) {
         toast.warn('Please Login Now');
-        navigate('/');
+        navigate('/login-admin');
       }
       if (err.status == 400) {
         toast.warn(err.response.data.err);
@@ -129,7 +117,7 @@ const Konsultasi = () => {
       <div className="lg:grid grid-cols-2">
         <div>
           <div className="pl-6 pt-6 lg:p-4 lg:px-8 rounded-md flex">
-            <Link to="/client">
+            <Link to="/admin/booking">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
                 <path fill="none" d="M0 0h24v24H0z"></path>
                 <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z"></path>
@@ -173,8 +161,8 @@ const Konsultasi = () => {
             </div>
           </div>
           <div className="mb-6 lg:mb-10 px-6 lg:px-8 w-full text-center">
-            <div onClick={!isProcess ? handleNext : undefined} className={`cursor-pointer bg-[#29ADB2] hover:bg-[#21878b] px-4 py-1 rounded-md ${isProcess ? 'opacity-50 pointer-events-none' : ''}`}>
-              {isProcess ? 'Loading...' : 'Bayar'}
+            <div onClick={!isProcess ? handleNext : undefined} className={`cursor-pointer bg-[#29ADB2] hover:bg-[#BBE2EC] px-4 py-1 rounded-md ${isProcess ? 'opacity-50 pointer-events-none' : ''}`}>
+              {isProcess ? 'Loading...' : 'Simpan'}
             </div>
           </div>
         </div>
@@ -190,4 +178,4 @@ const Konsultasi = () => {
   );
 };
 
-export default Konsultasi;
+export default BookingKonsultasiAdmin;

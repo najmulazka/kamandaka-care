@@ -90,7 +90,7 @@ const PsychologyTest = () => {
     <div>
       {/* <HeaderClient /> */}
       <div className="lg:grid grid-cols-2 ">
-        <div className='min-h-screen relative'>
+        <div className="min-h-screen relative">
           <div className="pl-6 pt-6 lg:p-4 lg:px-8 rounded-md flex">
             <Link to="/client">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
@@ -120,9 +120,10 @@ const PsychologyTest = () => {
                   testTypes
                     .filter((data) => data.educationId == education)
                     .map((item) => (
-                      <div key={item.id} onClick={() => handleTesType(item.id)} className={`${item.id == testType ? 'bg-[#BBE2EC] text-white' : 'bg-[#29ADB2]'} hover:bg-[#BBE2EC] cursor-pointer p-2 rounded-md`}>
+                      <div key={item.id} onClick={() => handleTesType(item.id)} className={`${item.id == testType ? 'bg-[#35c9ce] border border-black' : 'bg-[#9ddbdd] hover:bg-[#75cfd2]'} cursor-pointer p-2 rounded-md`}>
                         <div>{item.testName}</div>
-                        <div className={`text-xs  ${item.id == testType ? 'text-white' : 'text-gray-500'}`}>Harga Rp{item.price}</div>
+                        <div className={`text-xs text-gray-500`}>Harga Rp{item.price}</div>
+                        {/* className={`${data.time == available ? 'bg-blue-600 border border-black' : 'bg-blue-300 hover:bg-blue-400'} cursor-pointer px-2 py-1 mr-2 my-2 flex items-center justify-center rounded-md`}> */}
                       </div>
                     ))}
               </div>
@@ -130,13 +131,13 @@ const PsychologyTest = () => {
           </div>
 
           <div className="mb-6 lg:mb-10 px-6 lg:px-8 w-full text-center">
-            <div onClick={!isProcess ? handleCreateBookingTest : undefined} className={`cursor-pointer bg-[#29ADB2] hover:bg-[#BBE2EC] px-4 py-1 rounded-md ${isProcess ? 'opacity-50 pointer-events-none' : ''}`}>
+            <div onClick={!isProcess ? handleCreateBookingTest : undefined} className={`cursor-pointer bg-[#29ADB2] hover:bg-[#21878b] px-4 py-1 rounded-md ${isProcess ? 'opacity-50 pointer-events-none' : ''}`}>
               {isProcess ? 'Loading...' : 'Bayar'}
             </div>
           </div>
         </div>
-        <div  className='hidden lg:block min-h-screen'>
-          <img src="/test.jpg" className='h-full object-cover' alt="" />
+        <div className="hidden lg:block min-h-screen">
+          <img src="/test.jpg" className="h-full object-cover" alt="" />
         </div>
       </div>
 

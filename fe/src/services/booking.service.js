@@ -33,7 +33,26 @@ export const createBooking = async (data) => {
     return response.data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      CookiesStorage.remove(CookiesKey.AuthToken);
+      CookiesStorage.remove(CookiesKey.TokenClient);
+      throw new Error('Unauthorized: Token is invalid');
+    }
+    throw error;
+  }
+};
+
+export const createBookingOffline = async (data) => {
+  const token = CookiesStorage.get(CookiesKey.TokenAdmin);
+  try {
+    const response = await axios.post(`${BASE_URL}/booking/offline`, data, {
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    return response.data.data;
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      CookiesStorage.remove(CookiesKey.TokenAdmin);
       throw new Error('Unauthorized: Token is invalid');
     }
     throw error;
@@ -52,7 +71,7 @@ export const validateBooking = async (id, data) => {
     return response.data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      CookiesStorage.remove(CookiesKey.AuthToken);
+      CookiesStorage.remove(CookiesKey.TokenAdmin);
       throw new Error('Unauthorized: Token is invalid');
     }
     throw error;
@@ -71,7 +90,7 @@ export const getBooking = async () => {
     return response.data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      CookiesStorage.remove(CookiesKey.AuthToken);
+      CookiesStorage.remove(CookiesKey.TokenAdmin);
       throw new Error('Unauthorized: Token is invalid');
     }
     throw error;
@@ -90,7 +109,7 @@ export const getBookingsClient = async () => {
     return response.data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      CookiesStorage.remove(CookiesKey.AuthToken);
+      CookiesStorage.remove(CookiesKey.TokenClient);
       throw new Error('Unauthorized: Token is invalid');
     }
     throw error;
@@ -109,7 +128,7 @@ export const getBookingsDoctor = async () => {
     return response.data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      CookiesStorage.remove(CookiesKey.AuthToken);
+      CookiesStorage.remove(CookiesKey.TokenDoctor);
       throw new Error('Unauthorized: Token is invalid');
     }
     throw error;

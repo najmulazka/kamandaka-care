@@ -59,10 +59,10 @@ const HeaderClient = () => {
 
         {/* Desktop navigation */}
         <div className="hidden lg:flex lg:gap-x-10">
-          <Link to="/client" className="text-base font-bold text-[#29ADB2] hover:text-[#BBE2EC]">
+          <Link to="/client" className="text-base font-bold text-[#29ADB2] hover:text-[#21878b]">
             Booking
           </Link>
-          <div className="text-base font-bold text-[#29ADB2] hover:text-[#BBE2EC] relative flex cursor-pointer" onClick={handleOrderHistory}>
+          <div className="text-base font-bold text-[#29ADB2] hover:text-[#21878b] relative flex cursor-pointer" onClick={handleOrderHistory}>
             Riwayat Booking
             <svg className="size-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
               <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />

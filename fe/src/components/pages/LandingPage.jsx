@@ -35,16 +35,17 @@ const LandingPage = () => {
               Kontak
             </a>
           </div>
-          <Link
+          <div className="hidden lg:block opacity-0">.</div>
+          {/* <Link
             to={'/login-doctor'}
             className="hidden lg:flex lg:justify-end bg-[#29ADB2] border border-[#29ADB2] hover:bg-white hover:text-[#29ADB2] p-2 rounded-lg text-base font-semibold text-gray-800 flex flex-row space-x-1 cursor-pointer">
             <div>
-              {/* <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                 <path d="M3.06364 7.50914C4.70909 4.24092 8.09084 2 12 2C14.6954 2 16.959 2.99095 18.6909 4.60455L15.8227 7.47274C14.7864 6.48185 13.4681 5.97727 12 5.97727C9.39542 5.97727 7.19084 7.73637 6.40455 10.1C6.2045 10.7 6.09086 11.3409 6.09086 12C6.09086 12.6591 6.2045 13.3 6.40455 13.9C7.19084 16.2636 9.39542 18.0227 12 18.0227C13.3454 18.0227 14.4909 17.6682 15.3864 17.0682C16.4454 16.3591 17.15 15.3 17.3818 14.05H12V10.1818H21.4181C21.5364 10.8363 21.6 11.5182 21.6 12.2273C21.6 15.2727 20.5091 17.8363 18.6181 19.5773C16.9636 21.1046 14.7 22 12 22C8.09084 22 4.70909 19.7591 3.06364 16.4909C2.38638 15.1409 2 13.6136 2 12C2 10.3864 2.38638 8.85911 3.06364 7.50914Z"></path>
-              </svg> */}
+              </svg> 
             </div>
             <div>Login Dokter</div>
-          </Link>
+          </Link> */}
         </nav>
 
         {/* Mobile */}
@@ -55,7 +56,7 @@ const LandingPage = () => {
               <div className="flex items-center justify-between">
                 <a href="#" className="-m-1.5 p-1.5">
                   <span className="sr-only">Your Company</span>
-                  <img className="h-8 w-auto" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600" alt="" />
+                  <img className="h-10 w-auto" src="/logo.png" alt="" />
                 </a>
                 <button type="button" onClick={() => setIsOpen(false)} className="-m-2.5 rounded-md p-2.5 text-gray-700">
                   <span className="sr-only">Close menu</span>
@@ -77,11 +78,11 @@ const LandingPage = () => {
                       Kontak
                     </a>
                   </div>
-                  <div className="py-6">
+                  {/* <div className="py-6">
                     <Link to={'/login-doctor'} className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
                       Login Dokter
                     </Link>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -98,8 +99,13 @@ const LandingPage = () => {
           <div className="lg:w-2/3 bg-white font-semibold rounded-lg mt-10 mb-10 text-gray-800 px-4 py-2">
             <div>Tersedia Konsultasi Online atau Tes Psikologi Online</div>
             <hr className="m-2" />
-            <div className="bg-[#29ADB2] border border-[#29ADB2] text-white px-6 inline-block py-2 rounded-lg cursor-pointer hover:bg-white hover:text-[#29ADB2]" onClick={handleLogin}>
-              Daftar
+            <div className="flex space-x-6">
+              <div className="bg-[#29ADB2] border border-[#29ADB2] text-white px-6 inline-block py-2 rounded-lg cursor-pointer hover:bg-white hover:text-[#29ADB2]" onClick={handleLogin}>
+                Daftar
+              </div>
+              <div className="bg-[#29ADB2] border border-[#29ADB2] text-white px-6 inline-block py-2 rounded-lg cursor-pointer hover:bg-white hover:text-[#29ADB2]" onClick={handleLogin}>
+                Masuk
+              </div>
             </div>
           </div>
         </div>
@@ -111,11 +117,11 @@ const LandingPage = () => {
       </div>
 
       {/* LAYANAN */}
-      <div id="layanan" className="p-4 lg:px-20 min-h-[900px]">
+      <div id="layanan" className="p-4 lg:px-20 min-h-[400px]">
         <div className="lg:w-full relative">
           <div className="bg-white w-full p-4 lg:px-10 lg:py-10 rounded-xl lg:absolute -top-10 lg:-top-14 shadow-md">
             <div className="mb-2">Layanan Kami</div>
-            <div className="text-3xl font-bold text-[#29ADB2] mb-4">Layanan Klinik Pratama Kamandaka</div>
+            {/* <div className="text-3xl font-bold text-[#29ADB2] mb-4">Layanan Klinik Pratama Kamandaka</div>
             <div className="lg:grid grid-cols-3">
               <ListLayanan img="/psychologi-consultation.jpg">Poli Umum</ListLayanan>
               <ListLayanan img="/psychologi-consultation.jpg">Poli Gigi</ListLayanan>
@@ -124,9 +130,9 @@ const LandingPage = () => {
               <ListLayanan img="/psychologi-consultation.jpg">Terapi Wicara</ListLayanan>
               <ListLayanan img="/psychologi-consultation.jpg">Terapi Okupasi</ListLayanan>
               <ListLayanan img="/psychologi-consultation.jpg">Khitan</ListLayanan>
-            </div>
+            </div> */}
 
-            <div className="text-3xl font-bold text-[#29ADB2] mb-4 mt-10">Layanan Online Klinik Pratama Kamandaka</div>
+            <div className="text-3xl font-bold text-[#29ADB2] mb-4">Layanan Online Klinik Pratama Kamandaka</div>
             <div className="lg:grid grid-cols-3">
               <ListLayanan img="/psychologi-consultation.jpg">Tes Psikologi</ListLayanan>
               <ListLayanan img="/psychologi-consultation.jpg">Konsultasi Psikologi</ListLayanan>
@@ -134,11 +140,11 @@ const LandingPage = () => {
               <ListLayanan img="/psychologi-consultation.jpg">Konsultasi Terapi</ListLayanan>
               <ListLayanan img="/psychologi-consultation.jpg">Konsultasi Dokter Gigi</ListLayanan>
               <ListLayanan img="/psychologi-consultation.jpg">Konsultasi Obat</ListLayanan>
-              <div className="col-span-3 m-6 flex flex-row flex justify-center">
+              {/* <div className="col-span-3 m-6 flex flex-row flex justify-center">
                 <div className="border border-[#29ADB2] p-4 bg-[#29ADB2] rounded-lg font-semibold cursor-pointer hover:bg-white text-center" onClick={handleLogin}>
                   Daftar Konsultasi atau Tes Psikologi Online
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
