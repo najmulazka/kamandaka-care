@@ -13,6 +13,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model News {
+  id          Int     @id @default(autoincrement())
+  title       String
+  imageUrl    String?
+  fileId      String? @unique
+  description String
+}
+
 model Admin {
   id       Int    @id @default(autoincrement())
   username String @unique
@@ -83,6 +91,7 @@ model Bookings {
   id         Int      @id @default(autoincrement())
   clientId   Int
   serviceId  Int
+  type       String   @default("Online")
   dateTime   DateTime
   linkClient String?
   linkHost   String?
@@ -102,7 +111,7 @@ model TestTypes {
   id          Int           @id @default(autoincrement())
   educationId Int
   doctorId    Int
-  testName    String       
+  testName    String
   price       String
   educations  Educations    @relation(fields: [educationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   doctors     Doctors       @relation(fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)

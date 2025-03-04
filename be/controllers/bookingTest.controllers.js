@@ -47,7 +47,6 @@ module.exports = {
 
     let questionUrl = '';
     if (bookingTest.isValidate) {
-      // const questions = await createQuestion(bookingTest.testypes.testName);
       if (bookingTest.testypes.testName.toLowerCase().includes('inteligensi')) {
         questionUrl = GOOGLE_FORM_INTELIGENSI;
       } else if (bookingTest.testypes.testName.toLowerCase().includes('belajar')) {
@@ -153,6 +152,15 @@ module.exports = {
           },
         },
       },
+      orderBy: [
+        {
+          isValidate: {
+            nulls: 'first',
+            sort: 'asc',
+          },
+        },
+        { id: 'desc' },
+      ],
     });
 
     if (!bookingTest) {
@@ -186,6 +194,15 @@ module.exports = {
           },
         },
       },
+      orderBy: [
+        {
+          isValidate: {
+            nulls: 'first',
+            sort: 'asc',
+          },
+        },
+        { id: 'desc' },
+      ],
     });
 
     const bookingsWithWIB = bookingTest.map((booking) => ({
@@ -210,6 +227,7 @@ module.exports = {
         },
         clients: true,
       },
+      orderBy: { id: 'desc' },
     });
 
     const bookingsWithWIB = bookingTest.map((booking) => ({
@@ -275,7 +293,7 @@ module.exports = {
       });
 
       if (bookingTestExist.fileId !== null) {
-        imagekit.deleteFile(bookingTestExist.fileId);
+        await imagekit.deleteFile(bookingTestExist.fileId);
       }
 
       const bookingTest = await prisma.bookingTest.update({

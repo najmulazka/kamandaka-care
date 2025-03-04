@@ -26,7 +26,7 @@ module.exports = {
   getDoctors: async (req, res, next) => {
     const doctor = await prisma.doctors.findMany();
 
-    res.sendResponse(201, 'OK', null, doctor);
+    res.sendResponse(200, 'OK', null, doctor);
   },
 
   updateDoctors: async (req, res, next) => {

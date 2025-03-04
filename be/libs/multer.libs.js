@@ -24,4 +24,8 @@ module.exports = {
   pdf: generateFilter({
     allowedMimeTypes: ['application/pdf'],
   }),
+
+  image: generateFilter({
+    allowedMimeTypes: ['image/jpeg', 'image/png'],
+  }),
 };

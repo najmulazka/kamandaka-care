@@ -1,6 +1,6 @@
 const prisma = require('../libs/prisma.lib');
 const bcrypt = require('bcrypt');
-const { USERNAME_ADMIN, PASSWORD_ADMIN } = process.env;
+const { USERNAME_ADMIN, PASSWORD_ADMIN, CLIENT_EMAIL, CLIENT_FULLNAME, CLIENT_GOOGLE_ID } = process.env;
 
 module.exports = {
   firstRun: async () => {
@@ -11,6 +11,17 @@ module.exports = {
         data: {
           username: USERNAME_ADMIN,
           password: encryptedPassword,
+        },
+      });
+    }
+
+    const clientExist = await prisma.clients.findUnique({ where: { email: CLIENT_EMAIL } });
+    if (!clientExist) {
+      await prisma.clients.create({
+        data: {
+          fullName: CLIENT_FULLNAME,
+          email: CLIENT_EMAIL,
+          googleId: CLIENT_GOOGLE_ID,
         },
       });
     }

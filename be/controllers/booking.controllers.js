@@ -4,6 +4,7 @@ const prisma = require('../libs/prisma.lib');
 const { formatTimeToWib } = require('../libs/formatTimeToWib.libs');
 const moment = require('moment-timezone');
 moment.locale('id');
+const { CLIENT_EMAIL } = process.env;
 
 // const formatTimeToWib 'YYYY-MM-DD HH:mm:ss',= (isoString) => {
 //   const date = new Date(isoString);
@@ -65,6 +66,27 @@ module.exports = {
 
     // Kekurangan -> tidak bisa buka diatas jam 7
     res.sendResponse(200, 'OK', null, filteredAvailableTime);
+  },
+
+  createBookingOffline: async (req, res, next) => {
+    const { serviceId, date, month, year, time } = req.body;
+
+    const wib = new Date(`${year}-${month}-${date} ${time}:00.000`);
+    const toUtc = moment.tz(wib, 'Asia/Jakarta').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+
+    const client = await prisma.clients.findUnique({ where: { email: CLIENT_EMAIL } });
+
+    const booking = await prisma.bookings.create({
+      data: {
+        clientId: Number(client.id),
+        serviceId: Number(serviceId),
+        type: 'Offline',
+        dateTime: new Date(`${toUtc}`),
+        isValidate: true,
+      },
+    });
+
+    res.sendResponse(201, 'Created', null, booking);
   },
 
   createBooking: async (req, res, next) => {
@@ -165,9 +187,12 @@ module.exports = {
           },
         },
       },
-      orderBy: {
-        isValidate: { nulls: 'first', sort: 'asc' },
-      },
+      orderBy: [
+        {
+          isValidate: { nulls: 'first', sort: 'asc' },
+        },
+        { id: 'desc' },
+      ],
     });
 
     const bookingsWithWIB = bookings.map((booking) => ({
@@ -192,6 +217,7 @@ module.exports = {
           },
         },
       },
+      orderBy: { id: 'desc' },
     });
 
     const bookingsWithWIB = bookings.map((booking) => ({
@@ -216,12 +242,15 @@ module.exports = {
           },
         },
       },
-      orderBy: {
-        isValidate: {
-          nulls: 'first',
-          sort: 'asc',
+      orderBy: [
+        {
+          isValidate: {
+            nulls: 'first',
+            sort: 'asc',
+          },
         },
-      },
+        { id: 'desc' },
+      ],
     });
 
     const bookingsWithWIB = bookings.map((booking) => ({
