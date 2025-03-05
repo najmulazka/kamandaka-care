@@ -8,19 +8,6 @@ const HeaderAdmin = () => {
   const [isDropDownLogout, setIsDropDownLogout] = useState(false);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-
-  //     } catch (err) {
-  //       if (err.message.includes('Unauthorized')) {
-  //         navigate('/');
-  //       }
-  //     }
-  //   };
-  //   fetchData();
-  // }, [navigate]);
-
   const handleOrderHistory = () => {
     setIsDropDown(!isDropDown);
   };
@@ -35,7 +22,7 @@ const HeaderAdmin = () => {
   };
 
   return (
-    <header className="inset-x-0 top-0 z-50 sticky bg-white shadow">
+    <header className="inset-x-0 top-0 z-50 sticky bg-white shadow print:hidden">
       <nav className="flex items-center justify-between p-4 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link to="#" className="">
@@ -83,6 +70,9 @@ const HeaderAdmin = () => {
           </Link>
           <Link to="/admin/doctor" className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer">
             Doctor
+          </Link>
+          <Link to="/admin/report" className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer">
+            Laporan
           </Link>
         </div>
 

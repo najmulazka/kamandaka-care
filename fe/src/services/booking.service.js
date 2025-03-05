@@ -78,10 +78,13 @@ export const validateBooking = async (id, data) => {
   }
 };
 
-export const getBooking = async () => {
+export const getBooking = async (queryParams = {}) => {
   const token = CookiesStorage.get(CookiesKey.TokenAdmin);
   try {
-    const response = await axios.get(`${BASE_URL}/booking`, {
+    const queryString = new URLSearchParams(queryParams).toString();
+    console.log(queryString)
+
+    const response = await axios.get(`${BASE_URL}/booking${queryString ? `?${queryString}` : ''}`, {
       headers: {
         Authorization: token,
       },

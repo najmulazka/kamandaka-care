@@ -176,32 +176,82 @@ module.exports = {
   },
 
   getBookings: async (req, res, next) => {
-    const bookings = await prisma.bookings.findMany({
-      include: {
-        clients: true,
-        services: {
-          include: {
-            doctors: {
-              select: { fullName: true, specialist: true },
+    try {
+      let { date, month, year } = req.query;
+      let where = {};
+
+      if (date && month && year) {
+        const startDate = new Date(`${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T17:00:00.000Z`);
+        startDate.setUTCDate(startDate.getUTCDate() - 1);
+        const endDate = new Date(`${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T17:00:00.000Z`);
+        console.log(startDate);
+        console.log(endDate);
+
+        where.dateTime = {
+          gte: startDate,
+          lt: endDate,
+        };
+        where.isValidate = true;
+      } else if (month && year) {
+        const startMonth = new Date(`${year}-${String(month).padStart(2, '0')}-01T17:00:00.000Z`);
+        startMonth.setUTCDate(startMonth.getUTCDate() - 1);
+        const endMonth = new Date(`${year}-${String(month).padStart(2, '0')}-01T17:00:00.000Z`);
+        endMonth.setUTCMonth(endMonth.getUTCMonth() + 1);
+        endMonth.setUTCDate(endMonth.getUTCDate() - 1);
+        console.log(startMonth);
+        console.log(endMonth);
+
+        where.dateTime = {
+          gte: startMonth,
+          lt: endMonth,
+        };
+        where.isValidate = true;
+      } else if (year && !month && !date) {
+        const startYear = new Date(`${year}-01-01T17:00:00.000Z`);
+        startYear.setUTCDate(startYear.getUTCDate() - 1);
+        const endYear = new Date(`${year}-01-01T17:00:00.000Z`);
+        endYear.setUTCFullYear(endYear.getUTCFullYear() + 1);
+        endYear.setUTCDate(endYear.getUTCDate() - 1);
+        console.log(startYear);
+        console.log(endYear);
+
+        where.dateTime = {
+          gte: startYear,
+          lt: endYear,
+        };
+        where.isValidate = true;
+      }
+
+      const bookings = await prisma.bookings.findMany({
+        where,
+        include: {
+          clients: true,
+          services: {
+            include: {
+              doctors: {
+                select: { fullName: true, specialist: true },
+              },
             },
           },
         },
-      },
-      orderBy: [
-        {
-          isValidate: { nulls: 'first', sort: 'asc' },
-        },
-        { id: 'desc' },
-      ],
-    });
+        orderBy: [
+          {
+            isValidate: { nulls: 'first', sort: 'asc' },
+          },
+          { dateTime: 'desc' },
+        ],
+      });
 
-    const bookingsWithWIB = bookings.map((booking) => ({
-      ...booking,
-      dateTime: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.dateTime),
-      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
-    }));
+      const bookingsWithWIB = bookings.map((booking) => ({
+        ...booking,
+        dateTime: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.dateTime),
+        createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
+      }));
 
-    res.sendResponse(200, 'OK', null, bookingsWithWIB);
+      res.sendResponse(200, 'OK', null, bookingsWithWIB);
+    } catch (err) {
+      next(err);
+    }
   },
 
   getBookingsDoctor: async (req, res, next) => {
@@ -217,7 +267,7 @@ module.exports = {
           },
         },
       },
-      orderBy: { id: 'desc' },
+      orderBy: { dateTime: 'desc' },
     });
 
     const bookingsWithWIB = bookings.map((booking) => ({

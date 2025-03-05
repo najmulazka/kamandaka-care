@@ -24,6 +24,7 @@ import EducationAdmin from '../components/pages/admin/EducationAdmin';
 import PsychologyTestAdmin from '../components/pages/admin/PsychologyTestAdmin';
 import { Protected, ProtectedClient, ProtectedDoctor } from '../utils/protected';
 import SyaratKetentuan from '../components/pages/SyaratKetentuan';
+import ReportAdmin from '../components/pages/admin/ReportAdmin';
 
 const RouterList = () => {
   return (
@@ -140,10 +141,17 @@ const RouterList = () => {
           }
         />
         <Route
+          path="/admin/report"
+          element={
+            <Protected>
+              <ReportAdmin />
+            </Protected>
+          }
+        />
+        <Route
           path="/doctor/available/:id"
           element={
             <ProtectedDoctor>
-              {' '}
               <AvailableDoctor />
             </ProtectedDoctor>
           }

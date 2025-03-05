@@ -18,3 +18,23 @@ html {
     -moz-appearance: textfield;
   }
 }
+
+@media print {
+  thead {
+    display: table-header-group;
+  }
+
+  tbody {
+    display: table-row-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  .page-break {
+    break-before: page;
+    margin-top: 40px;
+  }
+}
+

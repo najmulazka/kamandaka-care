@@ -24,6 +24,6 @@ app.get('/', async (req, res) => {
 app.use('/api/v1', routes);
 
 app.use(notFoundHandler);
-app.use(internalErrorHandler);
+// app.use(internalErrorHandler);
 
 app.listen(PORT, () => console.log('Running app in port', PORT));
