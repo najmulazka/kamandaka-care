@@ -74,6 +74,9 @@ const HeaderAdmin = () => {
           <Link to="/admin/report" className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer">
             Laporan
           </Link>
+          <Link to="/admin/news" className="text-base font-bold text-sky-500 hover:text-sky-700 relative flex cursor-pointer">
+            News
+          </Link>
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end relative">

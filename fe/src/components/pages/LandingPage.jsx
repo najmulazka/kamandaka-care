@@ -1,12 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import vector from '../../assets/vector.png';
 import { Link } from 'react-router-dom';
+import { getNews } from '../../services/news.service';
 
 const LandingPage = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [news, setNews] = useState({});
   const handleLogin = () => {
     window.location.href = `${import.meta.env.VITE_URL}/auth/google`;
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getNews();
+      setNews(response);
+    };
+    fetchData();
+  }, []);
+
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? news.length - 1 : prevIndex - 1));
+  };
+
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === news.length - 1 ? 0 : prevIndex + 1));
+  };
+
   return (
     <div>
       <header className="sticky z-50 top-0 bg-white shadow-md">
@@ -93,7 +113,7 @@ const LandingPage = () => {
       {/* Hero */}
       {/* bg-[url(/hero.jpg)] bg-cover bg-bottom bg-no-repeat ... */}
       <div className=" bg-[#29ADB2] lg:grid lg:grid-cols-2 " style={{ backgroundImage: `url(${vector})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'left' }}>
-        <div className="p-4 py-14 lg:py-0 lg:px-20 lg:pt-16">
+        <div className="p-4 pt-14 lg:py-0 lg:px-20 lg:pt-16">
           <div className="text-3xl lg:text-6xl text-white font-bold text-left leading-snug">Kesehatan Anda, Prioritas Kami</div>
           <div className=" text-white font-semibold text-left mt-4">Klinik Pratama Kamandaka siap menjadi mitra kesehatan Anda dengan pelayanan yang ramah, cepat, dan berkualitas.</div>
           <div className="lg:w-2/3 bg-white font-semibold rounded-lg mt-10 mb-10 text-gray-800 px-4 py-2">
@@ -108,6 +128,36 @@ const LandingPage = () => {
               </div>
             </div>
           </div>
+          {/* banner mobile*/}
+          <div id="banner" className="lg:hidden flex justify-center items-center relative">
+            <button onClick={prevSlide} className="absolute left-1 lg:left-24 z-10 text-white p-1 rounded-full shadow-md hover:bg-gray-700">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-8 h-8 lg:w-14 lg:h-14" fill="rgba(255,255,255,0.57)">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path>
+              </svg>
+            </button>
+            <div className="lg:w-full relative overflow-hidden">
+              <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+                {news.length > 0 &&
+                  news.map((news, index) => (
+                    <div key={index} className="min-w-full flex justify-center relative">
+                      <div className="bg-white w-full rounded-xl shadow-md overflow-hidden relative">
+                        <img src={news.imageUrl} alt={`Banner ${index + 1}`} className="rounded-xl w-full object-cover" />
+                        <div className="absolute inset-0 flex bg-black bg-opacity-40 text-white text-xl font-bold">
+                          <div className="absolute bottom-2 lg:bottom-6 left-2 lg:left-6 text-lgz">{news.title}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+            <button onClick={nextSlide} className="absolute right-1 lg:right-24 z-10 text-white p-1 rounded-full shadow-md hover:bg-gray-700">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-8 h-8 lg:w-14 lg:h-14" fill="rgba(255,255,255,0.57)">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path d="M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"></path>
+              </svg>
+            </button>
+          </div>
         </div>
         <div className="hidden h-full lg:flex justify-center items-center">
           <div className="w-1/2">
@@ -116,10 +166,41 @@ const LandingPage = () => {
         </div>
       </div>
 
+      {/* banner desktop*/}
+      <div id="banner" className="p-4 hidden lg:flex w-full lg:px-20 justify-center items-center relative">
+        <button onClick={prevSlide} className="absolute left-5 lg:left-24 z-10 text-white p-1 rounded-full shadow-md hover:bg-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-8 h-8 lg:w-14 lg:h-14" fill="rgba(255,255,255,0.57)">
+            <path fill="none" d="M0 0h24v24H0z"></path>
+            <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path>
+          </svg>
+        </button>
+        <div className="lg:w-full relative overflow-hidden rounded-xl">
+          <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+            {news.length > 0 &&
+              news.map((news, index) => (
+                <div key={index} className="min-w-full flex justify-center relative">
+                  <div className="bg-white w-full shadow-md overflow-hidden relative">
+                    <img src={news.imageUrl} alt={`Banner ${index + 1}`} className="rounded-xl w-full" />
+                    <div className="absolute inset-0 flex bg-black bg-opacity-40 text-white text-xl font-bold">
+                      <div className="absolute bottom-2 lg:bottom-6 left-2 lg:left-6 lg:text-5xl">{news.title}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+        <button onClick={nextSlide} className="absolute right-5 lg:right-24 z-10 text-white p-1 rounded-full shadow-md hover:bg-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-8 h-8 lg:w-14 lg:h-14" fill="rgba(255,255,255,0.57)">
+            <path fill="none" d="M0 0h24v24H0z"></path>
+            <path d="M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"></path>
+          </svg>
+        </button>
+      </div>
+
       {/* LAYANAN */}
       <div id="layanan" className="p-4 lg:px-20 min-h-[400px]">
-        <div className="lg:w-full relative">
-          <div className="bg-white w-full p-4 lg:px-10 lg:py-10 rounded-xl lg:absolute -top-10 lg:-top-14 shadow-md">
+        <div className="lg:w-full ">
+          <div className="bg-white w-full p-4 lg:px-10 lg:py-10 rounded-xl border border-gray-200 shadow-md">
             <div className="mb-2">Layanan Kami</div>
             {/* <div className="text-3xl font-bold text-[#29ADB2] mb-4">Layanan Klinik Pratama Kamandaka</div>
             <div className="lg:grid grid-cols-3">
@@ -134,12 +215,24 @@ const LandingPage = () => {
 
             <div className="text-3xl font-bold text-[#29ADB2] mb-4">Layanan Online Klinik Pratama Kamandaka</div>
             <div className="lg:grid grid-cols-3">
-              <ListLayanan img="/psychologi-consultation.jpg">Tes Psikologi</ListLayanan>
-              <ListLayanan img="/psychologi-consultation.jpg">Konsultasi Psikologi</ListLayanan>
-              <ListLayanan img="/psychologi-consultation.jpg">Konsultasi Dokter Umum</ListLayanan>
-              <ListLayanan img="/psychologi-consultation.jpg">Konsultasi Terapi</ListLayanan>
-              <ListLayanan img="/psychologi-consultation.jpg">Konsultasi Dokter Gigi</ListLayanan>
-              <ListLayanan img="/psychologi-consultation.jpg">Konsultasi Obat</ListLayanan>
+              <ListLayanan img="/psychologi-consultation.jpg" title="Tes Psikologi">
+                Evaluasi untuk mengukur aspek kepribadian, kecerdasan, emosi, dan perilaku seseorang.
+              </ListLayanan>
+              <ListLayanan img="/psychologi-consultation.jpg" title="Konsultasi Psikologi">
+                Mengatasi masalah mental, emosional, dan menemukan solusi terbaik bagi kesejahteraan Anda.
+              </ListLayanan>
+              <ListLayanan img="/psychologi-consultation.jpg" title="Konsultasi Dokter Umum">
+                Membantu diagnosis, pengobatan, dan pencegahan berbagai kondisi kesehatan untuk menjaga kesejahteraan Anda.
+              </ListLayanan>
+              <ListLayanan img="/psychologi-consultation.jpg" title="Konsultasi Terapi">
+                Membantu mengatasi masalah emosional, mental, atau fisik melalui pendekatan profesional untuk meningkatkan kualitas hidup.
+              </ListLayanan>
+              <ListLayanan img="/psychologi-consultation.jpg" title="Konsultasi Dokter Gigi">
+                Pemeriksaan, perawatan, dan pencegahan masalah kesehatan gigi dan mulut.
+              </ListLayanan>
+              <ListLayanan img="/psychologi-consultation.jpg" title="Konsultasi Obat">
+                Membantu memahami penggunaan, dosis, dan efek samping obat untuk pengobatan yang aman dan efektif.
+              </ListLayanan>
               {/* <div className="col-span-3 m-6 flex flex-row flex justify-center">
                 <div className="border border-[#29ADB2] p-4 bg-[#29ADB2] rounded-lg font-semibold cursor-pointer hover:bg-white text-center" onClick={handleLogin}>
                   Daftar Konsultasi atau Tes Psikologi Online
@@ -245,13 +338,16 @@ const LandingPage = () => {
 };
 
 function ListLayanan(props) {
-  const { img, children } = props;
+  const { img, children, title } = props;
   return (
     <div className="border border-[#29ADB2] p-4 m-2 flex flex-row rounded-md space-x-4 align-center items-center">
-      <div className="w-16">
+      <div className="max-w-16">
         <img src={img} alt="" className="rounded-full" />
       </div>
-      <div>{children}</div>
+      <div>
+        <div className="font-bold">{title}</div>
+        <div>{children}</div>
+      </div>
     </div>
   );
 }

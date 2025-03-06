@@ -14,7 +14,8 @@ const formatTimeToWib = (isoString) => {
 };
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: 'credentials.json',
+  // keyFile: 'credentials.json',
+  keyFile: 'credentialskamcare.json',
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
 });
 

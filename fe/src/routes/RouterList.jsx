@@ -25,6 +25,7 @@ import PsychologyTestAdmin from '../components/pages/admin/PsychologyTestAdmin';
 import { Protected, ProtectedClient, ProtectedDoctor } from '../utils/protected';
 import SyaratKetentuan from '../components/pages/SyaratKetentuan';
 import ReportAdmin from '../components/pages/admin/ReportAdmin';
+import NewsAdmin from '../components/pages/admin/NewsAdmin';
 
 const RouterList = () => {
   return (
@@ -87,7 +88,6 @@ const RouterList = () => {
           path="/admin/booking"
           element={
             <Protected>
-              {' '}
               <BookingAdmin />
             </Protected>
           }
@@ -145,6 +145,14 @@ const RouterList = () => {
           element={
             <Protected>
               <ReportAdmin />
+            </Protected>
+          }
+        />
+        <Route
+          path="/admin/news"
+          element={
+            <Protected>
+              <NewsAdmin />
             </Protected>
           }
         />

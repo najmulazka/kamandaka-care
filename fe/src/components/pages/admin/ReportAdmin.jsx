@@ -1,21 +1,29 @@
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useReactToPrint } from 'react-to-print';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import HeaderAdmin from '../../fragments/HeaderAdmin';
 import { getBooking } from '../../../services/booking.service';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const ReportAdmin = () => {
-  const contentRef = useRef(null);
-  const reactToPrintFn = useReactToPrint({ contentRef });
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedValue, setSelectedValue] = useState('month');
   const navigate = useNavigate();
   const [bookings, setBookings] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   let index = 1;
+
+  let formatter = new Intl.DateTimeFormat('id-ID', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Asia/Jakarta',
+  });
+
+  const formatDate = formatter.format(selectedDate).toUpperCase();
+  const [, , month, year] = formatDate.split(' ');
 
   const handleChange = (event) => {
     setSelectedValue(event.target.id);
@@ -60,6 +68,10 @@ const ReportAdmin = () => {
     fetchData();
   }, [selectedValue, selectedDate]);
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div>
       <HeaderAdmin />
@@ -82,13 +94,13 @@ const ReportAdmin = () => {
       </div>
       <div className="px-8 lg:justify-center lg:flex flex-col print:hidden">
         <div className="flex justify-end">
-          <div onClick={() => reactToPrintFn()} className="bg-green-600 py-1 px-2 rounded-md hover:bg-green-700 hover:cursor-pointer font-semibold text-white">
+          <div onClick={handlePrint} className="bg-green-600 py-1 px-2 rounded-md hover:bg-green-700 hover:cursor-pointer font-semibold text-white">
             Download/Print
           </div>
         </div>
       </div>
-      <div ref={contentRef} className="p-10 px-8">
-        <div className="font-semibold text-xl text-center">LAPORAN {selectedValue == 'date' ? 'HARIAN' : selectedValue == 'month' ? 'BULANAN' : 'TAHUNAN'}</div>
+      <div className="p-10 px-8">
+        <div className="font-semibold text-xl text-center">LAPORAN {selectedValue == 'date' ? `HARI ${formatDate} ` : selectedValue == 'month' ? `BULAN ${month} ${year}` : `TAHUN ${year}`}</div>
         <div className="font-semibold text-xl text-center mb-4">KLINIK PRATAMA KAMANDAKA</div>
         {isLoading ? (
           'Loading...'
