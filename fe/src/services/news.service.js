@@ -47,7 +47,7 @@ export const getNewsDetail = async (id) => {
 export const updateNews = async (id, data) => {
   try {
     const token = CookiesStorage.get(CookiesKey.TokenAdmin);
-    const response = await axios.post(`${BASE_URL}/news/${id}`, data, {
+    const response = await axios.put(`${BASE_URL}/news/${id}`, data, {
       headers: { Authorization: token, 'Content-Type': 'multipart/form-data' },
     });
     return response.data.data;

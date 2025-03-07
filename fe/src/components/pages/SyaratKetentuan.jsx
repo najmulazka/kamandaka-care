@@ -45,7 +45,7 @@ const SyaratKetentuan = () => {
       <div>Syarat dan ketentuan ini diatur oleh hukum yang berlaku di Indonesia. Sengketa yang timbul dari penggunaan aplikasi ini akan diselesaikan di yurisdiksi Indonesia.</div>
       <div className="mt-4 font-semibold text-xl">9. Kontak</div>
       <div>
-        Untuk pertanyaan atau keluhan terkait syarat dan ketentuan ini, silakan hubungi kami di mail@gmail.com. Dengan menggunakan aplikasi Klinik Kamandaka, Anda menyatakan telah membaca, memahami, dan menyetujui syarat dan ketentuan ini.
+        Untuk pertanyaan atau keluhan terkait syarat dan ketentuan ini, silakan hubungi kami di klinikkamandaka@gmail.com. Dengan menggunakan aplikasi Klinik Kamandaka, Anda menyatakan telah membaca, memahami, dan menyetujui syarat dan ketentuan ini.
       </div>
     </div>
   );

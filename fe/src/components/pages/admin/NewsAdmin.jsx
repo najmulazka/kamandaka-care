@@ -51,7 +51,6 @@ const ArticleAdmin = () => {
     if (editData) {
       setFormInput({
         title: editData.title,
-        image: editData.imageUrl,
         description: editData.description,
       });
     }
@@ -243,10 +242,12 @@ const ArticleAdmin = () => {
           <div className="relative p-4 w-full max-w-md h-auto">
             {/* <!-- Modal content --> */}
             <div className="relative p-4 text-center bg-white rounded-lg shadow sm:p-5">
-              <button
+              <div
                 type="button"
-                onClick={handleCancel}
-                className="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                onClick={isProcess ? undefined : handleCancel}
+                className={`text-gray-400 absolute top-2.5 right-2.5 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center ${
+                  isProcess ? '' : 'hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white'
+                }`}
                 data-modal-toggle="deleteModal">
                 <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -255,14 +256,14 @@ const ArticleAdmin = () => {
                     clipRule="evenodd"></path>
                 </svg>
                 <span className="sr-only">Close modal</span>
-              </button>
+              </div>
 
               <div className="font-semibold">{editData ? 'Update' : 'Input'} News</div>
               {errorMessage !== '' && <div className="text-red-500">{errorMessage}</div>}
               <form onSubmit={isProcess ? undefined : handleSubmit} className="flex flex-col space-y-2 my-4">
                 <input type="text" value={formInput.title} onChange={handleChange} required name="title" placeholder="title" className="border border-gray-500 px-2 py-1 rounded-lg" />
                 <input type="file" accept="image/png, image/jpeg" onChange={handleChange} required name="image" className="border border-gray-500 px-2 py-1 rounded-lg" />
-                <input type="text" value={formInput.description} onChange={handleChange} required name="description" placeholder="description" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
+                <textarea type="text" value={formInput.description} onChange={handleChange} required name="description" placeholder="description" className="border border-gray-500 px-2 py-1 rounded-lg h-48" />
                 <button type="submit" className={`bg-sky-500 hover:bg-sky-700 text-white px-4 ${isProcess ? 'opacity-50 pointer-events-none' : ''} py-2 rounded-lg w-full `}>
                   {isProcess ? 'Loading...' : editData ? 'Update' : 'Simpan'}
                 </button>

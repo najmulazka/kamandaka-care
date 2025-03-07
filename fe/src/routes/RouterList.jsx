@@ -26,6 +26,7 @@ import { Protected, ProtectedClient, ProtectedDoctor } from '../utils/protected'
 import SyaratKetentuan from '../components/pages/SyaratKetentuan';
 import ReportAdmin from '../components/pages/admin/ReportAdmin';
 import NewsAdmin from '../components/pages/admin/NewsAdmin';
+import News from '../components/pages/news';
 
 const RouterList = () => {
   return (
@@ -33,6 +34,7 @@ const RouterList = () => {
       <Routes>
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/" element={<LandingPage />} />
+        <Route path="/news/:id" element={<News />} />
         <Route path="/syarat-ketentuan" element={<SyaratKetentuan />} />
         <Route path="/callback" element={<CallbackPage />} />
         <Route

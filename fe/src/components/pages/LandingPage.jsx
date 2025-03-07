@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import vector from '../../assets/vector.png';
 import { Link } from 'react-router-dom';
 import { getNews } from '../../services/news.service';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [news, setNews] = useState({});
@@ -25,6 +27,10 @@ const LandingPage = () => {
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex === news.length - 1 ? 0 : prevIndex + 1));
+  };
+
+  const handleNews = (id) => {
+    navigate(`/news/${id}`);
   };
 
   return (
@@ -139,12 +145,12 @@ const LandingPage = () => {
             <div className="lg:w-full relative overflow-hidden">
               <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
                 {news.length > 0 &&
-                  news.map((news, index) => (
-                    <div key={index} className="min-w-full flex justify-center relative">
+                  news.map((item, index) => (
+                    <div key={index} className="min-w-full flex justify-center relative cursor-pointer" onClick={() => handleNews(item.id)}>
                       <div className="bg-white w-full rounded-xl shadow-md overflow-hidden relative">
-                        <img src={news.imageUrl} alt={`Banner ${index + 1}`} className="rounded-xl w-full object-cover" />
+                        <img src={item.imageUrl} alt={`Banner ${index + 1}`} className="rounded-xl w-full object-cover" />
                         <div className="absolute inset-0 flex bg-black bg-opacity-40 text-white text-xl font-bold">
-                          <div className="absolute bottom-2 lg:bottom-6 left-2 lg:left-6 text-lgz">{news.title}</div>
+                          <div className="absolute bottom-2 lg:bottom-6 left-2 lg:left-6 text-xl line-clamp-2">{item.title}</div>
                         </div>
                       </div>
                     </div>
@@ -177,12 +183,12 @@ const LandingPage = () => {
         <div className="lg:w-full relative overflow-hidden rounded-xl">
           <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
             {news.length > 0 &&
-              news.map((news, index) => (
-                <div key={index} className="min-w-full flex justify-center relative">
+              news.map((item, index) => (
+                <div key={index} className="min-w-full flex justify-center relative cursor-pointer" onClick={() => handleNews(item.id)}>
                   <div className="bg-white w-full shadow-md overflow-hidden relative">
-                    <img src={news.imageUrl} alt={`Banner ${index + 1}`} className="rounded-xl w-full" />
-                    <div className="absolute inset-0 flex bg-black bg-opacity-40 text-white text-xl font-bold">
-                      <div className="absolute bottom-2 lg:bottom-6 left-2 lg:left-6 lg:text-5xl">{news.title}</div>
+                    <img src={item.imageUrl} alt={`Banner ${index + 1}`} className="rounded-xl w-full" />
+                    <div className="absolute inset-0 flex bg-black bg-opacity-25 hover:bg-opacity-50 text-white text-xl font-bold">
+                      <div className="absolute bottom-2 lg:bottom-6 left-2 lg:left-6 lg:text-5xl line-clamp-2">{item.title}</div>
                     </div>
                   </div>
                 </div>
@@ -247,24 +253,22 @@ const LandingPage = () => {
       <div className="p-4 lg:px-20 items-center flex flex-col justify-center border border-gray-200 border-t-0 border-l-0 border-r-0 border-b-1">
         <div className="">
           <div className="text-[#29ADB2] text-center lg:text-2xl text-base font-semibold">Visi</div>
-          <div className="text-base text-center">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque, quos? Molestiae dolor cum voluptatibus eius reprehenderit quos dolore quisquam harum rerum magni. Ut rem cum vel qui distinctio. Recusandae, cum.
-          </div>
+          <div className="text-base text-center">Menjadi Pusat Pelayanan Terapi Profesional Tingkat Nasional pada tahun 2030.</div>
           <div className="text-[#29ADB2] text-center lg:text-2xl text-base mt-4 font-semibold">Misi</div>
-          <div className="text-base text-left mb-1 lg:mb-2">- Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-          <div className="text-base text-left mb-1 lg:mb-2">- Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-          <div className="text-base text-left mb-1 lg:mb-2">- Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-          <div className="text-base text-left mb-1 lg:mb-2">- Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-          <div className="text-base text-left mb-1 lg:mb-2">- Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
+          <div className="text-base text-left mb-1 lg:mb-2">1. Sebagai tempat masyarakat untuk mengkonsultasikan masalah kesehatan yang mereka alami khususnya pelayanan terapi.</div>
+          <div className="text-base text-left mb-1 lg:mb-2">2. Sebagai mitra Pemerintah dalam memberikan pelayanan prefentif dan kuratif serta rehabilitatif.</div>
+          <div className="text-base text-left mb-1 lg:mb-2">3. Sebagai wujud pengabdian pada masyarakat dengan ikut serta dalam usaha warga untuk meningkatkan derajad kesejahteraan melalui peningkatan kesehatan.</div>
+          <div className="text-base text-left mb-1 lg:mb-2">4. Menjalankan pengobatan sesuai prosedur, berkualitas dan dapat terjangkau oleh semua kalangan masyarakat.</div>
+          <div className="text-base text-left mb-1 lg:mb-2">5. Memberikan pelayanan medis dasar yang berbasis Murah Terjangkau</div>
         </div>
       </div>
 
       {/* STRUKTUR ORGANISASI */}
       <div className="p-4 lg:px-20 items-center flex flex-col justify-center border border-gray-200 border-t-0 border-l-0 border-r-0 border-b-1">
         <div className="">
-          <div className="text-[#29ADB2] text-center lg:text-2xl text-base font-semibold">Struktur Organisasi</div>
+          <div className="text-[#29ADB2] text-center lg:text-2xl text-base font-semibold mb-2">Struktur Organisasi</div>
           <div>
-            <img src="struktur-organisasi.jpg" alt="" />
+            <img src="struktur.png" alt="" />
           </div>
         </div>
       </div>
@@ -279,7 +283,10 @@ const LandingPage = () => {
               <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM13 12V7H11V14H17V12H13Z"></path>
             </svg>
 
-            <div>Jam Operasional: Pagi 08.00-12.00 & Sore 16.00-20.00</div>
+            <div className="flex flex-col">
+              <div>Senin – Sabtu (Minggu atau hari Besar Tutup)</div>
+              <div>Pukul 08.00 – 12.00 dan 16.00 – 20.00</div>
+            </div>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -293,7 +300,7 @@ const LandingPage = () => {
                 className="hover:text-white"
                 target="_blank"
                 href="https://www.google.com/maps/place/Klinik+Pratama+Kamandaka/@-7.4085807,109.2204295,17z/data=!3m1!4b1!4m6!3m5!1s0x2e655f0013cc3cc3:0xb18ff0f531b06827!8m2!3d-7.4085807!4d109.2204295!16s%2Fg%2F11vz77ymm1?entry=ttu&g_ep=EgoyMDI1MDIxOC4wIKXMDSoASAFQAw%3D%3D">
-                Jl. Kamandaka, Bobosan RT 2/ RW2 Kec.Purwokerto Utara, Kabupaten Banyumas, Jawa Tengah 53127
+                Jl. Kamandaka, Bobosan RT02/02 Kec.Purwokerto Utara, Kabupaten Banyumas, Jawa Tengah 53127
               </a>
             </div>
           </div>
@@ -316,7 +323,11 @@ const LandingPage = () => {
               <path d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM20 7.23792L12.0718 14.338L4 7.21594V19H20V7.23792ZM4.51146 5L12.0619 11.662L19.501 5H4.51146Z"></path>
             </svg>
 
-            <div>mail@gmail.com</div>
+            <div>
+              <a href="mailto:klinikkamandaka@gmail.com" className="hover:text-white">
+                klinikkamandaka@gmail.com
+              </a>
+            </div>
           </div>
         </div>
         <div className="my-6 lg:my-0">
