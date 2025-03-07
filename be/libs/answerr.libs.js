@@ -74,7 +74,7 @@ async function getAnswerr(auth, id, testName, email) {
   const bookingTest = await prisma.bookingTest.findUnique({ where: { id: Number(id) } });
   bookingTest.createdAt = formatTimeToWib(bookingTest.createdAt);
 
-  const userExist = data.filter((item) => item['Email Address'] == email) || [];
+  const userExist = data.filter((item) => item['Email Address'] == email).sort((a, b) => new Date(a.Timestamp) - new Date(b.Timestamp)) || [];
   const firstLargerTimestamp = userExist.find(({ Timestamp }) => {
     return Timestamp > bookingTest.createdAt;
   });

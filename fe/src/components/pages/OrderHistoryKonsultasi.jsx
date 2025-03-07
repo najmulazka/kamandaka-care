@@ -30,9 +30,8 @@ const OrderHistoryKonsultasi = () => {
   return (
     <div>
       <HeaderClient />
-      <div className="p-8 px-8 align-center lg:flex flex-col justify-center">
+      <div className="p-8 px-8 align-center lg:flex flex-col justify-center print:hidden">
         <div className="font-semibold text-xl text-center mb-4">RIWAYAT BOOKING KONSULTASI</div>
-
         {data.length > 0 && (
           <table className="border-collapse border border-gray-400">
             <thead className="bg-[#29ADB2]">

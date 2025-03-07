@@ -40,10 +40,10 @@ const Payment = () => {
       <div className="px-8 py-12 flex justify-center">
         <div className="text-center">
           {dataBooking.length > 0 && dataBooking.find((item) => item.isValidate === null) && (
-            <div>Silahkan lakukan pembayaran dengan nominal Rp {dataBooking.find((item) => item.isValidate === null).services.price} nomor rekening 123456789 an.Kamandaka Care</div>
+            <div>Silahkan lakukan pembayaran dengan nominal Rp {dataBooking.find((item) => item.isValidate === null).services.price} ke Bank BSI.1100000567 an.KLINIK KAMANDAKA</div>
           )}
           {dataBookingTest.length > 0 && dataBookingTest.find((item) => item.isValidate === null) && (
-            <div>Silahkan lakukan pembayaran dengan nominal Rp {dataBookingTest.find((item) => item.isValidate === null).testypes.price} nomor rekening 123456789 an.Kamandaka Care</div>
+            <div>Silahkan lakukan pembayaran dengan nominal Rp {dataBookingTest.find((item) => item.isValidate === null).testypes.price} ke Bank BSI.1100000567 an.KLINIK KAMANDAKA</div>
           )}
           <div className="m-4">atau scan qr code</div>
           <div className="align-center flex justify-center">
@@ -52,7 +52,10 @@ const Payment = () => {
         </div>
       </div>
       <div className="text-center">
-        Jika sudah melakukan pembayaran harap kirim bukti pembayaran ke <strong className="text-sky-500 underline">whatsapp admin</strong>
+        Jika sudah melakukan pembayaran harap kirim bukti pembayaran ke
+        <strong className="text-sky-500 underline">
+          <a href="https://wa.me/+6287844760789">whatsapp admin</a>
+        </strong>
       </div>
     </div>
   );

@@ -110,7 +110,47 @@ module.exports = {
   },
 
   getBookingTests: async (req, res, next) => {
+    let { date, month, year } = req.query;
+    let where = {};
+
+    if (date && month && year) {
+      const startDate = new Date(`${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T17:00:00.000Z`);
+      startDate.setUTCDate(startDate.getUTCDate() - 1);
+      const endDate = new Date(`${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T17:00:00.000Z`);
+
+      where.createdAt = {
+        gte: startDate,
+        lt: endDate,
+      };
+      where.isValidate = true;
+    } else if (month && year) {
+      const startMonth = new Date(`${year}-${String(month).padStart(2, '0')}-01T17:00:00.000Z`);
+      startMonth.setUTCDate(startMonth.getUTCDate() - 1);
+      const endMonth = new Date(`${year}-${String(month).padStart(2, '0')}-01T17:00:00.000Z`);
+      endMonth.setUTCMonth(endMonth.getUTCMonth() + 1);
+      endMonth.setUTCDate(endMonth.getUTCDate() - 1);
+
+      where.createdAt = {
+        gte: startMonth,
+        lt: endMonth,
+      };
+      where.isValidate = true;
+    } else if (year && !month && !date) {
+      const startYear = new Date(`${year}-01-01T17:00:00.000Z`);
+      startYear.setUTCDate(startYear.getUTCDate() - 1);
+      const endYear = new Date(`${year}-01-01T17:00:00.000Z`);
+      endYear.setUTCFullYear(endYear.getUTCFullYear() + 1);
+      endYear.setUTCDate(endYear.getUTCDate() - 1);
+
+      where.createdAt = {
+        gte: startYear,
+        lt: endYear,
+      };
+      where.isValidate = true;
+    }
+
     const bookingTest = await prisma.bookingTest.findMany({
+      where,
       include: {
         clients: true,
         testypes: {
@@ -264,7 +304,7 @@ module.exports = {
       // }
 
       // res.sendResponse(200, 'OK', null, answer.answers[0].answers);
-      res.sendResponse(200, 'OK', null, answer);
+      res.sendResponse(200, 'OK', null, { bookingTest, answer });
     } catch (err) {
       next(err);
     }

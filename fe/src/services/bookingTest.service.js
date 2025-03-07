@@ -72,7 +72,7 @@ export const getBookingTestAnswer = async (id) => {
     return response.data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      CookiesStorage.remove(CookiesKey.TokenClient);
+      CookiesStorage.remove(CookiesKey.TokenDoctor);
       throw new Error('Unauthorized: Token is invalid');
     }
     throw error;
@@ -88,17 +88,19 @@ export const updateBookingTestResult = async (id, data) => {
     return response.data.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      CookiesStorage.remove(CookiesKey.TokenClient);
+      CookiesStorage.remove(CookiesKey.TokenDoctor);
       throw new Error('Unauthorized: Token is invalid');
     }
     throw error;
   }
 };
 
-export const getBookingTest = async () => {
+export const getBookingTest = async (queryParams = {}) => {
   try {
     const token = CookiesStorage.get(CookiesKey.TokenAdmin);
-    const response = await axios.get(`${BASE_URL}/booking-test`, {
+    const queryString = new URLSearchParams(queryParams).toString();
+
+    const response = await axios.get(`${BASE_URL}/booking-test${queryString ? `?${queryString}` : ''}`, {
       headers: { Authorization: token },
     });
     return response.data.data;
