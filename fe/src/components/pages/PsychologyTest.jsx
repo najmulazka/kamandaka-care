@@ -60,8 +60,8 @@ const PsychologyTest = () => {
         setIsPopUp(true);
         setIsProcess(false);
       } else if (check === undefined && check1 === undefined) {
-        await createBookingTest({ testTypeId: testType });
-        navigate('/client/payment');
+        let bookingTest = await createBookingTest({ testTypeId: testType });
+        navigate(`/client/order-history-psychology-test/payment/${bookingTest.id}`);
         setIsProcess(false);
       } else {
         setTestType('');

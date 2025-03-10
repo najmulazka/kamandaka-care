@@ -351,4 +351,19 @@ module.exports = {
       next(err);
     }
   },
+
+  autoInvalidBookingTest: async () => {
+    const timeNow = new Date();
+    timeNow.setUTCHours(timeNow.getUTCHours() - 3);
+
+    await prisma.bookingTest.updateMany({
+      where: {
+        isValidate: null,
+        createdAt: { lt: timeNow },
+      },
+      data: {
+        isValidate: false,
+      },
+    });
+  },
 };

@@ -96,8 +96,8 @@ const Konsultasi = () => {
         setIsPopUp(true);
         setIsProcess(false);
       } else if (check === undefined && check1 === undefined) {
-        await createBooking(data);
-        navigate('/client/payment');
+        let createBooking = await createBooking(data);
+        navigate(`/client/order-history-konsultasi/payment/${createBooking.id}`);
         setIsProcess(false);
       } else {
         setData({});

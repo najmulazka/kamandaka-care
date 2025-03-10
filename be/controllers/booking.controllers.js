@@ -248,6 +248,8 @@ module.exports = {
         createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
       }));
 
+      console.log('time : ', new Date());
+
       res.sendResponse(200, 'OK', null, bookingsWithWIB);
     } catch (err) {
       next(err);
@@ -310,5 +312,20 @@ module.exports = {
     }));
 
     res.sendResponse(200, 'OK', null, bookingsWithWIB);
+  },
+
+  autoInvalidBooking: async () => {
+    const timeNow = new Date();
+    timeNow.setUTCHours(timeNow.getUTCHours() - 3);
+
+    await prisma.bookings.updateMany({
+      where: {
+        isValidate: null,
+        createdAt: { lt: timeNow },
+      },
+      data: {
+        isValidate: false,
+      },
+    });
   },
 };

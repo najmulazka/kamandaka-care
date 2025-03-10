@@ -100,7 +100,7 @@ const LandingPage = () => {
                     <a href="#" onClick={() => setIsOpen(false)} className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
                       Home
                     </a>
-                    <a href="#news" onClick={() => setIsOpen(false)} className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
+                    <a href="#newss" onClick={() => setIsOpen(false)} className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
                       Berita
                     </a>
                     <a href="#layanan" onClick={() => setIsOpen(false)} className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
@@ -141,7 +141,7 @@ const LandingPage = () => {
             </div>
           </div>
           {/* banner mobile*/}
-          <div id="news" className="lg:hidden flex justify-center items-center relative">
+          <div id="newss" className="lg:hidden flex justify-center items-center relative">
             <button onClick={prevSlide} className="absolute left-1 lg:left-24 z-10 text-white p-1 rounded-full shadow-md hover:bg-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-8 h-8 lg:w-14 lg:h-14" fill="rgba(255,255,255,0.57)">
                 <path fill="none" d="M0 0h24v24H0z"></path>

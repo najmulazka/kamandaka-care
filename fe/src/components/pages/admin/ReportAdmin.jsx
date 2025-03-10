@@ -115,7 +115,7 @@ const ReportAdmin = () => {
           </div>
         </div>
       </div>
-      <div className="p-10 px-8">
+      <div className="px-8">
         <div className="font-semibold text-xl text-center">LAPORAN {selectedValue == 'date' ? `HARI ${formatDate} ` : selectedValue == 'month' ? `BULAN ${month} ${year}` : `TAHUN ${year}`}</div>
         <div className="font-semibold text-xl text-center mb-4">KLINIK PRATAMA KAMANDAKA</div>
         <div className="lg:grid grid-cols-4 gap-4">

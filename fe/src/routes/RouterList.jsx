@@ -5,7 +5,6 @@ import CalendarComponent from '../components/pages/CalendarComponent';
 import DashboardClient from '../components/pages/DashboardClient';
 import Konsultasi from '../components/pages/Konsultasi';
 import CallbackPage from '../components/pages/CallbackPage';
-import Payment from '../components/pages/Payment';
 import OrderHistoryKonsultasi from '../components/pages/OrderHistoryKonsultasi';
 import PsychologyTest from '../components/pages/PsychologyTest';
 import OrderHistoryPsychologyTest from '../components/pages/OrderHistoryPsychologyTest';
@@ -27,6 +26,8 @@ import SyaratKetentuan from '../components/pages/SyaratKetentuan';
 import ReportAdmin from '../components/pages/admin/ReportAdmin';
 import NewsAdmin from '../components/pages/admin/NewsAdmin';
 import News from '../components/pages/news';
+import PaymentPsychologyTest from '../components/pages/PaymentPsychologyTest';
+import PaymentKonsultasi from '../components/pages/PaymentKonsultasi';
 
 const RouterList = () => {
   return (
@@ -62,14 +63,6 @@ const RouterList = () => {
           }
         />
         <Route
-          path="/client/payment"
-          element={
-            <ProtectedClient>
-              <Payment />
-            </ProtectedClient>
-          }
-        />
-        <Route
           path="/client/order-history-konsultasi"
           element={
             <ProtectedClient>
@@ -78,10 +71,26 @@ const RouterList = () => {
           }
         />
         <Route
+          path="/client/order-history-konsultasi/payment/:id"
+          element={
+            <ProtectedClient>
+              <PaymentKonsultasi />
+            </ProtectedClient>
+          }
+        />
+        <Route
           path="/client/order-history-psychology-test"
           element={
             <ProtectedClient>
               <OrderHistoryPsychologyTest />
+            </ProtectedClient>
+          }
+        />
+        <Route
+          path="/client/order-history-psychology-test/payment/:id"
+          element={
+            <ProtectedClient>
+              <PaymentPsychologyTest />
             </ProtectedClient>
           }
         />
