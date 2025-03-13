@@ -28,6 +28,7 @@ import NewsAdmin from '../components/pages/admin/NewsAdmin';
 import News from '../components/pages/news';
 import PaymentPsychologyTest from '../components/pages/PaymentPsychologyTest';
 import PaymentKonsultasi from '../components/pages/PaymentKonsultasi';
+import NotFound from '../components/pages/NotFound';
 
 const RouterList = () => {
   return (
@@ -202,6 +203,7 @@ const RouterList = () => {
 
         <Route path="/login-admin" element={<LoginAdmin />} />
         <Route path="/login-doctor" element={<LoginDoctor />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

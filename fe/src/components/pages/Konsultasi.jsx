@@ -18,7 +18,6 @@ const Konsultasi = () => {
   const [serviceId, setServiceId] = useState('');
   const [isProcess, setIsProcess] = useState(false);
   const [isPopUp, setIsPopUp] = useState(false);
-  console.log(isPopUp);
   const [message, setMessage] = useState('');
   const [data, setData] = useState({});
   const navigate = useNavigate();
@@ -96,8 +95,8 @@ const Konsultasi = () => {
         setIsPopUp(true);
         setIsProcess(false);
       } else if (check === undefined && check1 === undefined) {
-        let createBooking = await createBooking(data);
-        navigate(`/client/order-history-konsultasi/payment/${createBooking.id}`);
+        const booking = await createBooking(data);
+        navigate(`/client/order-history-konsultasi/payment/${booking.id}`);
         setIsProcess(false);
       } else {
         setData({});

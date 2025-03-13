@@ -1,7 +1,7 @@
-const { JWT_SECRET_KEY, URL } = process.env;
 const jwt = require('jsonwebtoken');
-const prisma = require('../libs/prisma.lib');
 const bcrypt = require('bcrypt');
+const prisma = require('../libs/prisma.lib');
+const { JWT_SECRET_KEY, URL } = process.env;
 
 module.exports = {
   addAdmin: async (req, res, next) => {

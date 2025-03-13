@@ -40,6 +40,27 @@ export const createBooking = async (data) => {
   }
 };
 
+export const createMeet = async () => {
+  const token = CookiesStorage.get(CookiesKey.TokenClient);
+  try {
+    const response = await axios.post(`http://localhost:3000/create-event`, {
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    console.log(response);
+
+    return response.data.data;
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      CookiesStorage.remove(CookiesKey.TokenClient);
+      throw new Error('Unauthorized: Token is invalid');
+    }
+    throw error;
+  }
+};
+
 export const createBookingOffline = async (data) => {
   const token = CookiesStorage.get(CookiesKey.TokenAdmin);
   try {
@@ -82,7 +103,7 @@ export const getBooking = async (queryParams = {}) => {
   const token = CookiesStorage.get(CookiesKey.TokenAdmin);
   try {
     const queryString = new URLSearchParams(queryParams).toString();
-    console.log(queryString)
+    console.log(queryString);
 
     const response = await axios.get(`${BASE_URL}/booking${queryString ? `?${queryString}` : ''}`, {
       headers: {
