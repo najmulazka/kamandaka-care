@@ -45,6 +45,7 @@ module.exports = {
     });
 
     let questionUrl = '';
+    let emailPromises = [];
     if (bookingTest.isValidate) {
       if (bookingTest.testypes.testName.toLowerCase().includes('inteligensi')) {
         questionUrl = GOOGLE_FORM_INTELIGENSI;
@@ -72,28 +73,25 @@ module.exports = {
         },
       });
 
-      const html = await getHtml('booking-test-successfull.ejs', {
-        client: {
-          fullName: bookingTest.clients.fullName,
-          testName: bookingTest.testypes.testName,
-          questionUrl: a.questionUrl,
-        },
-      });
+      const [html, htmlDoctor] = await Promise.all([
+        getHtml('booking-test-successfull.ejs', {
+          client: {
+            fullName: bookingTest.clients.fullName,
+            testName: bookingTest.testypes.testName,
+            questionUrl: a.questionUrl,
+          },
+        }),
+        getHtml('get-booking-test.ejs', {
+          doctor: {
+            fullName: bookingTest.testypes.doctors.fullName,
+            testName: bookingTest.testypes.testName,
+            questionUrl: a.questionUrl,
+          },
+        }),
+      ]);
 
-      const htmlDoctor = await getHtml('get-booking-test.ejs', {
-        doctor: {
-          fullName: bookingTest.testypes.doctors.fullName,
-          testName: bookingTest.testypes.testName,
-          questionUrl: a.questionUrl,
-        },
-      });
-      await sendEmail(bookingTest.clients.email, bookingTest.testypes.testName, html);
-      await sendEmail(bookingTest.testypes.doctors.email, bookingTest.testypes.testName, htmlDoctor);
-
-      return res.sendResponse(200, 'OK', null, a);
-    }
-
-    if (!bookingTest.isValidate) {
+      emailPromises.push(sendEmail(bookingTest.clients.email, bookingTest.testypes.testName, html), sendEmail(bookingTest.testypes.doctors.email, bookingTest.testypes.testName, htmlDoctor));
+    } else {
       const html = await getHtml('booking-test-failed.ejs', {
         client: {
           fullName: bookingTest.clients.fullName,
@@ -101,10 +99,10 @@ module.exports = {
         },
       });
 
-      await sendEmail(bookingTest.clients.email, 'Booking Test Psikologi Gagal', html);
-      return res.sendResponse(200, 'OK', null, bookingTest);
+      emailPromises.push(sendEmail(bookingTest.clients.email, 'Booking Test Psikologi Gagal', html));
     }
 
+    await Promise.all(emailPromises);
     res.sendResponse(200, 'OK', null, bookingTest);
   },
 
@@ -112,39 +110,22 @@ module.exports = {
     let { date, month, year } = req.query;
     let where = {};
 
-    if (date && month && year) {
-      const startDate = new Date(`${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T17:00:00.000Z`);
-      startDate.setUTCDate(startDate.getUTCDate() - 1);
-      const endDate = new Date(`${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T17:00:00.000Z`);
+    if (year) {
+      let startDate, endDate;
 
-      where.createdAt = {
-        gte: startDate,
-        lt: endDate,
-      };
-      where.isValidate = true;
-    } else if (month && year) {
-      const startMonth = new Date(`${year}-${String(month).padStart(2, '0')}-01T17:00:00.000Z`);
-      startMonth.setUTCDate(startMonth.getUTCDate() - 1);
-      const endMonth = new Date(`${year}-${String(month).padStart(2, '0')}-01T17:00:00.000Z`);
-      endMonth.setUTCMonth(endMonth.getUTCMonth() + 1);
-      endMonth.setUTCDate(endMonth.getUTCDate() - 1);
-
-      where.createdAt = {
-        gte: startMonth,
-        lt: endMonth,
-      };
-      where.isValidate = true;
-    } else if (year && !month && !date) {
-      const startYear = new Date(`${year}-01-01T17:00:00.000Z`);
-      startYear.setUTCDate(startYear.getUTCDate() - 1);
-      const endYear = new Date(`${year}-01-01T17:00:00.000Z`);
-      endYear.setUTCFullYear(endYear.getUTCFullYear() + 1);
-      endYear.setUTCDate(endYear.getUTCDate() - 1);
-
-      where.createdAt = {
-        gte: startYear,
-        lt: endYear,
-      };
+      if (month) {
+        if (date) {
+          startDate = new Date(Date.UTC(year, month - 1, date, 0, 0, 0));
+          endDate = new Date(Date.UTC(year, month - 1, date, 23, 59, 59));
+        } else {
+          startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
+          endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59));
+        }
+      } else {
+        startDate = new Date(Date.UTC(year, 0, 1, 0, 0, 0));
+        endDate = new Date(Date.UTC(year, 11, 31, 23, 59, 59));
+      }
+      where.createdAt = { gte: startDate, lt: endDate };
       where.isValidate = true;
     }
 
@@ -192,12 +173,6 @@ module.exports = {
         },
       },
       orderBy: [
-        {
-          isValidate: {
-            nulls: 'first',
-            sort: 'asc',
-          },
-        },
         { id: 'desc' },
       ],
     });
@@ -211,10 +186,6 @@ module.exports = {
       createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
     }));
 
-    // const formId = bookingTest.questionUrl.split('/')[3];
-
-    // const answer = await getAnswer(formId);
-    // res.sendResponse(200, 'OK', null, { bookingTest, answers: answer.answers[0].answers });
     res.sendResponse(200, 'OK', null, bookingsWithWIB);
   },
 
@@ -234,12 +205,6 @@ module.exports = {
         },
       },
       orderBy: [
-        {
-          isValidate: {
-            nulls: 'first',
-            sort: 'asc',
-          },
-        },
         { id: 'desc' },
       ],
     });
@@ -279,8 +244,6 @@ module.exports = {
 
   getAnswerTest: async (req, res, next) => {
     try {
-      // const { formId } = req.params;
-      // const answer = await getAnswer(formId);
       const { id } = req.params;
       const bookingTest = await prisma.bookingTest.findUnique({
         where: { id: Number(id) },
@@ -297,12 +260,6 @@ module.exports = {
       });
 
       const answer = await getAnswerr(bookingTest.id, bookingTest.testypes.testName, bookingTest.clients.email);
-
-      // if (answer.answers.length === 0) {
-      //   return res.sendResponse(200, 'OK', null, answer.answers);
-      // }
-
-      // res.sendResponse(200, 'OK', null, answer.answers[0].answers);
       res.sendResponse(200, 'OK', null, { bookingTest, answer });
     } catch (err) {
       next(err);
@@ -322,27 +279,28 @@ module.exports = {
       }
 
       let strFile = req.file.buffer.toString('base64');
-      const { url, fileId } = await imagekit.upload({
-        fileName: Date.now() + path.extname(req.file.originalname),
-        file: strFile,
-      });
+      // let strFile = req.file.buffer;
+      const [uploadResult, bookingTestExist] = await Promise.all([
+        imagekit.upload({
+          fileName: Date.now() + path.extname(req.file.originalname),
+          file: strFile,
+        }),
+        prisma.bookingTest.findUnique({ where: { id: Number(id) } }),
+      ]);
 
-      const bookingTestExist = await prisma.bookingTest.findUnique({
-        where: { id: Number(id) },
-      });
+      const deleteOldFile = bookingTestExist.fileId ? imagekit.deleteFile(bookingTestExist.fileId) : Promise.resolve();
 
-      if (bookingTestExist.fileId !== null) {
-        await imagekit.deleteFile(bookingTestExist.fileId);
-      }
-
-      const bookingTest = await prisma.bookingTest.update({
-        where: { id: Number(id) },
-        data: {
-          resultUrl: url,
-          fileId,
-        },
-        include: { clients: true, testypes: true },
-      });
+      const [bookingTest] = await Promise.all([
+        prisma.bookingTest.update({
+          where: { id: Number(id) },
+          data: {
+            resultUrl: uploadResult.url,
+            fileId: uploadResult.fileId,
+          },
+          include: { clients: true, testypes: true },
+        }),
+        deleteOldFile,
+      ]);
 
       await sendEmail(bookingTest.clients.email, `Hasil tes ${bookingTest.testypes.testName}`, bookingTest.resultUrl);
       res.sendResponse(200, 'OK', null, bookingTest);

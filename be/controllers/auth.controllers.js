@@ -67,7 +67,6 @@ module.exports = {
 
   googleOauth2: async (req, res, next) => {
     const token = jwt.sign({ id: req.user.id }, JWT_SECRET_KEY);
-    console.log(token);
 
     const redirectUrl = `${URL}/callback?token=${token}`;
     res.redirect(redirectUrl);

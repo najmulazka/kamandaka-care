@@ -65,24 +65,27 @@ module.exports = {
         });
       }
 
-      const newsExist = await prisma.news.findUnique({ where: { id: Number(id) } });
+      let strFile = req.file.buffer.toString('base64');
+      const [uploadNews, newsExist] = await Promise.all([
+        imagekit.upload({
+          fileName: Date.now() + path.extname(req.file.originalname),
+          file: strFile,
+        }),
+        ,
+        prisma.news.findUnique({ where: { id: Number(id) } }),
+      ]);
+
       if (!newsExist) {
         return res.sendResponse(404, 'Not Found', 'Resource Not Found', null);
       }
       await imagekit.deleteFile(newsExist.fileId);
 
-      let strFile = req.file.buffer.toString('base64');
-      const { url, fileId } = await imagekit.upload({
-        fileName: Date.now() + path.extname(req.file.originalname),
-        file: strFile,
-      });
-
       const news = await prisma.news.update({
         where: { id: Number(id) },
         data: {
           title,
-          imageUrl: url,
-          fileId,
+          imageUrl: uploadNews.url,
+          fileId: uploadNews.fileId,
           description,
         },
       });
@@ -101,9 +104,7 @@ module.exports = {
         return res.sendResponse(404, 'Not Found', 'Resource Not Found', null);
       }
 
-      await imagekit.deleteFile(newsExist.fileId);
-      await prisma.news.delete({ where: { id: Number(id) } });
-
+      await Promise.all([imagekit.deleteFile(newsExist.fileId), prisma.news.delete({ where: { id: Number(id) } })]);
       res.sendResponse(200, 'Deleted', null, null);
     } catch (err) {
       next(err);

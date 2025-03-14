@@ -15,7 +15,6 @@ module.exports = {
     }
 
     jwt.verify(authorization, JWT_SECRET_KEY, async (err, decoded) => {
-      console.log('decoded', decoded);
       if (err) {
         return res.status(401).json({
           status: false,
@@ -43,7 +42,6 @@ module.exports = {
     }
 
     jwt.verify(authorization, JWT_SECRET_KEY, async (err, decoded) => {
-      console.log('decoded', decoded);
       if (err) {
         return res.status(401).json({
           status: false,
@@ -71,7 +69,6 @@ module.exports = {
     }
 
     jwt.verify(authorization, JWT_SECRET_KEY, async (err, decoded) => {
-      console.log('decoded', decoded);
       if (err) {
         return res.status(401).json({
           status: false,

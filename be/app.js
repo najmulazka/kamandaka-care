@@ -10,12 +10,17 @@ const { firstRun } = require('./middlewares/firstRun.middlewares');
 const { autoInvalidBooking } = require('./controllers/booking.controllers');
 const cron = require('node-cron');
 const { autoInvalidBookingTest } = require('./controllers/bookingTest.controllers');
-const { PORT } = process.env;
+const { URL, PORT } = process.env;
 
 app.use(express.json());
 app.set('view engine', 'ejs');
 app.use(morgan('dev'));
-app.use(cors());
+const corsOptions = {
+  origin: URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  // allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
 app.use(jsonResponse);
 
 (async () => {
@@ -23,8 +28,7 @@ app.use(jsonResponse);
 })();
 
 cron.schedule('*/1 * * * *', async () => {
-  await autoInvalidBooking();
-  await autoInvalidBookingTest();
+  await Promise.all([autoInvalidBooking(), autoInvalidBookingTest()]);
 });
 
 app.get('/', async (req, res) => {
@@ -33,6 +37,6 @@ app.get('/', async (req, res) => {
 app.use('/api/v1', routes);
 
 app.use(notFoundHandler);
-// app.use(internalErrorHandler);
+app.use(internalErrorHandler);
 
 app.listen(PORT, () => console.log('Running app in port', PORT));

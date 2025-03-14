@@ -43,7 +43,6 @@ async function getAnswerr(auth, id, testName, email) {
 
   const rows = response.data.values;
   if (!rows || rows.length === 0) {
-    console.log('No data found.');
     return;
   }
 
@@ -78,7 +77,6 @@ async function getAnswerr(auth, id, testName, email) {
   const firstLargerTimestamp = userExist.find(({ Timestamp }) => {
     return Timestamp > bookingTest.createdAt;
   });
-  console.log(firstLargerTimestamp);
   return firstLargerTimestamp ? firstLargerTimestamp : {};
 }
 

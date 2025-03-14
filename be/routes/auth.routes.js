@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { googleOauth2, whoami, addAdmin, loginAdmin, loginDoctor, whoDoctor } = require('../controllers/auth.controllers');
 const passport = require('../libs/passport.lib');
 const { restrict, doctor } = require('../middlewares/restrict.middleware');
+const { URL_BE } = process.env;
 
 router.post('/add-admin', addAdmin);
 router.post('/login-admin', loginAdmin);
@@ -12,7 +13,7 @@ router.get(
   '/google/callback',
   passport.authenticate('google', {
     session: false,
-    failureRedirect: `http://localhost:3000`,
+    failureRedirect: URL_BE,
   }),
   googleOauth2
 );

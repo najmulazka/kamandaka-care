@@ -11,9 +11,10 @@ module.exports = {
     const { serviceId, day, date, month, year } = req.body;
     const generateHourlySlots = (start, end) => {
       let slots = [];
-      let current = moment.utc(start).tz('Asia/Jakarta').startOf('hour');
+      let current = moment.tz(start, 'Asia/Jakarta').startOf('hour');
+      let endTime = moment.tz(end, 'Asia/Jakarta');
 
-      while (current.isSameOrBefore(moment.utc(end).tz('Asia/Jakarta'))) {
+      while (current.isSameOrBefore(endTime)) {
         slots.push(current.format('HH:mm'));
         current.add(1, 'hour');
       }
@@ -43,11 +44,6 @@ module.exports = {
       },
     });
 
-    // let booked = [];
-    // while (booked.length < booking.length) {
-    //   booked.push(formatTimeToWib('YYYY-MM-DD HH:mm:ss', booking[booked.length].dateTime));
-    // }
-
     const booked = booking.map((b) => formatTimeToWib('YYYY-MM-DD HH:mm:ss', b.dateTime));
 
     const formatHhMm = booked.map((w) => moment(w, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Jakarta').format('HH:mm'));
@@ -60,8 +56,8 @@ module.exports = {
   createBookingOffline: async (req, res, next) => {
     const { serviceId, date, month, year, time } = req.body;
 
-    const wib = new Date(`${year}-${month}-${date} ${time}:00.000`);
-    const toUtc = moment.tz(wib, 'Asia/Jakarta').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+    const wib = `${year}-${month}-${date} ${time}:00`;
+    const toUtc = moment.tz(wib, 'Asia/Jakarta').utc().toDate();
 
     const client = await prisma.clients.findUnique({ where: { email: CLIENT_EMAIL } });
 
@@ -70,7 +66,7 @@ module.exports = {
         clientId: Number(client.id),
         serviceId: Number(serviceId),
         type: 'Offline',
-        dateTime: new Date(`${toUtc}`),
+        dateTime: toUtc,
         isValidate: true,
       },
     });
@@ -81,14 +77,14 @@ module.exports = {
   createBooking: async (req, res, next) => {
     const { serviceId, date, month, year, time } = req.body;
 
-    const wib = new Date(`${year}-${month}-${date} ${time}:00.000`);
-    const toUtc = moment.tz(wib, 'Asia/Jakarta').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+    const wib = `${year}-${month}-${date} ${time}:00`;
+    const toUtc = moment.tz(wib, 'Asia/Jakarta').utc().toDate();
 
     const booking = await prisma.bookings.create({
       data: {
         clientId: req.client.id,
         serviceId: Number(serviceId),
-        dateTime: new Date(`${toUtc}`),
+        dateTime: toUtc,
       },
     });
 
@@ -119,36 +115,7 @@ module.exports = {
       },
     });
 
-    // if (validateBooking.isValidate) {
-    //   const linkMeet = await createMeeting(formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime));
-
-    //   await prisma.bookings.update({
-    //     where: { id: Number(id) },
-    //     data: { linkClient: linkMeet.linkClient, linkHost: linkMeet.linkHost },
-    //   });
-
-    //   const html = await getHtml('booking-successfull.ejs', {
-    //     client: {
-    //       fullName: validateBooking.clients.fullName,
-    //       dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
-    //       linkZoom: linkMeet.linkClient,
-    //       service: validateBooking.services.serviceName,
-    //     },
-    //   });
-
-    //   const htmlDoctor = await getHtml('get-booking.ejs', {
-    //     doctor: {
-    //       fullName: validateBooking.services.doctors.fullName,
-    //       dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
-    //       linkZoom: linkMeet.linkHost,
-    //       service: validateBooking.services.serviceName,
-    //     },
-    //   });
-
-    //   await sendEmail(validateBooking.clients.email, 'Konfirmasi Booking & Link Zoom Meeting', html);
-    //   await sendEmail(validateBooking.services.doctors.email, 'Konfirmasi Booking & Link Zoom Meeting', htmlDoctor);
-    // }
-
+    let emailPromises = [];
     if (validateBooking.isValidate) {
       const linkMeet = await gmeet([{ email: validateBooking.clients.email }, { email: validateBooking.services.doctors.email }], validateBooking.services.serviceName, formatTimeToWib('', validateBooking.dateTime));
       await prisma.bookings.update({
@@ -156,29 +123,27 @@ module.exports = {
         data: { linkClient: linkMeet.data.hangoutLink, linkHost: linkMeet.data.hangoutLink },
       });
 
-      const html = await getHtml('booking-successfull.ejs', {
-        client: {
-          fullName: validateBooking.clients.fullName,
-          dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
-          linkZoom: linkMeet.data.hangoutLink,
-          service: validateBooking.services.serviceName,
-        },
-      });
+      const [html, htmlDoctor] = await Promise.all([
+        getHtml('booking-successfull.ejs', {
+          client: {
+            fullName: validateBooking.clients.fullName,
+            dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
+            linkZoom: linkMeet.data.hangoutLink,
+            service: validateBooking.services.serviceName,
+          },
+        }),
+        getHtml('get-booking.ejs', {
+          doctor: {
+            fullName: validateBooking.services.doctors.fullName,
+            dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
+            linkZoom: linkMeet.data.hangoutLink,
+            service: validateBooking.services.serviceName,
+          },
+        }),
+      ]);
 
-      const htmlDoctor = await getHtml('get-booking.ejs', {
-        doctor: {
-          fullName: validateBooking.services.doctors.fullName,
-          dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
-          linkZoom: linkMeet.data.hangoutLink,
-          service: validateBooking.services.serviceName,
-        },
-      });
-
-      await sendEmail(validateBooking.clients.email, 'Konfirmasi Booking & Link Zoom Meeting', html);
-      await sendEmail(validateBooking.services.doctors.email, 'Konfirmasi Booking & Link Zoom Meeting', htmlDoctor);
-    }
-
-    if (!validateBooking.isValidate) {
+      emailPromises.push(sendEmail(validateBooking.clients.email, 'Konfirmasi Booking & Link Zoom Meeting', html), sendEmail(validateBooking.services.doctors.email, 'Konfirmasi Booking & Link Zoom Meeting', htmlDoctor));
+    } else {
       const html = await getHtml('booking-failed.ejs', {
         client: {
           fullName: validateBooking.clients.fullName,
@@ -187,9 +152,10 @@ module.exports = {
         },
       });
 
-      await sendEmail(validateBooking.clients.email, 'Booking Layanan Konsultasi Gagal', html);
+      emailPromises.push(sendEmail(validateBooking.clients.email, 'Booking Layanan Konsultasi Gagal', html));
     }
 
+    await Promise.all(emailPromises);
     res.sendResponse(200, 'OK', null, validateBooking);
   },
 
@@ -198,39 +164,58 @@ module.exports = {
       let { date, month, year } = req.query;
       let where = {};
 
-      if (date && month && year) {
-        const startDate = new Date(`${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T17:00:00.000Z`);
-        startDate.setUTCDate(startDate.getUTCDate() - 1);
-        const endDate = new Date(`${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T17:00:00.000Z`);
+      // if (date && month && year) {
+      //   const startDate = new Date(`${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T17:00:00.000Z`);
+      //   startDate.setUTCDate(startDate.getUTCDate() - 1);
+      //   const endDate = new Date(`${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T17:00:00.000Z`);
 
-        where.dateTime = {
-          gte: startDate,
-          lt: endDate,
-        };
-        where.isValidate = true;
-      } else if (month && year) {
-        const startMonth = new Date(`${year}-${String(month).padStart(2, '0')}-01T17:00:00.000Z`);
-        startMonth.setUTCDate(startMonth.getUTCDate() - 1);
-        const endMonth = new Date(`${year}-${String(month).padStart(2, '0')}-01T17:00:00.000Z`);
-        endMonth.setUTCMonth(endMonth.getUTCMonth() + 1);
-        endMonth.setUTCDate(endMonth.getUTCDate() - 1);
+      //   where.dateTime = {
+      //     gte: startDate,
+      //     lt: endDate,
+      //   };
+      //   where.isValidate = true;
+      // } else if (month && year) {
+      //   const startMonth = new Date(`${year}-${String(month).padStart(2, '0')}-01T17:00:00.000Z`);
+      //   startMonth.setUTCDate(startMonth.getUTCDate() - 1);
+      //   const endMonth = new Date(`${year}-${String(month).padStart(2, '0')}-01T17:00:00.000Z`);
+      //   endMonth.setUTCMonth(endMonth.getUTCMonth() + 1);
+      //   endMonth.setUTCDate(endMonth.getUTCDate() - 1);
 
-        where.dateTime = {
-          gte: startMonth,
-          lt: endMonth,
-        };
-        where.isValidate = true;
-      } else if (year && !month && !date) {
-        const startYear = new Date(`${year}-01-01T17:00:00.000Z`);
-        startYear.setUTCDate(startYear.getUTCDate() - 1);
-        const endYear = new Date(`${year}-01-01T17:00:00.000Z`);
-        endYear.setUTCFullYear(endYear.getUTCFullYear() + 1);
-        endYear.setUTCDate(endYear.getUTCDate() - 1);
+      //   where.dateTime = {
+      //     gte: startMonth,
+      //     lt: endMonth,
+      //   };
+      //   where.isValidate = true;
+      // } else if (year && !month && !date) {
+      //   const startYear = new Date(`${year}-01-01T17:00:00.000Z`);
+      //   startYear.setUTCDate(startYear.getUTCDate() - 1);
+      //   const endYear = new Date(`${year}-01-01T17:00:00.000Z`);
+      //   endYear.setUTCFullYear(endYear.getUTCFullYear() + 1);
+      //   endYear.setUTCDate(endYear.getUTCDate() - 1);
 
-        where.dateTime = {
-          gte: startYear,
-          lt: endYear,
-        };
+      //   where.dateTime = {
+      //     gte: startYear,
+      //     lt: endYear,
+      //   };
+      //   where.isValidate = true;
+      // }
+
+      if (year) {
+        let startDate, endDate;
+
+        if (month) {
+          if (date) {
+            startDate = new Date(Date.UTC(year, month - 1, date, 0, 0, 0));
+            endDate = new Date(Date.UTC(year, month - 1, date, 23, 59, 59));
+          } else {
+            startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
+            endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59));
+          }
+        } else {
+          startDate = new Date(Date.UTC(year, 0, 1, 0, 0, 0));
+          endDate = new Date(Date.UTC(year, 11, 31, 23, 59, 59));
+        }
+        where.dateTime = { gte: startDate, lt: endDate };
         where.isValidate = true;
       }
 
@@ -247,9 +232,6 @@ module.exports = {
           },
         },
         orderBy: [
-          {
-            isValidate: { nulls: 'first', sort: 'asc' },
-          },
           { dateTime: 'desc' },
         ],
       });
