@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-kamandaka-care-dev
+    restart: always
+    environment:
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+      - POSTGRES_USER=${POSTGRES_USER_DEV}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DEV}
+      - POSTGRES_DB=${POSTGRES_DB_DEV}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  expressjs-kamandaka-care:
+    container_name: expressjs-kamandaka-care
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - postgres
+    command: >
+      sh -c "npx prisma migrate dev && npx nodemon --legacy-watch app.js"
+
+volumes:
+ postgres_data:
+

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 const BookingDoctor = () => {
   const navigate = useNavigate();
-  const [bookingsDoctor, setBookingsDoctor] = useState({});
+  const [bookingsDoctor, setBookingsDoctor] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   let index = 1;
 

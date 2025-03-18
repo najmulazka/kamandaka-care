@@ -7,9 +7,9 @@ const SyaratKetentuan = () => {
       <div>Aplikasi ini dimiliki oleh Klinik Kamandaka ("Kami"), yang berlokasi di Jl. Kamandaka, Bobosan RT 2/ RW2 Kec.Purwokerto Utara, Kabupaten Banyumas, Jawa Tengah 53127, Indonesia</div>
       <div className="mt-4 font-semibold text-xl">2. Deskripsi Aplikasi</div>
       <div>
-        Aplikasi ini adalah sebuah sistem yang terintegrasi dengan Website Klinik Kamandaka, Google form dan Zoom. Aplikasi, web, Google form dan zoom saling terhubung untuk melayani Tes online dan konsultasi online bagi Pasien Klinik
+        Aplikasi ini adalah sebuah sistem yang terintegrasi dengan Website Klinik Kamandaka, Google form dan Gmeet. Aplikasi, web, Google form dan Gmeet saling terhubung untuk melayani Tes online dan konsultasi online bagi Pasien Klinik
         Kamandaka. Data booking yang dilakukan oleh Pasien akan masuk pada laman admin dan laman Dokter yang bersangkutan. Pengguna Aplikasi ini adalah Pasien, admin dan Dokter. Admin memiliki akses untuk mengelola layanan online pada
-        Klinik Kamandaka dan memvalidasi bukti pembayaran booking yang dikirim Pasien melalui Whatsapp Admin. Link zoom yang terintegrasi akan otomatis masuk ke laman Pasien dan Dokter yang bersangkutan serta notifikasi melalui gmail
+        Klinik Kamandaka dan memvalidasi bukti pembayaran booking yang dikirim Pasien melalui Whatsapp Admin. Link Gmeet yang terintegrasi akan otomatis masuk ke laman Pasien dan Dokter yang bersangkutan serta notifikasi melalui gmail
         setelah Admin memvalidasi bukti pembayaran Pasien. Link Tes Google Form yang terintegrasi akan otomatis masuk ke laman Pasien serta notifikasi melalui gmail setelah Admin memvalidasi bukti pembayaran Pasien. Dokter memiliki akses
         untuk mengelola waktu layanan yang dapat dilakukannya serta mengirim hasil Tes yang dilakukan oleh Pasien
       </div>
@@ -45,7 +45,8 @@ const SyaratKetentuan = () => {
       <div>Syarat dan ketentuan ini diatur oleh hukum yang berlaku di Indonesia. Sengketa yang timbul dari penggunaan aplikasi ini akan diselesaikan di yurisdiksi Indonesia.</div>
       <div className="mt-4 font-semibold text-xl">9. Kontak</div>
       <div>
-        Untuk pertanyaan atau keluhan terkait syarat dan ketentuan ini, silakan hubungi kami di klinikkamandaka@gmail.com. Dengan menggunakan aplikasi Klinik Kamandaka, Anda menyatakan telah membaca, memahami, dan menyetujui syarat dan ketentuan ini.
+        Untuk pertanyaan atau keluhan terkait syarat dan ketentuan ini, silakan hubungi kami di klinikkamandaka@gmail.com. Dengan menggunakan aplikasi Klinik Kamandaka, Anda menyatakan telah membaca, memahami, dan menyetujui syarat dan
+        ketentuan ini.
       </div>
     </div>
   );

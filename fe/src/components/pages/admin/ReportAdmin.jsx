@@ -11,8 +11,8 @@ const ReportAdmin = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedValue, setSelectedValue] = useState('month');
   const navigate = useNavigate();
-  const [bookings, setBookings] = useState({});
-  const [bookingTests, setBookingTests] = useState({});
+  const [bookings, setBookings] = useState([]);
+  const [bookingTests, setBookingTests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   let index = 1;
   const [dateTime, setDateTime] = useState(new Date());

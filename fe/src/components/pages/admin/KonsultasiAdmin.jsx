@@ -32,12 +32,12 @@ const KonsultasiAdmin = () => {
         const response = await getServices();
         setServices(response);
 
-        setDoctors(await getDoctors());
+        setDoctors((await getDoctors()));
         setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-               toast.warn('Please Login Now');
-navigate('/login-admin');
+          toast.warn('Please Login Now');
+          navigate('/login-admin');
         }
         if (err.status == 400) {
           toast.warn(err.response.data.err);
@@ -101,8 +101,8 @@ navigate('/login-admin');
         }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-               toast.warn('Please Login Now');
-navigate('/login-admin');
+          toast.warn('Please Login Now');
+          navigate('/login-admin');
         }
         if (err.status == 400) {
           toast.warn(err.response.data.err);
@@ -125,8 +125,8 @@ navigate('/login-admin');
         }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-               toast.warn('Please Login Now');
-navigate('/login-admin');
+          toast.warn('Please Login Now');
+          navigate('/login-admin');
         }
         if (err.status == 400) {
           toast.warn(err.response.data.err);

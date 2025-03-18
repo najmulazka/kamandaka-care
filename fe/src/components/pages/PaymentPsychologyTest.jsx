@@ -13,8 +13,8 @@ const PaymentPsychologyTest = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response1 = await getBookingTestClient();
-        setDataBookingTest(response1);
+        const response = await getBookingTestClient();
+        setDataBookingTest(response);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');

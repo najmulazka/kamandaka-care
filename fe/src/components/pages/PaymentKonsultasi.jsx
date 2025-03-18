@@ -42,7 +42,7 @@ const PaymentKonsultasi = () => {
     };
 
     updateRemainingTime();
-    const timer = setInterval(updateRemainingTime, 1000); 
+    const timer = setInterval(updateRemainingTime, 1000);
 
     return () => clearInterval(timer);
   }, [dataBooking, id]);
@@ -57,19 +57,7 @@ const PaymentKonsultasi = () => {
 
   const booking = dataBooking.find((item) => item.id == id);
 
-  return (
-    <div>
-      {booking?.isValidate === null ? (
-        <Payment
-          remainingTime={formatTime(remainingTime)}
-          bookingName={booking.services?.serviceName}
-          price={booking.services?.price}
-        />
-      ) : (
-        <div>Not Found</div>
-      )}
-    </div>
-  );
+  return <div>{booking?.isValidate === null ? <Payment remainingTime={formatTime(remainingTime)} bookingName={booking.services?.serviceName} price={booking.services?.price} /> : <div>Not Found</div>}</div>;
 };
 
 export default PaymentKonsultasi;

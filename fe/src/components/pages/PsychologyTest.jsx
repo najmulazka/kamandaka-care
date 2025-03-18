@@ -11,7 +11,7 @@ const PsychologyTest = () => {
   const navigate = useNavigate();
   const [education, setEducation] = useState('');
   const [educations, setEducations] = useState([]);
-  const [testTypes, setTestTypes] = useState({});
+  const [testTypes, setTestTypes] = useState([]);
   const [testType, setTestType] = useState('');
   const [isProcess, setIsProcess] = useState(false);
   const [isPopUp, setIsPopUp] = useState(false);

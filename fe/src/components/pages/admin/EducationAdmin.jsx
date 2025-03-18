@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 const EducationAdmin = () => {
   const navigate = useNavigate();
-  const [educations, setEducations] = useState({});
+  const [educations, setEducations] = useState([]);
   const [popUpConfirmationDelete, setPopUpConfirmationDelete] = useState(false);
   const [idDelete, setIdDelete] = useState('');
   const [editData, setEditData] = useState();
@@ -84,7 +84,7 @@ const EducationAdmin = () => {
         setPopUpInput(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now')
+          toast.warn('Please Login Now');
           navigate('/login-admin');
         }
         if (err.status == 400) {

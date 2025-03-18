@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-kamandaka-care-prod
+    restart: always
+    environment:
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+      - POSTGRES_USER=${POSTGRES_USER_DEV}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DEV}
+      - POSTGRES_DB=${POSTGRES_DB_DEV}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  expressjs-kamandaka-care:
+    container_name: expressjs-kamandaka-care-prod
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    restart: always
+    ports:
+      - '5000:5000'
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - postgres
+    command: 'node app.js'
+
+volumes:
+  postgres_data:

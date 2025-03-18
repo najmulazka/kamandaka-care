@@ -7,7 +7,7 @@ const News = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [newsDetail, setNewsDetail] = useState({});
-  const [news, setNews] = useState({});
+  const [news, setNews] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {

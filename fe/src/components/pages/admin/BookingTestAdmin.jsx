@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 const BookingTestAdmin = () => {
   const navigate = useNavigate();
-  const [bookingTests, setBookingTests] = useState({});
+  const [bookingTests, setBookingTests] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [isProcess, setIsProcess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

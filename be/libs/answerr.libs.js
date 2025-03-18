@@ -9,7 +9,7 @@ const { SPREADSHEET_ANSWER_ID_INTELIGENSI, SPREADSHEET_ANSWER_ID_GAYA_BELAJAR, S
 
 const formatTimeToWib = (isoString) => {
   const date = new Date(isoString);
-  const wib = moment.utc(date).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm:ss');
+  const wib = moment.utc(date).tz('Asia/Jakarta').format('M/DD/YYYY HH:mm:ss');
   return wib;
 };
 
@@ -37,7 +37,8 @@ async function getAnswerr(auth, id, testName, email) {
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
-    range: `Form Responses 1!A1:Z1000`,
+    // range: `Form Responses 1!A1:Z1000`,
+    range: `Form Responses 1`,
     auth: auth,
   });
 
@@ -46,12 +47,22 @@ async function getAnswerr(auth, id, testName, email) {
     return;
   }
 
+  function getColumnLetter(colIndex) {
+    let letter = '';
+    while (colIndex >= 0) {
+      letter = String.fromCharCode((colIndex % 26) + 65) + letter;
+      colIndex = Math.floor(colIndex / 26) - 1;
+    }
+    return letter;
+  }
+
   // Hitung jumlah kolom dan baris yang terisi
   const numRows = rows.length;
   const numCols = rows[0].length;
 
   // Tentukan rentang berdasarkan baris dan kolom yang terisi
-  const range = `Form Responses 1!A1:${String.fromCharCode(65 + numCols - 1)}${numRows}`;
+  const lastColumn = getColumnLetter(numCols - 1);
+  const range = `Form Responses 1!A1:${lastColumn}${numRows}`;
 
   const dynamicResponse = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
@@ -75,7 +86,9 @@ async function getAnswerr(auth, id, testName, email) {
 
   const userExist = data.filter((item) => item['Email Address'] == email).sort((a, b) => new Date(a.Timestamp) - new Date(b.Timestamp)) || [];
   const firstLargerTimestamp = userExist.find(({ Timestamp }) => {
-    return Timestamp > bookingTest.createdAt;
+    const answer = moment(Timestamp, 'M/DD/YYYY HH:mm:ss').toDate();
+    const createdAt = moment(bookingTest.createdAt, 'M/DD/YYYY HH:mm:ss').toDate();
+    return answer > createdAt;
   });
   return firstLargerTimestamp ? firstLargerTimestamp : {};
 }
@@ -84,7 +97,6 @@ module.exports = {
   getAnswerr: async (id, testName, email) => {
     try {
       const dataSpreadSheets = await getAnswerr(auth, id, testName, email);
-      // res.json({ questions: dataSpreadSheets });
       return dataSpreadSheets;
     } catch (err) {
       console.log(err.message);

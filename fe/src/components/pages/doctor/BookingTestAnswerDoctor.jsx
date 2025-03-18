@@ -8,7 +8,7 @@ const BookingTestAnswerDoctor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({});
-  const [bookingTest, setBookingTest] = useState({});
+  const [bookingTest, setBookingTest] = useState([]);
   const [loading, setLoading] = useState(false);
   // let index = 1;
 
@@ -19,7 +19,6 @@ const BookingTestAnswerDoctor = () => {
         const data = await getBookingTestAnswer(id);
         setAnswers(data.answer);
         setBookingTest(data.bookingTest);
-        setLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
@@ -28,6 +27,8 @@ const BookingTestAnswerDoctor = () => {
         if (err.status == 400) {
           toast.warn(err.response.data.err);
         }
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -47,7 +48,7 @@ const BookingTestAnswerDoctor = () => {
         </Link>
       </div>
 
-      <div className="w-full flex font-semibold justify-center text-gray-900 mb-2 text-lg lg:text-xl">JAWABAN {bookingTest?.testypes?.testName ? bookingTest.testypes.testName.toUpperCase() : 'Loading...'}</div>
+      <div className="w-full flex font-semibold justify-center text-gray-900 mb-2 text-lg lg:text-xl">JAWABAN {bookingTest?.testypes?.testName ? bookingTest.testypes.testName.toUpperCase() : '...'}</div>
       <div className="p-6 px-8 lg:justify-center lg:flex">
         {loading && <div>Loading...</div>}
         {!loading && Object.values(answers).length === 0 && <div>Client belum menyelesaikan soal test</div>}
@@ -73,9 +74,9 @@ const BookingTestAnswerDoctor = () => {
 
               {Object.entries(answers).map(([key, value], index) => (
                 <tr key={index}>
-                  <td className={`border border-gray-400 p-1 text-center ${index < 2 ? 'bg-green-200' : ''}`}>{index >= 2 ? index - 1 : ''}</td>
-                  <td className={`border border-gray-400 p-1 ${index < 2 ? 'bg-green-200' : ''}`}>{key}</td>
-                  <td className={`border border-gray-400 p-1 ${index < 2 ? 'bg-green-200' : ''}`}>{value}</td>
+                  <td className={`border border-gray-400 p-1 text-center ${index < 3 ? 'bg-green-200' : ''}`}>{index >= 3 ? index - 1 : ''}</td>
+                  <td className={`border border-gray-400 p-1 ${index < 3 ? 'bg-green-200' : ''}`}>{key}</td>
+                  <td className={`border border-gray-400 p-1 ${index < 3 ? 'bg-green-200' : ''}`}>{value}</td>
                 </tr>
               ))}
             </tbody>

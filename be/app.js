@@ -39,4 +39,8 @@ app.use('/api/v1', routes);
 app.use(notFoundHandler);
 app.use(internalErrorHandler);
 
-app.listen(PORT, () => console.log('Running app in port', PORT));
+app
+  .listen(PORT, '0.0.0.0', () => console.log('Running app in port', PORT))
+  .on('error', (err) => {
+    console.error('Error starting server:', err);
+  });

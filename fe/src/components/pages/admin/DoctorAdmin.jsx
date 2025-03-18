@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 const DoctorAdmin = () => {
   const navigate = useNavigate();
-  const [doctors, setDoctors] = useState({});
+  const [doctors, setDoctors] = useState([]);
   const [popUpConfirmationDelete, setPopUpConfirmationDelete] = useState(false);
   const [idDelete, setIdDelete] = useState('');
   const [editData, setEditData] = useState();

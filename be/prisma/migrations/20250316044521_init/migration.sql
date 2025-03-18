@@ -1,4 +1,15 @@
 -- CreateTable
+CREATE TABLE "News" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+    "imageUrl" TEXT,
+    "fileId" TEXT,
+    "description" TEXT NOT NULL,
+
+    CONSTRAINT "News_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Admin" (
     "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
@@ -76,6 +87,7 @@ CREATE TABLE "Bookings" (
     "id" SERIAL NOT NULL,
     "clientId" INTEGER NOT NULL,
     "serviceId" INTEGER NOT NULL,
+    "type" TEXT NOT NULL DEFAULT 'Online',
     "dateTime" TIMESTAMP(3) NOT NULL,
     "linkClient" TEXT,
     "linkHost" TEXT,
@@ -119,6 +131,9 @@ CREATE TABLE "BookingTest" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "News_fileId_key" ON "News"("fileId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Admin_username_key" ON "Admin"("username");
 
 -- CreateIndex
@@ -132,9 +147,6 @@ CREATE UNIQUE INDEX "Services_serviceName_key" ON "Services"("serviceName");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Educations_educationLevel_key" ON "Educations"("educationLevel");
-
--- CreateIndex
-CREATE UNIQUE INDEX "TestTypes_testName_key" ON "TestTypes"("testName");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "BookingTest_fileId_key" ON "BookingTest"("fileId");

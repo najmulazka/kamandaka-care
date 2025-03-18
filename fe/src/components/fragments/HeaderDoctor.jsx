@@ -10,9 +10,9 @@ const HeaderDoctor = () => {
   const [isDropDown, setIsDropDown] = useState(false);
   const [isDropDownAvailable, setIsDropDownAvailable] = useState(false);
   const [isDropDownLogout, setIsDropDownLogout] = useState(false);
-  const [data, setData] = useState({});
-  const [services, setServices] = useState({});
-  const [bookingTests, setBookingTests] = useState({});
+  const [data, setData] = useState([]);
+  const [services, setServices] = useState([]);
+  const [bookingTests, setBookingTests] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {

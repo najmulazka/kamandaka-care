@@ -172,9 +172,7 @@ module.exports = {
           },
         },
       },
-      orderBy: [
-        { id: 'desc' },
-      ],
+      orderBy: [{ id: 'desc' }],
     });
 
     if (!bookingTest) {
@@ -204,9 +202,7 @@ module.exports = {
           },
         },
       },
-      orderBy: [
-        { id: 'desc' },
-      ],
+      orderBy: [{ id: 'desc' }],
     });
 
     const bookingsWithWIB = bookingTest.map((booking) => ({
@@ -222,6 +218,7 @@ module.exports = {
         testypes: {
           doctors: { id: req.doctor.id },
         },
+        isValidate: true,
       },
       include: {
         testypes: {
@@ -302,7 +299,15 @@ module.exports = {
         deleteOldFile,
       ]);
 
-      await sendEmail(bookingTest.clients.email, `Hasil tes ${bookingTest.testypes.testName}`, bookingTest.resultUrl);
+      const html = await getHtml('result-test.ejs', {
+        client: {
+          fullName: bookingTest.clients.fullName,
+          testName: bookingTest.testypes.testName,
+          resultUrl: bookingTest.resultUrl,
+        },
+      });
+
+      await sendEmail(bookingTest.clients.email, `Hasil tes ${bookingTest.testypes.testName}`, html);
       res.sendResponse(200, 'OK', null, bookingTest);
     } catch (err) {
       next(err);

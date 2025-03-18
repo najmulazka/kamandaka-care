@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon app.js",
-    "start": "nodemon app.js"
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
@@ -21,17 +21,18 @@
     "express": "^4.21.2",
     "googleapis": "^144.0.0",
     "imagekit": "^6.0.0",
-    "jotform": "^1.0.1",
     "jsonwebtoken": "^9.0.2",
     "moment-timezone": "^0.5.47",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.10.0",
-    "nodemon": "^3.1.9",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "path": "^0.12.7",
     "prisma": "^6.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }

@@ -40,7 +40,8 @@ module.exports = {
       where: {
         serviceId: Number(serviceId),
         dateTime: { gte: new Date(a) },
-        isValidate: true,
+        // isValidate: true,
+        OR: [{ isValidate: true }, { isValidate: null }],
       },
     });
 
@@ -231,9 +232,7 @@ module.exports = {
             },
           },
         },
-        orderBy: [
-          { dateTime: 'desc' },
-        ],
+        orderBy: [{ dateTime: 'desc' }],
       });
 
       const bookingsWithWIB = bookings.map((booking) => ({

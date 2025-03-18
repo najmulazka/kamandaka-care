@@ -8,7 +8,7 @@ import PopUpConfirmation from '../../fragments/PopUpConfirmation';
 const ArticleAdmin = () => {
   const navigate = useNavigate();
   // const fileInputRefs = useRef({});
-  const [news, setNews] = useState({});
+  const [news, setNews] = useState([]);
   const [popUpInput, setPopUpInput] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [editData, setEditData] = useState();
