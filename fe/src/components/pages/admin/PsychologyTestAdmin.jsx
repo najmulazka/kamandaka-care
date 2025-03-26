@@ -36,8 +36,8 @@ const PsychologyTestAdmin = () => {
         const response = await getTestTypes();
         setPsychologyTests(response);
 
-        setDoctors((await getDoctors()));
-        setEducations((await getEducations()));
+        setDoctors(await getDoctors());
+        setEducations(await getEducations());
         setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
@@ -94,11 +94,13 @@ const PsychologyTestAdmin = () => {
 
     if (editData) {
       try {
-        if (data.doctorId == 'Select') {
-          setErrorMessage('Silahkan pilih dokter terlebih dahulu');
-        } else if (data.educationId == 'Select') {
-          setErrorMessage('Silahkan pilih pendidikan terlebih dahulu');
-        } else {
+        // if (data.testName == 'Select') {
+        //   setErrorMessage('Silahkan pilih nama tes terlebih dahulu');
+        // } else if (data.doctorId == 'Select') {
+        //   setErrorMessage('Silahkan pilih dokter terlebih dahulu');
+        // } else if (data.educationId == 'Select') {
+        //   setErrorMessage('Silahkan pilih pendidikan terlebih dahulu');
+        // } else {
           await updateTestType(editData.id, data);
           setRefresh(!refresh);
           setEditData(null);
@@ -109,7 +111,7 @@ const PsychologyTestAdmin = () => {
             doctorId: '',
           });
           setPopUpInput(false);
-        }
+        // }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
@@ -122,9 +124,11 @@ const PsychologyTestAdmin = () => {
       }
     } else {
       try {
-        if (data.doctorId == 'Select') {
-          setErrorMessage('Silahkan pilih dokter terlebih dahulu');
-        } else {
+        // if (data.testName == 'Select') {
+        //   setErrorMessage('Silahkan pilih nama tes terlebih dahulu');
+        // } else if (data.doctorId == 'Select') {
+        //   setErrorMessage('Silahkan pilih dokter terlebih dahulu');
+        // } else {
           await createTestType(data);
           setRefresh(!refresh);
           setFormData({
@@ -134,7 +138,7 @@ const PsychologyTestAdmin = () => {
             doctorId: '',
           });
           setPopUpInput(false);
-        }
+        // }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
@@ -271,12 +275,26 @@ const PsychologyTestAdmin = () => {
               </button>
 
               <div className="font-semibold">{editData ? 'Update' : 'Input'} Jenis Test Psikologi</div>
+              <div className="text-left mt-2 text-sm">
+                {/* <strong>Note:</strong> Inteligensi, Belajar, Kepribadian, Minat, Psikologi, Pekerjaan */}
+              </div>
               {errorMessage !== '' && <div className="text-red-500">{errorMessage}</div>}
               <form onSubmit={isProcess ? undefined : handleSubmit} className="flex flex-col space-y-2 my-4">
-                <input type="text" value={formData.testName} onChange={handleChange} required name="testName" placeholder="Nama Jenis Test" className="border border-gray-500 px-2 py-1 rounded-lg" />
+                {/* <input type="text" value={formData.testName} onChange={handleChange} required name="testName" placeholder="Nama Jenis Test" className="border border-gray-500 px-2 py-1 rounded-lg" /> */}
+                <select value={formData.testName} onChange={handleChange} required name="testName" className="border border-gray-500 px-2 py-1 rounded-lg">
+                  <option value="" disabled>
+                    Pilih Nama Tes
+                  </option>
+                  <option value="Tes Rekruitmen Pekerjaan">Tes Rekruitmen Pekerjaan</option>
+                  <option value="Tes Gaya Belajar">Tes Gaya Belajar</option>
+                  <option value="Tes Kepribadian">Tes Kepribadian</option>
+                  <option value="Tes Minat">Tes Minat</option>
+                  <option value="Tes Psikologi">Tes Psikologi</option>
+                  <option value="Tes Inteligensi">Tes Inteligensi</option>
+                </select>
                 <input type="number" value={formData.price} onChange={handleChange} required name="price" placeholder="Harga" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
                 <select name="educationId" required value={formData.educationId} onChange={handleChange} className="border border-gray-500 px-2 py-1 rounded-lg">
-                  <option value="Select">Pilih Pendidikan</option>
+                  <option value="" disabled>Pilih Pendidikan</option>
                   {educations.length > 0 &&
                     educations.map((item) => (
                       <option key={item.id} value={item.id}>
@@ -285,7 +303,7 @@ const PsychologyTestAdmin = () => {
                     ))}
                 </select>
                 <select name="doctorId" required value={formData.doctorId} onChange={handleChange} className="border border-gray-500 px-2 py-1 rounded-lg">
-                  <option value="Select">Pilih Dokter</option>
+                  <option value="" disabled>Pilih Dokter</option>
                   {doctors.length > 0 &&
                     doctors.map((item) => (
                       <option key={item.id} value={item.id}>

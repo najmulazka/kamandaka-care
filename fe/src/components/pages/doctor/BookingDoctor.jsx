@@ -47,7 +47,7 @@ const BookingDoctor = () => {
                 <th className="border border-gray-400 w-48 text-left p-2">Jenis Layanan</th>
                 <th className="border border-gray-400 w-48 text-left p-2">Tanggal Booking</th>
                 <th className="border border-gray-400 w-48 text-left p-2">Tanggal Konsultasi</th>
-                <th className="border border-gray-400 w-48 text-left p-2">Zoom</th>
+                <th className="border border-gray-400 w-48 text-left p-2">Meet</th>
               </tr>
             </thead>
             <tbody>

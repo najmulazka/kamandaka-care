@@ -34,15 +34,17 @@ const BookingAdmin = () => {
   }, [refresh, navigate]);
 
   const handleValidate = async (id, data) => {
+    setIsProcess(true);
     try {
-      setIsProcess(true);
       await validateBooking(id, data);
-      setRefresh(!refresh);
-      setIsProcess(false);
     } catch (err) {
       if (err.message.includes('Unauthorized')) {
         navigate('/login-admin');
       }
+      toast.error(err.message);
+    } finally {
+      setRefresh(!refresh);
+      setIsProcess(false);
     }
   };
 

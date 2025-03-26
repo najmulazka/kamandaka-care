@@ -14,13 +14,14 @@ const LoginDoctor = () => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
+    setIsProcess(true);
     try {
-      setIsProcess(true);
       await loginDoctor(data);
       navigate('/doctor/booking');
-      setIsProcess(false);
     } catch (err) {
       setError(err.response.data.err);
+    } finally {
+      setIsProcess(false);
     }
   };
 

@@ -93,71 +93,117 @@ module.exports = {
   },
 
   validateBooking: async (req, res, next) => {
-    const { id } = req.params;
-    const { isValidate } = req.body;
+    try {
+      const { id } = req.params;
+      const { isValidate } = req.body;
+      let linkMeet;
 
-    const validateBooking = await prisma.bookings.update({
-      where: { id: Number(id) },
-      data: { isValidate },
-      include: {
-        clients: {
-          select: {
-            fullName: true,
-            email: true,
+      const existBooking = await prisma.bookings.findUnique({
+        where: { id: Number(id) },
+        include: {
+          clients: {
+            select: {
+              fullName: true,
+              email: true,
+            },
           },
-        },
-        services: {
-          include: {
-            doctors: {
-              select: { fullName: true, email: true },
+          services: {
+            include: {
+              doctors: {
+                select: { fullName: true, email: true },
+              },
             },
           },
         },
-      },
-    });
-
-    let emailPromises = [];
-    if (validateBooking.isValidate) {
-      const linkMeet = await gmeet([{ email: validateBooking.clients.email }, { email: validateBooking.services.doctors.email }], validateBooking.services.serviceName, formatTimeToWib('', validateBooking.dateTime));
-      await prisma.bookings.update({
-        where: { id: Number(id) },
-        data: { linkClient: linkMeet.data.hangoutLink, linkHost: linkMeet.data.hangoutLink },
       });
+      if (!existBooking) return res.sendResponse(404, 'Not Found', 'Resource Not Found', null);
 
-      const [html, htmlDoctor] = await Promise.all([
-        getHtml('booking-successfull.ejs', {
+      if (isValidate) {
+        linkMeet = await gmeet([{ email: existBooking.clients.email }, { email: existBooking.services.doctors.email }], existBooking.services.serviceName, formatTimeToWib('', existBooking.dateTime));
+      }
+
+      let emailPromises = [];
+      if (isValidate) {
+        const validateBooking = await prisma.bookings.update({
+          where: { id: Number(id) },
+          data: {
+            isValidate,
+            linkClient: linkMeet.data.hangoutLink,
+            linkHost: linkMeet.data.hangoutLink,
+          },
+          include: {
+            clients: {
+              select: {
+                fullName: true,
+                email: true,
+              },
+            },
+            services: {
+              include: {
+                doctors: {
+                  select: { fullName: true, email: true },
+                },
+              },
+            },
+          },
+        });
+
+        const [html, htmlDoctor] = await Promise.all([
+          getHtml('booking-successfull.ejs', {
+            client: {
+              fullName: validateBooking.clients.fullName,
+              dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
+              linkZoom: linkMeet.data.hangoutLink,
+              service: validateBooking.services.serviceName,
+            },
+          }),
+          getHtml('get-booking.ejs', {
+            doctor: {
+              fullName: validateBooking.services.doctors.fullName,
+              dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
+              linkZoom: linkMeet.data.hangoutLink,
+              service: validateBooking.services.serviceName,
+            },
+          }),
+        ]);
+
+        emailPromises.push(sendEmail(validateBooking.clients.email, 'Konfirmasi Booking & Link Zoom Meeting', html), sendEmail(validateBooking.services.doctors.email, 'Konfirmasi Booking & Link Zoom Meeting', htmlDoctor));
+      } else {
+        const validateBooking = await prisma.bookings.update({
+          where: { id: Number(id) },
+          data: { isValidate },
+          include: {
+            clients: {
+              select: {
+                fullName: true,
+                email: true,
+              },
+            },
+            services: {
+              include: {
+                doctors: {
+                  select: { fullName: true, email: true },
+                },
+              },
+            },
+          },
+        });
+        const html = await getHtml('booking-failed.ejs', {
           client: {
             fullName: validateBooking.clients.fullName,
             dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
-            linkZoom: linkMeet.data.hangoutLink,
             service: validateBooking.services.serviceName,
           },
-        }),
-        getHtml('get-booking.ejs', {
-          doctor: {
-            fullName: validateBooking.services.doctors.fullName,
-            dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
-            linkZoom: linkMeet.data.hangoutLink,
-            service: validateBooking.services.serviceName,
-          },
-        }),
-      ]);
+        });
 
-      emailPromises.push(sendEmail(validateBooking.clients.email, 'Konfirmasi Booking & Link Zoom Meeting', html), sendEmail(validateBooking.services.doctors.email, 'Konfirmasi Booking & Link Zoom Meeting', htmlDoctor));
-    } else {
-      const html = await getHtml('booking-failed.ejs', {
-        client: {
-          fullName: validateBooking.clients.fullName,
-          dateTime: formatTimeToWib('YYYY-MM-DD HH:mm:ss', validateBooking.dateTime),
-          service: validateBooking.services.serviceName,
-        },
-      });
+        emailPromises.push(sendEmail(validateBooking.clients.email, 'Booking Layanan Konsultasi Gagal', html));
+      }
 
-      emailPromises.push(sendEmail(validateBooking.clients.email, 'Booking Layanan Konsultasi Gagal', html));
+      await Promise.all(emailPromises);
+      res.sendResponse(200, 'OK', null, null);
+    } catch (err) {
+      next(err);
     }
-
-    await Promise.all(emailPromises);
-    res.sendResponse(200, 'OK', null, validateBooking);
   },
 
   getBookings: async (req, res, next) => {

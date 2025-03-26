@@ -65,7 +65,7 @@ const OrderHistoryKonsultasi = () => {
                           <Link
                             to={`${item.isValidate === null ? `payment/${item.id}` : !item.isValidate ? '' : item.linkClient ? item.linkClient : ''}`}
                             target={`${item.isValidate === null ? `_parent` : !item.isValidate ? '' : item.linkClient ? '_blank' : '_parent'}`}>
-                            {`${item.isValidate === null ? `Cek` : !item.isValidate ? 'Invalid' : item.linkClient ? 'Zoom' : ''}`}
+                            {`${item.isValidate === null ? `Cek` : !item.isValidate ? 'Invalid' : item.linkClient ? 'Meet' : ''}`}
                           </Link>
                         </td>
                       </tr>

@@ -86,9 +86,9 @@ const KonsultasiAdmin = () => {
 
     if (editData) {
       try {
-        if (data.doctorId == 'Select') {
-          setErrorMessage('Silahkan pilih dokter terlebih dahulu');
-        } else {
+        // if (data.doctorId == 'Select') {
+        //   setErrorMessage('Silahkan pilih dokter terlebih dahulu');
+        // } else {
           await updateService(editData.id, data);
           setRefresh(!refresh);
           setEditData(null);
@@ -98,7 +98,7 @@ const KonsultasiAdmin = () => {
             doctorId: '',
           });
           setPopUpInput(false);
-        }
+        // }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
@@ -261,7 +261,7 @@ const KonsultasiAdmin = () => {
                 <input type="text" value={formData.serviceName} onChange={handleChange} required name="serviceName" placeholder="Nama Layanan Konsultasi" className="border border-gray-500 px-2 py-1 rounded-lg" />
                 <input type="number" value={formData.price} onChange={handleChange} required name="price" placeholder="Harga" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
                 <select name="doctorId" required value={formData.doctorId} onChange={handleChange} className="border border-gray-500 px-2 py-1 rounded-lg">
-                  <option value="Select">Pilih Dokter</option>
+                  <option value="" disabled>Pilih Dokter</option>
                   {doctors.length > 0 &&
                     doctors.map((item) => (
                       <option key={item.id} value={item.id}>

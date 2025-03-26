@@ -74,9 +74,9 @@ const BookingTestAnswerDoctor = () => {
 
               {Object.entries(answers).map(([key, value], index) => (
                 <tr key={index}>
-                  <td className={`border border-gray-400 p-1 text-center ${index < 3 ? 'bg-green-200' : ''}`}>{index >= 3 ? index - 1 : ''}</td>
-                  <td className={`border border-gray-400 p-1 ${index < 3 ? 'bg-green-200' : ''}`}>{key}</td>
-                  <td className={`border border-gray-400 p-1 ${index < 3 ? 'bg-green-200' : ''}`}>{value}</td>
+                  <td className={`border border-gray-400 p-1 text-center ${index < 7 ? 'bg-green-200' : ''}`}>{index >= 7 ? index - 6 : ''}</td>
+                  <td className={`border border-gray-400 p-1 ${index < 7 ? 'bg-green-200' : ''}`}>{key}</td>
+                  <td className={`border border-gray-400 p-1 ${index < 7 ? 'bg-green-200' : ''}`}>{value}</td>
                 </tr>
               ))}
             </tbody>

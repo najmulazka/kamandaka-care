@@ -258,7 +258,7 @@ const ArticleAdmin = () => {
                 <span className="sr-only">Close modal</span>
               </div>
 
-              <div className="font-semibold">{editData ? 'Update' : 'Input'} News</div>
+              <div className="font-semibold">{editData ? 'Update' : 'Input'} News (resolusi gambar 16:6)</div>
               {errorMessage !== '' && <div className="text-red-500">{errorMessage}</div>}
               <form onSubmit={isProcess ? undefined : handleSubmit} className="flex flex-col space-y-2 my-4">
                 <input type="text" value={formInput.title} onChange={handleChange} required name="title" placeholder="title" className="border border-gray-500 px-2 py-1 rounded-lg" />
