@@ -4,8 +4,16 @@ const prisma = require('./prisma.lib');
 const sheets = google.sheets('v4');
 const moment = require('moment-timezone');
 moment.locale('id');
-const { SPREADSHEET_ANSWER_ID_INTELIGENSI, SPREADSHEET_ANSWER_ID_GAYA_BELAJAR, SPREADSHEET_ANSWER_ID_KEPRIBADIAN, SPREADSHEET_ANSWER_ID_MINAT, SPREADSHEET_ANSWER_ID_GANGGUAN_PSIKOLOGI, SPREADSHEET_ANSWER_ID_REKRUITMEN_PEKERJAAN } =
-  process.env;
+const {
+  SPREADSHEET_ANSWER_ID_IST,
+  SPREADSHEET_ANSWER_ID_CFIT_2,
+  SPREADSHEET_ANSWER_ID_CFIT_3,
+  SPREADSHEET_ANSWER_ID_GAYA_BELAJAR,
+  SPREADSHEET_ANSWER_ID_KEPRIBADIAN,
+  SPREADSHEET_ANSWER_ID_MINAT,
+  SPREADSHEET_ANSWER_ID_GANGGUAN_PSIKOLOGI,
+  SPREADSHEET_ANSWER_ID_REKRUITMEN_PEKERJAAN,
+} = process.env;
 
 const formatTimeToWib = (isoString) => {
   const date = new Date(isoString);
@@ -21,9 +29,7 @@ const auth = new google.auth.GoogleAuth({
 
 let SPREADSHEET_ID = '';
 async function getAnswerr(auth, id, testName, email) {
-  if (testName.toLowerCase().includes('inteligensi')) {
-    SPREADSHEET_ID = SPREADSHEET_ANSWER_ID_INTELIGENSI;
-  } else if (testName.toLowerCase().includes('belajar')) {
+  if (testName.toLowerCase().includes('belajar')) {
     SPREADSHEET_ID = SPREADSHEET_ANSWER_ID_GAYA_BELAJAR;
   } else if (testName.toLowerCase().includes('kepribadian')) {
     SPREADSHEET_ID = SPREADSHEET_ANSWER_ID_KEPRIBADIAN;
@@ -33,6 +39,12 @@ async function getAnswerr(auth, id, testName, email) {
     SPREADSHEET_ID = SPREADSHEET_ANSWER_ID_GANGGUAN_PSIKOLOGI;
   } else if (testName.toLowerCase().includes('pekerjaan')) {
     SPREADSHEET_ID = SPREADSHEET_ANSWER_ID_REKRUITMEN_PEKERJAAN;
+  }else if (testName.toLowerCase().includes('ist')) {
+    SPREADSHEET_ID = SPREADSHEET_ANSWER_ID_IST;
+  }else if (testName.toLowerCase().includes('cfit 2')) {
+    SPREADSHEET_ID = SPREADSHEET_ANSWER_ID_CFIT_2;
+  }else if (testName.toLowerCase().includes('cfit 3')) {
+    SPREADSHEET_ID = SPREADSHEET_ANSWER_ID_CFIT_3;
   }
 
   const response = await sheets.spreadsheets.values.get({

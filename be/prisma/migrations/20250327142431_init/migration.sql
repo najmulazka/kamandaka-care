@@ -111,6 +111,7 @@ CREATE TABLE "TestTypes" (
     "educationId" INTEGER NOT NULL,
     "doctorId" INTEGER NOT NULL,
     "testName" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "price" TEXT NOT NULL,
 
     CONSTRAINT "TestTypes_pkey" PRIMARY KEY ("id")

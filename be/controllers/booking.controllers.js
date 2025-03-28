@@ -167,7 +167,7 @@ module.exports = {
           }),
         ]);
 
-        emailPromises.push(sendEmail(validateBooking.clients.email, 'Konfirmasi Booking & Link Zoom Meeting', html), sendEmail(validateBooking.services.doctors.email, 'Konfirmasi Booking & Link Zoom Meeting', htmlDoctor));
+        emailPromises.push(sendEmail(validateBooking.clients.email, 'Konfirmasi Booking & Link Meeting', html), sendEmail(validateBooking.services.doctors.email, 'Konfirmasi Booking & Link Meeting', htmlDoctor));
       } else {
         const validateBooking = await prisma.bookings.update({
           where: { id: Number(id) },

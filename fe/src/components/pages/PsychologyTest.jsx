@@ -121,7 +121,8 @@ const PsychologyTest = () => {
                     .filter((data) => data.educationId == education)
                     .map((item) => (
                       <div key={item.id} onClick={() => handleTesType(item.id)} className={`${item.id == testType ? 'bg-[#35c9ce] border border-black' : 'bg-[#9ddbdd] hover:bg-[#75cfd2]'} cursor-pointer p-2 rounded-md`}>
-                        <div>{item.testName}</div>
+                        <div className="font-semibold">{item.testName}</div>
+                        <div className={`${item.id == testType ? 'text-gray-700' : 'text-xm text-gray-500'}`}>{item.description}</div>
                         <div className={`text-xs text-gray-500`}>Harga Rp{item.price}</div>
                         {/* className={`${data.time == available ? 'bg-blue-600 border border-black' : 'bg-blue-300 hover:bg-blue-400'} cursor-pointer px-2 py-1 mr-2 my-2 flex items-center justify-center rounded-md`}> */}
                       </div>

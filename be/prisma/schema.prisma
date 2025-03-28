@@ -112,6 +112,7 @@ model TestTypes {
   educationId Int
   doctorId    Int
   testName    String
+  description String
   price       String
   educations  Educations    @relation(fields: [educationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   doctors     Doctors       @relation(fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)

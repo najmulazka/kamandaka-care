@@ -4,7 +4,8 @@ const imagekit = require('../libs/imagekit.libs');
 const { getAnswerr } = require('../libs/answerr.libs');
 const { sendEmail, getHtml } = require('../libs/nodemailer.lib');
 const { formatTimeToWib } = require('../libs/formatTimeToWib.libs');
-const { GOOGLE_FORM_INTELIGENSI, GOOGLE_FORM_GAYA_BELAJAR, GOOGLE_FORM_KEPRIBADIAN, GOOGLE_FORM_MINAT, GOOGLE_FORM_GANGGUAN_PSIKOLOGI, GOOGLE_FORM_REKRUITMEN_PEKERJAAN } = process.env;
+const { setAccessForm } = require('../libs/accessForm.libs');
+const { GOOGLE_FORM_IST, GOOGLE_FORM_CFIT_2, GOOGLE_FORM_CFIT_3, GOOGLE_FORM_GAYA_BELAJAR, GOOGLE_FORM_KEPRIBADIAN, GOOGLE_FORM_MINAT, GOOGLE_FORM_GANGGUAN_PSIKOLOGI, GOOGLE_FORM_REKRUITMEN_PEKERJAAN } = process.env;
 
 module.exports = {
   createBookingTest: async (req, res, next) => {
@@ -21,89 +22,99 @@ module.exports = {
   },
 
   validateBookingTest: async (req, res, next) => {
-    const { id } = req.params;
-    const { isValidate } = req.body;
+    try {
+      const { id } = req.params;
+      const { isValidate } = req.body;
 
-    const bookingTestExist = await prisma.bookingTest.findUnique({ where: { id: Number(id) } });
-    if (!bookingTestExist) return res.sendResponse(404, 'Not Found', 'Resource not found', null);
+      const bookingTestExist = await prisma.bookingTest.findUnique({ where: { id: Number(id) } });
+      if (!bookingTestExist) return res.sendResponse(404, 'Not Found', 'Resource not found', null);
 
-    const bookingTest = await prisma.bookingTest.update({
-      where: { id: Number(id) },
-      data: {
-        isValidate,
-      },
-      include: {
-        clients: true,
-        testypes: {
-          include: {
-            doctors: {
-              select: { fullName: true, email: true },
-            },
-          },
-        },
-      },
-    });
-
-    let questionUrl = '';
-    let emailPromises = [];
-    if (bookingTest.isValidate) {
-      if (bookingTest.testypes.testName.toLowerCase().includes('inteligensi')) {
-        questionUrl = GOOGLE_FORM_INTELIGENSI;
-      } else if (bookingTest.testypes.testName.toLowerCase().includes('belajar')) {
-        questionUrl = GOOGLE_FORM_GAYA_BELAJAR;
-      } else if (bookingTest.testypes.testName.toLowerCase().includes('kepribadian')) {
-        questionUrl = GOOGLE_FORM_KEPRIBADIAN;
-      } else if (bookingTest.testypes.testName.toLowerCase().includes('minat')) {
-        questionUrl = GOOGLE_FORM_MINAT;
-      } else if (bookingTest.testypes.testName.toLowerCase().includes('psikologi')) {
-        questionUrl = GOOGLE_FORM_GANGGUAN_PSIKOLOGI;
-      } else if (bookingTest.testypes.testName.toLowerCase().includes('pekerjaan')) {
-        questionUrl = GOOGLE_FORM_REKRUITMEN_PEKERJAAN;
-      }
-
-      const a = await prisma.bookingTest.update({
+      const bookingTest = await prisma.bookingTest.update({
         where: { id: Number(id) },
         data: {
-          // questionUrl: `https://form.jotform.com/${questions.formId}`,
-          questionUrl: questionUrl,
+          isValidate,
         },
         include: {
           clients: true,
-          testypes: true,
+          testypes: {
+            include: {
+              doctors: {
+                select: { fullName: true, email: true },
+              },
+            },
+          },
         },
       });
 
-      const [html, htmlDoctor] = await Promise.all([
-        getHtml('booking-test-successfull.ejs', {
+      let questionUrl = '';
+      let emailPromises = [];
+      if (bookingTest.isValidate) {
+        if (bookingTest.testypes.testName.toLowerCase().includes('belajar')) {
+          questionUrl = GOOGLE_FORM_GAYA_BELAJAR;
+        } else if (bookingTest.testypes.testName.toLowerCase().includes('kepribadian')) {
+          questionUrl = GOOGLE_FORM_KEPRIBADIAN;
+        } else if (bookingTest.testypes.testName.toLowerCase().includes('minat')) {
+          questionUrl = GOOGLE_FORM_MINAT;
+        } else if (bookingTest.testypes.testName.toLowerCase().includes('psikologi')) {
+          questionUrl = GOOGLE_FORM_GANGGUAN_PSIKOLOGI;
+        } else if (bookingTest.testypes.testName.toLowerCase().includes('pekerjaan')) {
+          questionUrl = GOOGLE_FORM_REKRUITMEN_PEKERJAAN;
+        } else if (bookingTest.testypes.testName.toLowerCase().includes('ist')) {
+          questionUrl = GOOGLE_FORM_IST;
+        } else if (bookingTest.testypes.testName.toLowerCase().includes('cfit 2')) {
+          questionUrl = GOOGLE_FORM_CFIT_2;
+        } else if (bookingTest.testypes.testName.toLowerCase().includes('cfit 3')) {
+          questionUrl = GOOGLE_FORM_CFIT_3;
+        }
+
+        const a = await prisma.bookingTest.update({
+          where: { id: Number(id) },
+          data: {
+            // questionUrl: `https://form.jotform.com/${questions.formId}`,
+            questionUrl: questionUrl,
+          },
+          include: {
+            clients: true,
+            testypes: true,
+          },
+        });
+
+        await setAccessForm(a.testypes.testName, a.clients.email);
+
+        const [html, htmlDoctor] = await Promise.all([
+          getHtml('booking-test-successfull.ejs', {
+            client: {
+              fullName: bookingTest.clients.fullName,
+              testName: bookingTest.testypes.testName,
+              questionUrl: a.questionUrl,
+            },
+          }),
+          getHtml('get-booking-test.ejs', {
+            doctor: {
+              fullName: bookingTest.testypes.doctors.fullName,
+              testName: bookingTest.testypes.testName,
+              questionUrl: a.questionUrl,
+            },
+          }),
+        ]);
+
+        emailPromises.push(sendEmail(bookingTest.clients.email, bookingTest.testypes.testName, html), sendEmail(bookingTest.testypes.doctors.email, bookingTest.testypes.testName, htmlDoctor));
+      } else {
+        const html = await getHtml('booking-test-failed.ejs', {
           client: {
             fullName: bookingTest.clients.fullName,
             testName: bookingTest.testypes.testName,
-            questionUrl: a.questionUrl,
           },
-        }),
-        getHtml('get-booking-test.ejs', {
-          doctor: {
-            fullName: bookingTest.testypes.doctors.fullName,
-            testName: bookingTest.testypes.testName,
-            questionUrl: a.questionUrl,
-          },
-        }),
-      ]);
+        });
 
-      emailPromises.push(sendEmail(bookingTest.clients.email, bookingTest.testypes.testName, html), sendEmail(bookingTest.testypes.doctors.email, bookingTest.testypes.testName, htmlDoctor));
-    } else {
-      const html = await getHtml('booking-test-failed.ejs', {
-        client: {
-          fullName: bookingTest.clients.fullName,
-          testName: bookingTest.testypes.testName,
-        },
-      });
+        emailPromises.push(sendEmail(bookingTest.clients.email, 'Booking Test Psikologi Gagal', html));
+      }
 
-      emailPromises.push(sendEmail(bookingTest.clients.email, 'Booking Test Psikologi Gagal', html));
+      await Promise.all(emailPromises);
+      res.sendResponse(200, 'OK', null, bookingTest);
+    } catch (err) {
+      next(err);
     }
-
-    await Promise.all(emailPromises);
-    res.sendResponse(200, 'OK', null, bookingTest);
   },
 
   getBookingTests: async (req, res, next) => {

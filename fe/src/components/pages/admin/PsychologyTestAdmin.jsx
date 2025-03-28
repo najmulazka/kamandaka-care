@@ -17,6 +17,7 @@ const PsychologyTestAdmin = () => {
   const [formData, setFormData] = useState({
     testName: '',
     price: '',
+    description: '',
     educationId: '',
     doctorId: '',
   });
@@ -58,6 +59,7 @@ const PsychologyTestAdmin = () => {
       setFormData({
         testName: editData.testName,
         price: editData.price,
+        description: editData.description,
         educationId: editData.educationId,
         doctorId: editData.doctorId,
       });
@@ -67,6 +69,7 @@ const PsychologyTestAdmin = () => {
       setFormData({
         testName: '',
         price: '',
+        description: '',
         educationId: '',
         doctorId: '',
       });
@@ -87,6 +90,7 @@ const PsychologyTestAdmin = () => {
     setErrorMessage('');
     const data = {
       testName: e.target.testName?.value,
+      description: e.target.description?.value,
       price: e.target.price?.value,
       educationId: e.target.educationId?.value,
       doctorId: e.target.doctorId?.value,
@@ -101,16 +105,17 @@ const PsychologyTestAdmin = () => {
         // } else if (data.educationId == 'Select') {
         //   setErrorMessage('Silahkan pilih pendidikan terlebih dahulu');
         // } else {
-          await updateTestType(editData.id, data);
-          setRefresh(!refresh);
-          setEditData(null);
-          setFormData({
-            testName: '',
-            price: '',
-            educationId: '',
-            doctorId: '',
-          });
-          setPopUpInput(false);
+        await updateTestType(editData.id, data);
+        setRefresh(!refresh);
+        setEditData(null);
+        setFormData({
+          testName: '',
+          price: '',
+          description: '',
+          educationId: '',
+          doctorId: '',
+        });
+        setPopUpInput(false);
         // }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
@@ -129,15 +134,16 @@ const PsychologyTestAdmin = () => {
         // } else if (data.doctorId == 'Select') {
         //   setErrorMessage('Silahkan pilih dokter terlebih dahulu');
         // } else {
-          await createTestType(data);
-          setRefresh(!refresh);
-          setFormData({
-            testName: '',
-            price: '',
-            educationId: '',
-            doctorId: '',
-          });
-          setPopUpInput(false);
+        await createTestType(data);
+        setRefresh(!refresh);
+        setFormData({
+          testName: '',
+          price: '',
+          description: '',
+          educationId: '',
+          doctorId: '',
+        });
+        setPopUpInput(false);
         // }
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
@@ -186,6 +192,7 @@ const PsychologyTestAdmin = () => {
     setFormData({
       testName: '',
       price: '',
+      description: '',
       educationId: '',
       doctorId: '',
     });
@@ -214,6 +221,7 @@ const PsychologyTestAdmin = () => {
                 <tr>
                   <th className="border border-gray-400 w-5 text-left p-2">No</th>
                   <th className="border border-gray-400 text-left p-2">Nama Test</th>
+                  <th className="border border-gray-400 text-left p-2">Deskripsi</th>
                   <th className="border border-gray-400 text-left p-2">Harga</th>
                   <th className="border border-gray-400 text-left p-2">Pendidikan</th>
                   <th className="border border-gray-400 text-left p-2">Dokter</th>
@@ -226,6 +234,7 @@ const PsychologyTestAdmin = () => {
                     <tr key={item.id}>
                       <td className="border border-gray-400 p-1">{index++}</td>
                       <td className="border border-gray-400 p-1">{item.testName}</td>
+                      <td className="border border-gray-400 p-1">{item.description}</td>
                       <td className="border border-gray-400 p-1">{item.price}</td>
                       <td className="border border-gray-400 p-1">{item.educations.educationLevel}</td>
                       <td className="border border-gray-400 p-1">{item.doctors.fullName}</td>
@@ -275,9 +284,7 @@ const PsychologyTestAdmin = () => {
               </button>
 
               <div className="font-semibold">{editData ? 'Update' : 'Input'} Jenis Test Psikologi</div>
-              <div className="text-left mt-2 text-sm">
-                {/* <strong>Note:</strong> Inteligensi, Belajar, Kepribadian, Minat, Psikologi, Pekerjaan */}
-              </div>
+              <div className="text-left mt-2 text-sm">{/* <strong>Note:</strong> Inteligensi, Belajar, Kepribadian, Minat, Psikologi, Pekerjaan */}</div>
               {errorMessage !== '' && <div className="text-red-500">{errorMessage}</div>}
               <form onSubmit={isProcess ? undefined : handleSubmit} className="flex flex-col space-y-2 my-4">
                 {/* <input type="text" value={formData.testName} onChange={handleChange} required name="testName" placeholder="Nama Jenis Test" className="border border-gray-500 px-2 py-1 rounded-lg" /> */}
@@ -289,12 +296,17 @@ const PsychologyTestAdmin = () => {
                   <option value="Tes Gaya Belajar">Tes Gaya Belajar</option>
                   <option value="Tes Kepribadian">Tes Kepribadian</option>
                   <option value="Tes Minat">Tes Minat</option>
-                  <option value="Tes Psikologi">Tes Psikologi</option>
-                  <option value="Tes Inteligensi">Tes Inteligensi</option>
+                  <option value="Tes Gangguan Psikologi">Tes Gangguan Psikologi</option>
+                  <option value="Tes Intelegensi IST">Tes Intelegensi IST</option>
+                  <option value="Tes Intelegensi CFIT 2">Tes Intelegensi CFIT 2</option>
+                  <option value="Tes Intelegensi CFIT 3">Tes Intelegensi CFIT 3</option>
                 </select>
+                <input type="text" value={formData.description} onChange={handleChange} required name="description" placeholder="Deskripsi" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
                 <input type="number" value={formData.price} onChange={handleChange} required name="price" placeholder="Harga" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
                 <select name="educationId" required value={formData.educationId} onChange={handleChange} className="border border-gray-500 px-2 py-1 rounded-lg">
-                  <option value="" disabled>Pilih Pendidikan</option>
+                  <option value="" disabled>
+                    Pilih Pendidikan
+                  </option>
                   {educations.length > 0 &&
                     educations.map((item) => (
                       <option key={item.id} value={item.id}>
@@ -303,7 +315,9 @@ const PsychologyTestAdmin = () => {
                     ))}
                 </select>
                 <select name="doctorId" required value={formData.doctorId} onChange={handleChange} className="border border-gray-500 px-2 py-1 rounded-lg">
-                  <option value="" disabled>Pilih Dokter</option>
+                  <option value="" disabled>
+                    Pilih Dokter
+                  </option>
                   {doctors.length > 0 &&
                     doctors.map((item) => (
                       <option key={item.id} value={item.id}>

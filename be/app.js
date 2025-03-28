@@ -10,6 +10,7 @@ const { firstRun } = require('./middlewares/firstRun.middlewares');
 const { autoInvalidBooking } = require('./controllers/booking.controllers');
 const cron = require('node-cron');
 const { autoInvalidBookingTest } = require('./controllers/bookingTest.controllers');
+const { removeAccessForm } = require('./libs/accessForm.libs');
 const { URL, PORT } = process.env;
 
 app.use(express.json());
@@ -31,9 +32,16 @@ cron.schedule('*/1 * * * *', async () => {
   await Promise.all([autoInvalidBooking(), autoInvalidBookingTest()]);
 });
 
+cron.schedule('0 5 * * *', async () => {
+  await removeAccessForm()
+}, {
+  timezone: "Asia/Jakarta"
+});
+
 app.get('/', async (req, res) => {
   res.status(200).json({ data: 'Welcome To Kamandaka Care' });
 });
+
 app.use('/api/v1', routes);
 
 app.use(notFoundHandler);
