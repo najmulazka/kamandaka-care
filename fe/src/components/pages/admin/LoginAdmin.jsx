@@ -14,7 +14,7 @@ const LoginAdmin = () => {
     event.preventDefault();
     try {
       await loginAdmin(data);
-      navigate('/admin/booking');
+      navigate('/admin');
     } catch (err) {
       setError(err.response.data.err);
     }

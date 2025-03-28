@@ -16,15 +16,19 @@ const BookingDoctor = () => {
         setIsLoading(true);
         const data = await getBookingsDoctor();
         setBookingsDoctor(data);
-        setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
           navigate('/login-doctor');
-        }
-        if (err.status == 400) {
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();

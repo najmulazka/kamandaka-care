@@ -10,7 +10,6 @@ const BookingTestAnswerDoctor = () => {
   const [answers, setAnswers] = useState({});
   const [bookingTest, setBookingTest] = useState([]);
   const [loading, setLoading] = useState(false);
-  // let index = 1;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,9 +22,12 @@ const BookingTestAnswerDoctor = () => {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
           navigate('/login-doctor');
-        }
-        if (err.status == 400) {
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
       } finally {
         setLoading(false);
@@ -33,8 +35,6 @@ const BookingTestAnswerDoctor = () => {
     };
     fetchData();
   }, [navigate]);
-
-  console.log(bookingTest?.testypes?.testName ? bookingTest.testypes.testName : 'Loading...');
 
   return (
     <div>
@@ -62,16 +62,6 @@ const BookingTestAnswerDoctor = () => {
               </tr>
             </thead>
             <tbody>
-              {/* {Object.values(answers).map((item) =>
-                item.type !== 'control_button' && item.type !== 'control_head' ? (
-                  <tr key={item.order}>
-                    <td className="border border-gray-400 p-1">{index++}</td>
-                    <td className="border border-gray-400 p-1">{item.text}</td>
-                    <td className="border border-gray-400 p-1">{item.answer}</td>
-                  </tr>
-                ) : null
-              )} */}
-
               {Object.entries(answers).map(([key, value], index) => (
                 <tr key={index}>
                   <td className={`border border-gray-400 p-1 text-center ${index < 7 ? 'bg-green-200' : ''}`}>{index >= 7 ? index - 6 : ''}</td>

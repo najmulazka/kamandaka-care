@@ -30,16 +30,20 @@ const DoctorAdmin = () => {
         setIsLoading(true);
         const response = await getDoctors();
         setDoctors(response);
-        setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
           navigate('/login-admin');
-        }
-        if (err.status == 400) {
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
-          setIsProcess(false);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
+      } finally {
+        setIsLoading(false);
+        setIsProcess(false);
       }
     };
     fetchData();
@@ -74,20 +78,19 @@ const DoctorAdmin = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsProcess(true);
-    setErrorMessage('');
-    const data = {
-      fullName: e.target.fullName?.value,
-      email: e.target.email?.value,
-      password: e.target.password?.value,
-      specialist: e.target.specialist?.value,
-    };
+    try {
+      e.preventDefault();
+      setIsProcess(true);
+      setErrorMessage('');
+      const data = {
+        fullName: e.target.fullName?.value,
+        email: e.target.email?.value,
+        password: e.target.password?.value,
+        specialist: e.target.specialist?.value,
+      };
 
-    if (editData) {
-      try {
+      if (editData) {
         await updateDoctor(editData.id, data);
-        setRefresh(!refresh);
         setEditData(null);
         setFormData({
           fullName: '',
@@ -95,42 +98,31 @@ const DoctorAdmin = () => {
           password: '',
           specialist: '',
         });
-        setPopUpInput(false);
-      } catch (err) {
-        if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now');
-          navigate('/login-admin');
-        }
-        if (err.status == 400) {
-          toast.warn(err.response.data.err);
-          setIsProcess(false);
-        }
-      }
-    } else {
-      try {
+      } else {
         await createDoctor(data);
-        setRefresh(!refresh);
         setFormData({
           fullName: '',
           email: '',
           password: '',
-
           specialist: '',
         });
-        setPopUpInput(false);
-      } catch (err) {
-        if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now');
-
-          navigate('/login-admin');
-        }
-        if (err.status == 400) {
-          toast.warn(err.response.data.err);
-          setIsProcess(false);
-        }
       }
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
+      }
+    } finally {
+      setRefresh(!refresh);
+      setPopUpInput(false);
+      setIsProcess(false);
     }
-    setIsProcess(false);
   };
 
   const handleEdit = (education) => {
@@ -148,13 +140,21 @@ const DoctorAdmin = () => {
       setIsProcess(true);
       await deleteDoctor(idDelete);
       setIdDelete('');
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
+      }
+    } finally {
       setRefresh(!refresh);
       setIsProcess(false);
       setPopUpConfirmationDelete(false);
-    } catch (err) {
-      if (err.message.includes('Unauthorized')) {
-        navigate('/login-admin');
-      }
     }
   };
 

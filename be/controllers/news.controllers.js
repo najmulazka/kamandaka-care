@@ -37,19 +37,27 @@ module.exports = {
   },
 
   getNews: async (req, res, next) => {
-    const news = await prisma.news.findMany();
+    try {
+      const news = await prisma.news.findMany();
 
-    res.sendResponse(200, 'OK', null, news);
+      res.sendResponse(200, 'OK', null, news);
+    } catch (err) {
+      next(err);
+    }
   },
 
   getNewsDetail: async (req, res, next) => {
-    const { id } = req.params;
-    const news = await prisma.news.findUnique({ where: { id: Number(id) } });
-    if (!news) {
-      return res.sendResponse(404, 'Not Found', 'Return Not Found', null);
-    }
+    try {
+      const { id } = req.params;
+      const news = await prisma.news.findUnique({ where: { id: Number(id) } });
+      if (!news) {
+        return res.sendResponse(404, 'Not Found', 'Return Not Found', null);
+      }
 
-    res.sendResponse(200, 'OK', null, news);
+      res.sendResponse(200, 'OK', null, news);
+    } catch (err) {
+      next(err);
+    }
   },
 
   updateNews: async (req, res, next) => {

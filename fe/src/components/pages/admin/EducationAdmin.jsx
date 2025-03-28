@@ -27,15 +27,20 @@ const EducationAdmin = () => {
         setIsLoading(true);
         const response = await getEducations();
         setEducations(response);
-        setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/login-admin');
-        }
-        if (err.status == 400) {
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
-          setIsProcess(false);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
+      } finally {
+        setIsLoading(false);
+        setIsProcess(false);
       }
     };
     fetchData();
@@ -66,52 +71,42 @@ const EducationAdmin = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsProcess(true);
-    setErrorMessage('');
-    const data = {
-      educationLevel: e.target.educationLevel?.value,
-    };
+    try {
+      e.preventDefault();
+      setIsProcess(true);
+      setErrorMessage('');
+      const data = {
+        educationLevel: e.target.educationLevel?.value,
+      };
 
-    if (editData) {
-      try {
+      if (editData) {
         await updateEducation(editData.id, data);
-        setRefresh(!refresh);
         setEditData(null);
         setFormData({
           educationLevel: '',
         });
-        setPopUpInput(false);
-      } catch (err) {
-        if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now');
-          navigate('/login-admin');
-        }
-        if (err.status == 400) {
-          toast.warn(err.response.data.err);
-          setIsProcess(false);
-        }
-      }
-    } else {
-      try {
+      } else {
         await createEducation(data);
-        setRefresh(!refresh);
         setFormData({
           educationLevel: '',
         });
-        setPopUpInput(false);
-      } catch (err) {
-        if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now');
-          navigate('/login-admin');
-        }
-        if (err.status == 400) {
-          toast.warn(err.response.data.err);
-          setIsProcess(false);
-        }
       }
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
+      }
+    } finally {
+      setRefresh(!refresh);
+      setPopUpInput(false);
+      setIsProcess(false);
     }
-    setIsProcess(false);
   };
 
   const handleEdit = (education) => {
@@ -129,13 +124,21 @@ const EducationAdmin = () => {
       setIsProcess(true);
       await deleteEducation(idDelete);
       setIdDelete('');
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
+      }
+    } finally {
       setRefresh(!refresh);
       setIsProcess(false);
       setPopUpConfirmationDelete(false);
-    } catch (err) {
-      if (err.message.includes('Unauthorized')) {
-        navigate('/login-admin');
-      }
     }
   };
 

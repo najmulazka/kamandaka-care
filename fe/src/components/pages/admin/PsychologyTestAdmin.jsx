@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import HeaderAdmin from '../../fragments/HeaderAdmin';
 import { useNavigate } from 'react-router-dom';
-// import { createService, deleteService, getServices, updateService } from '../../../services/service.service';
 import PopUpConfirmation from '../../fragments/PopUpConfirmation';
 import { getDoctors } from '../../../services/doctor.service';
 import { createTestType, deleteTestType, getTestTypes, updateTestType } from '../../../services/testType.service';
@@ -39,16 +38,20 @@ const PsychologyTestAdmin = () => {
 
         setDoctors(await getDoctors());
         setEducations(await getEducations());
-        setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
           navigate('/login-admin');
-        }
-        if (err.status == 400) {
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
-          setIsProcess(false);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
+      } finally {
+        setIsLoading(false);
+        setIsProcess(false);
       }
     };
     fetchData();
@@ -85,28 +88,20 @@ const PsychologyTestAdmin = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsProcess(true);
-    setErrorMessage('');
-    const data = {
-      testName: e.target.testName?.value,
-      description: e.target.description?.value,
-      price: e.target.price?.value,
-      educationId: e.target.educationId?.value,
-      doctorId: e.target.doctorId?.value,
-    };
+    try {
+      e.preventDefault();
+      setIsProcess(true);
+      setErrorMessage('');
+      const data = {
+        testName: e.target.testName?.value,
+        description: e.target.description?.value,
+        price: e.target.price?.value,
+        educationId: e.target.educationId?.value,
+        doctorId: e.target.doctorId?.value,
+      };
 
-    if (editData) {
-      try {
-        // if (data.testName == 'Select') {
-        //   setErrorMessage('Silahkan pilih nama tes terlebih dahulu');
-        // } else if (data.doctorId == 'Select') {
-        //   setErrorMessage('Silahkan pilih dokter terlebih dahulu');
-        // } else if (data.educationId == 'Select') {
-        //   setErrorMessage('Silahkan pilih pendidikan terlebih dahulu');
-        // } else {
+      if (editData) {
         await updateTestType(editData.id, data);
-        setRefresh(!refresh);
         setEditData(null);
         setFormData({
           testName: '',
@@ -115,27 +110,8 @@ const PsychologyTestAdmin = () => {
           educationId: '',
           doctorId: '',
         });
-        setPopUpInput(false);
-        // }
-      } catch (err) {
-        if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now');
-          navigate('/login-admin');
-        }
-        if (err.status == 400) {
-          toast.warn(err.response.data.err);
-          setIsProcess(false);
-        }
-      }
-    } else {
-      try {
-        // if (data.testName == 'Select') {
-        //   setErrorMessage('Silahkan pilih nama tes terlebih dahulu');
-        // } else if (data.doctorId == 'Select') {
-        //   setErrorMessage('Silahkan pilih dokter terlebih dahulu');
-        // } else {
+      } else {
         await createTestType(data);
-        setRefresh(!refresh);
         setFormData({
           testName: '',
           price: '',
@@ -143,20 +119,23 @@ const PsychologyTestAdmin = () => {
           educationId: '',
           doctorId: '',
         });
-        setPopUpInput(false);
-        // }
-      } catch (err) {
-        if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now');
-          navigate('/login-admin');
-        }
-        if (err.status == 400) {
-          toast.warn(err.response.data.err);
-          setIsProcess(false);
-        }
       }
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
+      }
+    } finally {
+      setRefresh(!refresh);
+      setIsProcess(false);
+      setPopUpInput(false);
     }
-    setIsProcess(false);
   };
 
   const handleEdit = (testType) => {
@@ -174,13 +153,21 @@ const PsychologyTestAdmin = () => {
       setIsProcess(true);
       await deleteTestType(idDelete);
       setIdDelete('');
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
+      }
+    } finally {
       setRefresh(!refresh);
       setIsProcess(false);
       setPopUpConfirmationDelete(false);
-    } catch (err) {
-      if (err.message.includes('Unauthorized')) {
-        navigate('/login-admin');
-      }
     }
   };
 

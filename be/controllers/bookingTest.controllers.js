@@ -9,16 +9,20 @@ const { GOOGLE_FORM_IST, GOOGLE_FORM_CFIT_2, GOOGLE_FORM_CFIT_3, GOOGLE_FORM_GAY
 
 module.exports = {
   createBookingTest: async (req, res, next) => {
-    const { testTypeId } = req.body;
+    try {
+      const { testTypeId } = req.body;
 
-    const bookingTest = await prisma.bookingTest.create({
-      data: {
-        clientId: req.client.id,
-        testTypeId: Number(testTypeId),
-      },
-    });
+      const bookingTest = await prisma.bookingTest.create({
+        data: {
+          clientId: req.client.id,
+          testTypeId: Number(testTypeId),
+        },
+      });
 
-    res.sendResponse(201, 'Created', null, bookingTest);
+      res.sendResponse(201, 'Created', null, bookingTest);
+    } catch (err) {
+      next(err);
+    }
   },
 
   validateBookingTest: async (req, res, next) => {
@@ -118,136 +122,152 @@ module.exports = {
   },
 
   getBookingTests: async (req, res, next) => {
-    let { date, month, year } = req.query;
-    let where = {};
+    try {
+      let { date, month, year } = req.query;
+      let where = {};
 
-    if (year) {
-      let startDate, endDate;
+      if (year) {
+        let startDate, endDate;
 
-      if (month) {
-        if (date) {
-          startDate = new Date(Date.UTC(year, month - 1, date, 0, 0, 0));
-          endDate = new Date(Date.UTC(year, month - 1, date, 23, 59, 59));
+        if (month) {
+          if (date) {
+            startDate = new Date(Date.UTC(year, month - 1, date, 0, 0, 0));
+            endDate = new Date(Date.UTC(year, month - 1, date, 23, 59, 59));
+          } else {
+            startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
+            endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59));
+          }
         } else {
-          startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
-          endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59));
+          startDate = new Date(Date.UTC(year, 0, 1, 0, 0, 0));
+          endDate = new Date(Date.UTC(year, 11, 31, 23, 59, 59));
         }
-      } else {
-        startDate = new Date(Date.UTC(year, 0, 1, 0, 0, 0));
-        endDate = new Date(Date.UTC(year, 11, 31, 23, 59, 59));
+        where.createdAt = { gte: startDate, lt: endDate };
+        where.isValidate = true;
       }
-      where.createdAt = { gte: startDate, lt: endDate };
-      where.isValidate = true;
-    }
 
-    const bookingTest = await prisma.bookingTest.findMany({
-      where,
-      include: {
-        clients: true,
-        testypes: {
-          include: {
-            educations: true,
-            doctors: {
-              select: { fullName: true, email: true },
+      const bookingTest = await prisma.bookingTest.findMany({
+        where,
+        include: {
+          clients: true,
+          testypes: {
+            include: {
+              educations: true,
+              doctors: {
+                select: { fullName: true, email: true },
+              },
             },
           },
         },
-      },
-      orderBy: {
-        id: 'desc',
-      },
-    });
+        orderBy: {
+          id: 'desc',
+        },
+      });
 
-    const bookingsWithWIB = bookingTest.map((booking) => ({
-      ...booking,
-      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
-    }));
+      const bookingsWithWIB = bookingTest.map((booking) => ({
+        ...booking,
+        createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
+      }));
 
-    res.sendResponse(200, 'OK', null, bookingsWithWIB);
+      res.sendResponse(200, 'OK', null, bookingsWithWIB);
+    } catch (err) {
+      next(err);
+    }
   },
 
   getBookingTest: async (req, res, next) => {
-    const { id } = req.params;
-    const bookingTest = await prisma.bookingTest.findUnique({
-      where: {
-        id: Number(id),
-      },
-      include: {
-        clients: true,
-        testypes: {
-          include: {
-            educations: true,
-            doctors: {
-              select: { fullName: true, email: true },
+    try {
+      const { id } = req.params;
+      const bookingTest = await prisma.bookingTest.findUnique({
+        where: {
+          id: Number(id),
+        },
+        include: {
+          clients: true,
+          testypes: {
+            include: {
+              educations: true,
+              doctors: {
+                select: { fullName: true, email: true },
+              },
             },
           },
         },
-      },
-      orderBy: [{ id: 'desc' }],
-    });
+        orderBy: [{ id: 'desc' }],
+      });
 
-    if (!bookingTest) {
-      return res.sendResponse(404, 'Not Found', 'Resource Not Found', null);
+      if (!bookingTest) {
+        return res.sendResponse(404, 'Not Found', 'Resource Not Found', null);
+      }
+
+      const bookingsWithWIB = bookingTest.map((booking) => ({
+        ...booking,
+        createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
+      }));
+
+      res.sendResponse(200, 'OK', null, bookingsWithWIB);
+    } catch (err) {
+      next(err);
     }
-
-    const bookingsWithWIB = bookingTest.map((booking) => ({
-      ...booking,
-      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
-    }));
-
-    res.sendResponse(200, 'OK', null, bookingsWithWIB);
   },
 
   getBookingTestClient: async (req, res, next) => {
-    const bookingTest = await prisma.bookingTest.findMany({
-      where: {
-        clientId: req.client.id,
-      },
-      include: {
-        testypes: {
-          include: {
-            educations: true,
-            doctors: {
-              select: { fullName: true, email: true },
+    try {
+      const bookingTest = await prisma.bookingTest.findMany({
+        where: {
+          clientId: req.client.id,
+        },
+        include: {
+          testypes: {
+            include: {
+              educations: true,
+              doctors: {
+                select: { fullName: true, email: true },
+              },
             },
           },
         },
-      },
-      orderBy: [{ id: 'desc' }],
-    });
+        orderBy: [{ id: 'desc' }],
+      });
 
-    const bookingsWithWIB = bookingTest.map((booking) => ({
-      ...booking,
-      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
-    }));
-    res.sendResponse(200, 'OK', null, bookingsWithWIB);
+      const bookingsWithWIB = bookingTest.map((booking) => ({
+        ...booking,
+        createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
+      }));
+      res.sendResponse(200, 'OK', null, bookingsWithWIB);
+    } catch (err) {
+      next(err);
+    }
   }, // update
 
   getBookingTestDoctor: async (req, res, next) => {
-    const bookingTest = await prisma.bookingTest.findMany({
-      where: {
-        testypes: {
-          doctors: { id: req.doctor.id },
-        },
-        isValidate: true,
-      },
-      include: {
-        testypes: {
-          include: {
-            educations: true,
+    try {
+      const bookingTest = await prisma.bookingTest.findMany({
+        where: {
+          testypes: {
+            doctors: { id: req.doctor.id },
           },
+          isValidate: true,
         },
-        clients: true,
-      },
-      orderBy: { id: 'desc' },
-    });
+        include: {
+          testypes: {
+            include: {
+              educations: true,
+            },
+          },
+          clients: true,
+        },
+        orderBy: { id: 'desc' },
+      });
 
-    const bookingsWithWIB = bookingTest.map((booking) => ({
-      ...booking,
-      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
-    }));
+      const bookingsWithWIB = bookingTest.map((booking) => ({
+        ...booking,
+        createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
+      }));
 
-    res.sendResponse(200, 'OK', null, bookingsWithWIB);
+      res.sendResponse(200, 'OK', null, bookingsWithWIB);
+    } catch (err) {
+      next(err);
+    }
   },
 
   getAnswerTest: async (req, res, next) => {
@@ -275,8 +295,9 @@ module.exports = {
   },
 
   updateResultTest: async (req, res, next) => {
-    const { id } = req.params;
     try {
+      const { id } = req.params;
+
       if (!req.file) {
         return res.status(400).json({
           status: false,
@@ -326,17 +347,21 @@ module.exports = {
   },
 
   autoInvalidBookingTest: async () => {
-    const timeNow = new Date();
-    timeNow.setUTCHours(timeNow.getUTCHours() - 3);
+    try {
+      const timeNow = new Date();
+      timeNow.setUTCHours(timeNow.getUTCHours() - 3);
 
-    await prisma.bookingTest.updateMany({
-      where: {
-        isValidate: null,
-        createdAt: { lt: timeNow },
-      },
-      data: {
-        isValidate: false,
-      },
-    });
+      await prisma.bookingTest.updateMany({
+        where: {
+          isValidate: null,
+          createdAt: { lt: timeNow },
+        },
+        data: {
+          isValidate: false,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
   },
 };

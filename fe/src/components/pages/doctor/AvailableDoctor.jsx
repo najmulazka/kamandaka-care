@@ -8,7 +8,6 @@ const AvailableDoctor = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedServiceTime, setSelectedServiceTime] = useState(null);
-  console.log(selectedServiceTime);
   const [availableDays, setAvailableDays] = useState({});
   const [isProcess, setIsProcess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,11 +30,19 @@ const AvailableDoctor = () => {
             Minggu: { checked: selected.minggu, startTime: selected.startTimeMinggu || '', endTime: selected.endTimeMinggu || '' },
           });
         }
-        setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
+          toast.warn('Please Login Now');
           navigate('/login-doctor');
+        } else if (err.status == 400) {
+          toast.warn(err.response.data.err);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -82,16 +89,19 @@ const AvailableDoctor = () => {
         endTimeMinggu: availableDays.Minggu.endTime,
       });
       toast.success('Waktu Layanan Berhasil di Perbarui', { position: 'top-center' });
-      setIsProcess(false);
     } catch (err) {
       if (err.message.includes('Unauthorized')) {
-        toast.warn('Please Login Now')
+        toast.warn('Please Login Now');
         navigate('/login-doctor');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
       }
-      if (err.status == 400) {
-        toast.error(err.response.data.err);
-        setIsProcess(false);
-      }
+    } finally {
+      setIsProcess(false);
     }
   };
 

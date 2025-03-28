@@ -14,20 +14,24 @@ const BookingAdmin = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
         const data = await getBooking();
         setBookings(data);
-        setIsLoading(false);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
           navigate('/login-admin');
-        }
-        if (err.status == 400) {
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
-          setIsProcess(false);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
+      } finally {
+        setIsLoading(false);
+        setIsProcess(false);
       }
     };
     fetchData();
@@ -39,9 +43,15 @@ const BookingAdmin = () => {
       await validateBooking(id, data);
     } catch (err) {
       if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
         navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
       }
-      toast.error(err.message);
     } finally {
       setRefresh(!refresh);
       setIsProcess(false);

@@ -7,28 +7,34 @@ import Payment from '../fragments/Payment';
 const PaymentPsychologyTest = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [dataBookingTest, setDataBookingTest] = useState([]);
   const [remainingTime, setRemainingTime] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await getBookingTestClient();
         setDataBookingTest(response);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
           navigate('/');
-        }
-        if (err.status == 400) {
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
   }, [navigate]);
 
-  
   useEffect(() => {
     const bookingTest = dataBookingTest.find((item) => item.id == id);
     if (!bookingTest) return;
@@ -42,7 +48,7 @@ const PaymentPsychologyTest = () => {
     };
 
     updateRemainingTime();
-    const timer = setInterval(updateRemainingTime, 1000); 
+    const timer = setInterval(updateRemainingTime, 1000);
 
     return () => clearInterval(timer);
   }, [dataBookingTest, id]);
@@ -59,15 +65,8 @@ const PaymentPsychologyTest = () => {
 
   return (
     <div>
-      {bookingTest?.isValidate === null ? (
-        <Payment
-          remainingTime={formatTime(remainingTime)}
-          bookingName={bookingTest.testypes?.testName}
-          price={bookingTest.testypes?.price}
-        />
-      ) : (
-        <div>Not Found</div>
-      )}
+      {isLoading && 'Loading...'}
+      {!isLoading && bookingTest?.isValidate === null ? <Payment remainingTime={formatTime(remainingTime)} bookingName={bookingTest.testypes?.testName} price={bookingTest.testypes?.price} /> : <div>Not Found</div>}
     </div>
   );
 };

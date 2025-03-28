@@ -1,7 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LandingPage from '../components/pages/LandingPage';
-import Invoice from '../components/pages/Invoice';
-import CalendarComponent from '../components/pages/CalendarComponent';
 import DashboardClient from '../components/pages/DashboardClient';
 import Konsultasi from '../components/pages/Konsultasi';
 import CallbackPage from '../components/pages/CallbackPage';
@@ -29,12 +27,12 @@ import News from '../components/pages/news';
 import PaymentPsychologyTest from '../components/pages/PaymentPsychologyTest';
 import PaymentKonsultasi from '../components/pages/PaymentKonsultasi';
 import NotFound from '../components/pages/NotFound';
+import DashboardAdmin from '../components/pages/admin/DashboardAdmin';
 
 const RouterList = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/invoice" element={<Invoice />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/news/:id" element={<News />} />
         <Route path="/syarat-ketentuan" element={<SyaratKetentuan />} />
@@ -95,7 +93,14 @@ const RouterList = () => {
             </ProtectedClient>
           }
         />
-        <Route path="/booking" element={<CalendarComponent />} />
+        <Route
+          path="/admin"
+          element={
+            <Protected>
+              <DashboardAdmin />
+            </Protected>
+          }
+        />
         <Route
           path="/admin/booking"
           element={

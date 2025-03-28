@@ -32,17 +32,21 @@ const KonsultasiAdmin = () => {
         const response = await getServices();
         setServices(response);
 
-        setDoctors((await getDoctors()));
-        setIsLoading(false);
+        setDoctors(await getDoctors());
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
           navigate('/login-admin');
-        }
-        if (err.status == 400) {
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
-          setIsProcess(false);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
+      } finally {
+        setIsProcess(false);
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -75,66 +79,48 @@ const KonsultasiAdmin = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsProcess(true);
-    setErrorMessage('');
-    const data = {
-      serviceName: e.target.serviceName?.value,
-      price: e.target.price?.value,
-      doctorId: e.target.doctorId?.value,
-    };
+    try {
+      e.preventDefault();
+      setIsProcess(true);
+      setErrorMessage('');
+      const data = {
+        serviceName: e.target.serviceName?.value,
+        price: e.target.price?.value,
+        doctorId: e.target.doctorId?.value,
+      };
 
-    if (editData) {
-      try {
-        // if (data.doctorId == 'Select') {
-        //   setErrorMessage('Silahkan pilih dokter terlebih dahulu');
-        // } else {
-          await updateService(editData.id, data);
-          setRefresh(!refresh);
-          setEditData(null);
-          setFormData({
-            serviceName: '',
-            price: '',
-            doctorId: '',
-          });
-          setPopUpInput(false);
-        // }
-      } catch (err) {
-        if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now');
-          navigate('/login-admin');
-        }
-        if (err.status == 400) {
-          toast.warn(err.response.data.err);
-          setIsProcess(false);
-        }
+      if (editData) {
+        await updateService(editData.id, data);
+        setEditData(null);
+        setFormData({
+          serviceName: '',
+          price: '',
+          doctorId: '',
+        });
+      } else {
+        await createService(data);
+        setFormData({
+          serviceName: '',
+          price: '',
+          doctorId: '',
+        });
       }
-    } else {
-      try {
-        if (data.doctorId == 'Select') {
-          setErrorMessage('Silahkan pilih dokter terlebih dahulu');
-        } else {
-          await createService(data);
-          setRefresh(!refresh);
-          setFormData({
-            serviceName: '',
-            price: '',
-            doctorId: '',
-          });
-          setPopUpInput(false);
-        }
-      } catch (err) {
-        if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now');
-          navigate('/login-admin');
-        }
-        if (err.status == 400) {
-          toast.warn(err.response.data.err);
-          setIsProcess(false);
-        }
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
       }
+    } finally {
+      setRefresh(!refresh);
+      setIsProcess(false);
+      setPopUpInput(false);
     }
-    setIsProcess(false);
   };
 
   const handleEdit = (service) => {
@@ -152,13 +138,21 @@ const KonsultasiAdmin = () => {
       setIsProcess(true);
       await deleteService(idDelete);
       setIdDelete('');
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
+      }
+    } finally {
       setRefresh(!refresh);
       setIsProcess(false);
       setPopUpConfirmationDelete(false);
-    } catch (err) {
-      if (err.message.includes('Unauthorized')) {
-        navigate('/login-admin');
-      }
     }
   };
 
@@ -261,7 +255,9 @@ const KonsultasiAdmin = () => {
                 <input type="text" value={formData.serviceName} onChange={handleChange} required name="serviceName" placeholder="Nama Layanan Konsultasi" className="border border-gray-500 px-2 py-1 rounded-lg" />
                 <input type="number" value={formData.price} onChange={handleChange} required name="price" placeholder="Harga" className="border border-gray-500 appearance-none no-spinner px-2 py-1 rounded-lg" />
                 <select name="doctorId" required value={formData.doctorId} onChange={handleChange} className="border border-gray-500 px-2 py-1 rounded-lg">
-                  <option value="" disabled>Pilih Dokter</option>
+                  <option value="" disabled>
+                    Pilih Dokter
+                  </option>
                   {doctors.length > 0 &&
                     doctors.map((item) => (
                       <option key={item.id} value={item.id}>

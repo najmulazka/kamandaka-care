@@ -7,23 +7,29 @@ import { getBookingsClient } from '../../services/booking.service';
 const PaymentKonsultasi = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [dataBooking, setDataBooking] = useState([]);
   const [remainingTime, setRemainingTime] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await getBookingsClient();
         setDataBooking(response);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
           navigate('/');
-        } else if (err.response?.status === 400) {
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
         } else {
-          toast.error('Failed to fetch bookings');
+          toast.error(err.message);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -57,7 +63,12 @@ const PaymentKonsultasi = () => {
 
   const booking = dataBooking.find((item) => item.id == id);
 
-  return <div>{booking?.isValidate === null ? <Payment remainingTime={formatTime(remainingTime)} bookingName={booking.services?.serviceName} price={booking.services?.price} /> : <div>Not Found</div>}</div>;
+  return (
+    <div>
+      {isLoading && 'Loading...'}
+      {!isLoading && booking?.isValidate === null ? <Payment remainingTime={formatTime(remainingTime)} bookingName={booking.services?.serviceName} price={booking.services?.price} /> : <div>Not Found</div>}
+    </div>
+  );
 };
 
 export default PaymentKonsultasi;

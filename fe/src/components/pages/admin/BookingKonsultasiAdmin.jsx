@@ -17,7 +17,6 @@ const BookingKonsultasiAdmin = () => {
   const [serviceId, setServiceId] = useState('');
   const [isProcess, setIsProcess] = useState(false);
   const [isPopUp, setIsPopUp] = useState(false);
-  console.log(isPopUp);
   const [message, setMessage] = useState('');
   const [data, setData] = useState({});
   const navigate = useNavigate();
@@ -45,12 +44,16 @@ const BookingKonsultasiAdmin = () => {
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
-          navigate('/');
-        }
-        if (err.status == 400) {
+          navigate('/login-admin');
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
-          setIsProcess(false);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
+      } finally {
+        setIsProcess(false);
       }
     };
 
@@ -84,24 +87,26 @@ const BookingKonsultasiAdmin = () => {
 
   const handleNext = async () => {
     try {
-      setIsProcess(!isProcess);
+      setIsProcess(true);
       if (data.serviceId === undefined || data.day === undefined || data.time === undefined) {
         setMessage('Silahkan Pilih Jenis layanan dan waktu untuk konsultasi');
         setIsPopUp(true);
-        setIsProcess(false);
       } else {
         await createBookingOffline(data);
-        setIsProcess(false);
       }
     } catch (err) {
       if (err.message.includes('Unauthorized')) {
         toast.warn('Please Login Now');
         navigate('/login-admin');
-      }
-      if (err.status == 400) {
+      } else if (err.status == 400) {
         toast.warn(err.response.data.err);
-        setIsProcess(false);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
       }
+    } finally {
+      setIsProcess(false);
     }
   };
 

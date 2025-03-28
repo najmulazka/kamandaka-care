@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const doctor = require('./doctor.routes');
-const test = require('./test.routes');
 const auth = require('./auth.routes');
 const service = require('./service.routes');
 const serviceTime = require('./serviceTime.routes');
@@ -13,7 +12,6 @@ const { getAnswerr } = require('../libs/answerr.libs');
 
 router.use('/auth', auth);
 router.use('/doctor', doctor);
-router.use('/test', test);
 router.use('/service', service);
 router.use('/service-time', serviceTime);
 router.use('/booking', booking);

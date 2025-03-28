@@ -8,88 +8,100 @@ const { CLIENT_EMAIL } = process.env;
 
 module.exports = {
   scheedule: async (req, res, next) => {
-    const { serviceId, day, date, month, year } = req.body;
-    const generateHourlySlots = (start, end) => {
-      let slots = [];
-      let current = moment.tz(start, 'Asia/Jakarta').startOf('hour');
-      let endTime = moment.tz(end, 'Asia/Jakarta');
+    try {
+      const { serviceId, day, date, month, year } = req.body;
+      const generateHourlySlots = (start, end) => {
+        let slots = [];
+        let current = moment.tz(start, 'Asia/Jakarta').startOf('hour');
+        let endTime = moment.tz(end, 'Asia/Jakarta');
 
-      while (current.isSameOrBefore(endTime)) {
-        slots.push(current.format('HH:mm'));
-        current.add(1, 'hour');
-      }
+        while (current.isSameOrBefore(endTime)) {
+          slots.push(current.format('HH:mm'));
+          current.add(1, 'hour');
+        }
 
-      return slots;
-    };
+        return slots;
+      };
 
-    const services = await prisma.services.findUnique({
-      where: { id: Number(serviceId) },
-      include: { serviceTime: true },
-    });
+      const services = await prisma.services.findUnique({
+        where: { id: Number(serviceId) },
+        include: { serviceTime: true },
+      });
 
-    const available = services.serviceTime[0][day.toLowerCase()];
-    if (!available) return res.sendResponse(200, 'OK', '', []);
+      const available = services.serviceTime[0][day.toLowerCase()];
+      if (!available) return res.sendResponse(200, 'OK', '', []);
 
-    const startTime = `startTime${day}`;
-    const endTime = `endTime${day}`;
-    const availableTime = generateHourlySlots(services.serviceTime[0][startTime], services.serviceTime[0][endTime]);
+      const startTime = `startTime${day}`;
+      const endTime = `endTime${day}`;
+      const availableTime = generateHourlySlots(services.serviceTime[0][startTime], services.serviceTime[0][endTime]);
 
-    const wib = new Date(`${year}-${month}-${date} 00:00:00.000`);
-    const a = moment.tz(wib, 'Asia/Jakarta').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-    const booking = await prisma.bookings.findMany({
-      where: {
-        serviceId: Number(serviceId),
-        dateTime: { gte: new Date(a) },
-        // isValidate: true,
-        OR: [{ isValidate: true }, { isValidate: null }],
-      },
-    });
+      const wib = new Date(`${year}-${month}-${date} 00:00:00.000`);
+      const a = moment.tz(wib, 'Asia/Jakarta').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+      const booking = await prisma.bookings.findMany({
+        where: {
+          serviceId: Number(serviceId),
+          dateTime: { gte: new Date(a) },
+          // isValidate: true,
+          OR: [{ isValidate: true }, { isValidate: null }],
+        },
+      });
 
-    const booked = booking.map((b) => formatTimeToWib('YYYY-MM-DD HH:mm:ss', b.dateTime));
+      const booked = booking.map((b) => formatTimeToWib('YYYY-MM-DD HH:mm:ss', b.dateTime));
 
-    const formatHhMm = booked.map((w) => moment(w, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Jakarta').format('HH:mm'));
-    const filteredAvailableTime = availableTime.filter((time) => !formatHhMm.includes(time));
+      const formatHhMm = booked.map((w) => moment(w, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Jakarta').format('HH:mm'));
+      const filteredAvailableTime = availableTime.filter((time) => !formatHhMm.includes(time));
 
-    // Kekurangan -> tidak bisa buka diatas jam 7
-    res.sendResponse(200, 'OK', null, filteredAvailableTime);
+      // Kekurangan -> tidak bisa buka diatas jam 7
+      res.sendResponse(200, 'OK', null, filteredAvailableTime);
+    } catch (err) {
+      next(err);
+    }
   },
 
   createBookingOffline: async (req, res, next) => {
-    const { serviceId, date, month, year, time } = req.body;
+    try {
+      const { serviceId, date, month, year, time } = req.body;
 
-    const wib = `${year}-${month}-${date} ${time}:00`;
-    const toUtc = moment.tz(wib, 'Asia/Jakarta').utc().toDate();
+      const wib = `${year}-${month}-${date} ${time}:00`;
+      const toUtc = moment.tz(wib, 'Asia/Jakarta').utc().toDate();
 
-    const client = await prisma.clients.findUnique({ where: { email: CLIENT_EMAIL } });
+      const client = await prisma.clients.findUnique({ where: { email: CLIENT_EMAIL } });
 
-    const booking = await prisma.bookings.create({
-      data: {
-        clientId: Number(client.id),
-        serviceId: Number(serviceId),
-        type: 'Offline',
-        dateTime: toUtc,
-        isValidate: true,
-      },
-    });
+      const booking = await prisma.bookings.create({
+        data: {
+          clientId: Number(client.id),
+          serviceId: Number(serviceId),
+          type: 'Offline',
+          dateTime: toUtc,
+          isValidate: true,
+        },
+      });
 
-    res.sendResponse(201, 'Created', null, booking);
+      res.sendResponse(201, 'Created', null, booking);
+    } catch (err) {
+      next(err);
+    }
   },
 
   createBooking: async (req, res, next) => {
-    const { serviceId, date, month, year, time } = req.body;
+    try {
+      const { serviceId, date, month, year, time } = req.body;
 
-    const wib = `${year}-${month}-${date} ${time}:00`;
-    const toUtc = moment.tz(wib, 'Asia/Jakarta').utc().toDate();
+      const wib = `${year}-${month}-${date} ${time}:00`;
+      const toUtc = moment.tz(wib, 'Asia/Jakarta').utc().toDate();
 
-    const booking = await prisma.bookings.create({
-      data: {
-        clientId: req.client.id,
-        serviceId: Number(serviceId),
-        dateTime: toUtc,
-      },
-    });
+      const booking = await prisma.bookings.create({
+        data: {
+          clientId: req.client.id,
+          serviceId: Number(serviceId),
+          dateTime: toUtc,
+        },
+      });
 
-    res.sendResponse(201, 'Created', null, booking);
+      res.sendResponse(201, 'Created', null, booking);
+    } catch (err) {
+      next(err);
+    }
   },
 
   validateBooking: async (req, res, next) => {
@@ -294,75 +306,87 @@ module.exports = {
   },
 
   getBookingsDoctor: async (req, res, next) => {
-    const bookings = await prisma.bookings.findMany({
-      where: { services: { doctors: { id: req.doctor.id } } },
-      include: {
-        clients: true,
-        services: {
-          include: {
-            doctors: {
-              select: { fullName: true, specialist: true },
+    try {
+      const bookings = await prisma.bookings.findMany({
+        where: { services: { doctors: { id: req.doctor.id } } },
+        include: {
+          clients: true,
+          services: {
+            include: {
+              doctors: {
+                select: { fullName: true, specialist: true },
+              },
             },
           },
         },
-      },
-      orderBy: { dateTime: 'desc' },
-    });
+        orderBy: { dateTime: 'desc' },
+      });
 
-    const bookingsWithWIB = bookings.map((booking) => ({
-      ...booking,
-      dateTime: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.dateTime),
-      createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
-    }));
+      const bookingsWithWIB = bookings.map((booking) => ({
+        ...booking,
+        dateTime: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.dateTime),
+        createdAt: formatTimeToWib('dddd, DD MMMM YYYY HH:mm:ss', booking.createdAt),
+      }));
 
-    res.sendResponse(200, 'OK', null, bookingsWithWIB);
+      res.sendResponse(200, 'OK', null, bookingsWithWIB);
+    } catch (err) {
+      next(err);
+    }
   },
 
   getBookingsClient: async (req, res, next) => {
-    const bookings = await prisma.bookings.findMany({
-      where: { clientId: req.client.id },
-      include: {
-        clients: true,
-        services: {
-          include: {
-            doctors: {
-              select: { fullName: true, specialist: true },
+    try {
+      const bookings = await prisma.bookings.findMany({
+        where: { clientId: req.client.id },
+        include: {
+          clients: true,
+          services: {
+            include: {
+              doctors: {
+                select: { fullName: true, specialist: true },
+              },
             },
           },
         },
-      },
-      orderBy: [
-        {
-          isValidate: {
-            nulls: 'first',
-            sort: 'asc',
+        orderBy: [
+          {
+            isValidate: {
+              nulls: 'first',
+              sort: 'asc',
+            },
           },
-        },
-        { id: 'desc' },
-      ],
-    });
+          { id: 'desc' },
+        ],
+      });
 
-    const bookingsWithWIB = bookings.map((booking) => ({
-      ...booking,
-      dateTime: moment.utc(booking.dateTime).tz('Asia/Jakarta').format('dddd, YYYY-MM-DD HH:mm:ss'),
-      createdAt: moment.utc(booking.createdAt).tz('Asia/Jakarta').format('dddd, YYYY-MM-DD HH:mm:ss'),
-    }));
+      const bookingsWithWIB = bookings.map((booking) => ({
+        ...booking,
+        dateTime: moment.utc(booking.dateTime).tz('Asia/Jakarta').format('dddd, YYYY-MM-DD HH:mm:ss'),
+        createdAt: moment.utc(booking.createdAt).tz('Asia/Jakarta').format('dddd, YYYY-MM-DD HH:mm:ss'),
+      }));
 
-    res.sendResponse(200, 'OK', null, bookingsWithWIB);
+      res.sendResponse(200, 'OK', null, bookingsWithWIB);
+    } catch (err) {
+      next(err);
+    }
   },
 
   autoInvalidBooking: async () => {
-    const timeNow = new Date();
-    timeNow.setUTCHours(timeNow.getUTCHours() - 3);
+    try {
+      const timeNow = new Date();
+      timeNow.setUTCHours(timeNow.getUTCHours() - 3);
 
-    await prisma.bookings.updateMany({
-      where: {
-        isValidate: null,
-        createdAt: { lt: timeNow },
-      },
-      data: {
-        isValidate: false,
-      },
-    });
+      await prisma.bookings.updateMany({
+        where: {
+          isValidate: null,
+          createdAt: { lt: timeNow },
+        },
+        data: {
+          isValidate: false,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
   },
 };

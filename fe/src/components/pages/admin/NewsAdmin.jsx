@@ -26,21 +26,24 @@ const ArticleAdmin = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
       try {
+        setIsLoading(true);
         const response = await getNews();
         setNews(response);
       } catch (err) {
         if (err.message.includes('Unauthorized')) {
           toast.warn('Please Login Now');
           navigate('/login-admin');
-        }
-        if (err.status == 400) {
+        } else if (err.status == 400) {
           toast.warn(err.response.data.err);
-          setIsProcess(false);
+        } else if (err.status == 500) {
+          toast.error('Aplikasi Error Silahkan Hubungi Developer');
+        } else {
+          toast.error(err.message);
         }
       } finally {
         setIsLoading(false);
+        setIsProcess(false);
       }
     };
 
@@ -80,58 +83,49 @@ const ArticleAdmin = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsProcess(true);
-    setErrorMessage('');
-    const data = new FormData();
-    data.append('title', formInput.title);
-    data.append('description', formInput.description);
-    data.append('image', formInput.image);
+    try {
+      e.preventDefault();
+      setIsProcess(true);
+      setErrorMessage('');
+      const data = new FormData();
+      data.append('title', formInput.title);
+      data.append('description', formInput.description);
+      data.append('image', formInput.image);
 
-    if (editData) {
-      try {
+      if (editData) {
         await updateNews(editData.id, data);
-        setRefresh(!refresh);
+
         setEditData(null);
         setFormInput({
           title: '',
           image: null,
           description: '',
         });
-        setPopUpInput(false);
-      } catch (err) {
-        if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now');
-          navigate('/login-admin');
-        }
-        if (err.status == 400) {
-          toast.warn(err.response.data.err);
-          setIsProcess(false);
-        }
-      }
-    } else {
-      try {
+      } else {
         await createNews(data);
-        setRefresh(!refresh);
+
         setFormInput({
           title: '',
           image: null,
           description: '',
         });
-        setPopUpInput(false);
-      } catch (err) {
-        if (err.message.includes('Unauthorized')) {
-          toast.warn('Please Login Now');
-
-          navigate('/login-admin');
-        }
-        if (err.status == 400) {
-          toast.warn(err.response.data.err);
-          setIsProcess(false);
-        }
       }
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
+      }
+    } finally {
+      setRefresh(!refresh);
+      setIsProcess(false);
+      setPopUpInput(false);
     }
-    setIsProcess(false);
   };
 
   const handleEdit = (news) => {
@@ -147,16 +141,23 @@ const ArticleAdmin = () => {
   const handleDeleteYes = async () => {
     try {
       setIsProcess(true);
-      console.log(idDelete);
       await deleteNews(idDelete);
       setIdDelete('');
+    } catch (err) {
+      if (err.message.includes('Unauthorized')) {
+        toast.warn('Please Login Now');
+        navigate('/login-admin');
+      } else if (err.status == 400) {
+        toast.warn(err.response.data.err);
+      } else if (err.status == 500) {
+        toast.error('Aplikasi Error Silahkan Hubungi Developer');
+      } else {
+        toast.error(err.message);
+      }
+    } finally {
       setRefresh(!refresh);
       setIsProcess(false);
       setPopUpConfirmationDelete(false);
-    } catch (err) {
-      if (err.message.includes('Unauthorized')) {
-        navigate('/login-admin');
-      }
     }
   };
 

@@ -25,7 +25,7 @@ const HeaderAdmin = () => {
     <header className="inset-x-0 top-0 z-50 sticky bg-white shadow print:hidden">
       <nav className="flex items-center justify-between p-4 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
-          <Link to="#" className="">
+          <Link to="/admin" className="">
             <span className="sr-only">Klinik Pratama Kamandaka</span>
             <img className="h-14 w-auto" src="/logo.png" alt="logo" />
           </Link>
